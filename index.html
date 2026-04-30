@@ -272,6 +272,39 @@ body::before { display: none; } /* noise overlay removed for light theme */
 .focus-badges-empty { font-size: 0.78rem; color: var(--text-dim); font-style: italic; }
 
 /* ═══════════════════════════════════════════
+   DAY STRIP (Sun-Sat scrubber above daily entry)
+═══════════════════════════════════════════ */
+.day-strip {
+  display: grid; grid-template-columns: repeat(7, 1fr); gap: 0.4rem;
+  margin-bottom: 0.65rem;
+}
+.day-strip-pill {
+  position: relative;
+  background: var(--bg2); border: 1px solid var(--border); border-radius: 10px;
+  padding: 0.55rem 0.3rem 0.5rem;
+  display: flex; flex-direction: column; align-items: center; gap: 0.15rem;
+  cursor: pointer; font-family: inherit; transition: all 0.15s;
+}
+.day-strip-pill:hover:not(.future) { border-color: var(--red-dim); }
+.day-strip-pill.selected { background: var(--red); border-color: var(--red); }
+.day-strip-pill.today:not(.selected) { box-shadow: inset 0 -2px 0 var(--sun); }
+.day-strip-pill.future { opacity: 0.45; cursor: not-allowed; }
+.day-strip-pill .ds-letter {
+  font-size: 0.62rem; font-weight: 700; letter-spacing: 1.5px;
+  text-transform: uppercase; color: var(--text-dim);
+}
+.day-strip-pill.selected .ds-letter { color: rgba(255,255,255,0.85); }
+.day-strip-pill .ds-num {
+  font-size: 1.1rem; font-weight: 800; color: var(--text); line-height: 1;
+}
+.day-strip-pill.selected .ds-num { color: #FFFFFF; }
+.day-strip-pill .ds-check {
+  position: absolute; top: 4px; right: 5px;
+  font-size: 0.7rem; font-weight: 800; color: var(--green); line-height: 1;
+}
+.day-strip-pill.selected .ds-check { color: #FFFFFF; }
+
+/* ═══════════════════════════════════════════
    QUICK ACTIONS (Check all / Copy / Clear)
 ═══════════════════════════════════════════ */
 .quick-actions { display: flex; gap: 0.5rem; margin-bottom: 0.6rem; flex-wrap: wrap; }
@@ -507,9 +540,52 @@ body::before { display: none; } /* noise overlay removed for light theme */
   position:fixed; inset:0; z-index:9997; pointer-events:none;
   display:flex; align-items:center; justify-content:center;
   opacity:0; transition:opacity 0.3s;
+  background: rgba(247,247,247,0.55); backdrop-filter: blur(2px);
 }
 #shred-overlay.active { opacity:1; }
-.shred-canvas { position:absolute; inset:0; }
+.shred-text-wrap { text-align:center; position:relative; z-index:2; }
+.barbell-drop {
+  position:absolute; left:50%; top:50%;
+  width:min(520px,80vw); height:auto;
+  transform: translate(-50%, -50%) translateY(-130vh) rotate(-4deg);
+  filter: drop-shadow(0 18px 22px rgba(0,0,0,0.25));
+}
+#shred-overlay.active .barbell-drop { animation: barbellSlam 1.6s cubic-bezier(0.45,0,0.4,1) forwards; }
+@keyframes barbellSlam {
+  0%   { transform: translate(-50%,-50%) translateY(-130vh) rotate(-4deg); opacity:0; }
+  6%   { opacity:1; }
+  55%  { transform: translate(-50%,-50%) translateY(0) rotate(2deg); }
+  60%  { transform: translate(-50%,-50%) translateY(0) rotate(2deg); }
+  68%  { transform: translate(-50%,-50%) translateY(-26px) rotate(-1.5deg); }
+  78%  { transform: translate(-50%,-50%) translateY(0) rotate(0.8deg); }
+  86%  { transform: translate(-50%,-50%) translateY(-10px) rotate(-0.4deg); }
+  100% { transform: translate(-50%,-50%) translateY(0) rotate(0); opacity:0.95; }
+}
+.shred-impact {
+  position:absolute; left:50%; top:50%;
+  width:0; height:6px; border-radius:3px;
+  background: radial-gradient(closest-side, var(--red), transparent 70%);
+  transform: translate(-50%, 14px);
+  opacity:0; pointer-events:none;
+}
+#shred-overlay.active .shred-impact { animation: impactFlash 0.6s ease-out 0.55s forwards; }
+@keyframes impactFlash {
+  0%   { width:0; opacity:0; }
+  20%  { width:90vw; opacity:0.9; }
+  100% { width:120vw; opacity:0; }
+}
+#shred-overlay.active .shred-text-wrap { animation: shredTextRise 0.8s ease-out 0.6s both; }
+@keyframes shredTextRise {
+  0%   { transform: translateY(20px); opacity:0; }
+  100% { transform: translateY(0); opacity:1; }
+}
+body.shake-impact { animation: screenShake 0.36s cubic-bezier(0.36, 0.07, 0.19, 0.97) both; }
+@keyframes screenShake {
+  10%, 90% { transform: translate3d(-2px, 0, 0); }
+  20%, 80% { transform: translate3d(3px, 0, 0); }
+  30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+  40%, 60% { transform: translate3d(4px, 0, 0); }
+}
 .shred-text {
   font-size: clamp(3rem,10vw,6rem); font-weight:900; color:var(--text);
   text-transform:uppercase; letter-spacing:4px;
@@ -884,11 +960,30 @@ body::before { display: none; } /* noise overlay removed for light theme */
 </head>
 <body>
 
-<!-- SHRED OVERLAY -->
+<!-- SHRED OVERLAY (barbell drop + confetti) -->
 <div id="shred-overlay">
-  <canvas class="shred-canvas" id="shred-canvas"></canvas>
-  <div style="text-align:center">
-    <div class="shred-text" id="shred-text">SHREDDED! 🔥</div>
+  <svg class="barbell-drop" id="barbell-drop" viewBox="0 0 480 120" aria-hidden="true">
+    <!-- Bar (knurled steel) -->
+    <rect x="50" y="55" width="380" height="10" fill="#9a9a9a" rx="2"/>
+    <rect x="50" y="55" width="380" height="3" fill="#cfcfcf" rx="1"/>
+    <!-- Inner collars -->
+    <rect x="118" y="42" width="6" height="36" fill="#666" rx="1"/>
+    <rect x="356" y="42" width="6" height="36" fill="#666" rx="1"/>
+    <!-- Plates: outer black 45s + inner red 25s -->
+    <circle cx="76"  cy="60" r="44" fill="#1a1a1a"/>
+    <circle cx="76"  cy="60" r="40" fill="none" stroke="#3a3a3a" stroke-width="2"/>
+    <circle cx="76"  cy="60" r="6"  fill="#666"/>
+    <circle cx="106" cy="60" r="32" fill="#DE3341"/>
+    <circle cx="106" cy="60" r="28" fill="none" stroke="#A8242F" stroke-width="2"/>
+    <circle cx="404" cy="60" r="44" fill="#1a1a1a"/>
+    <circle cx="404" cy="60" r="40" fill="none" stroke="#3a3a3a" stroke-width="2"/>
+    <circle cx="404" cy="60" r="6"  fill="#666"/>
+    <circle cx="374" cy="60" r="32" fill="#DE3341"/>
+    <circle cx="374" cy="60" r="28" fill="none" stroke="#A8242F" stroke-width="2"/>
+  </svg>
+  <div class="shred-impact" id="shred-impact"></div>
+  <div class="shred-text-wrap">
+    <div class="shred-text" id="shred-text">SHREDDED! 🐉</div>
     <div class="shred-sub" id="shred-sub">Day logged. Keep going.</div>
   </div>
 </div>
@@ -966,6 +1061,19 @@ body::before { display: none; } /* noise overlay removed for light theme */
     <!-- ══ TODAY VIEW ══ -->
     <div class="view active" id="view-log">
 
+      <!-- Title section: Weekly Focus + selected-day date + earned badges -->
+      <div class="focus-head fade-up">
+        <div class="focus-row focus-row-focus">
+          <span class="focus-bull">🎯</span>
+          <span class="focus-label" id="weekly-focus-week">Wk 1</span>
+          <span class="focus-text" id="weekly-focus-text">—</span>
+        </div>
+        <div class="focus-row focus-row-date" id="date-label">—</div>
+        <div class="focus-row focus-row-badges" id="focus-badges">
+          <span class="focus-badges-empty">No badges yet — keep grinding 🔥</span>
+        </div>
+      </div>
+
       <!-- Points hierarchy: Daily / Weekly / Program -->
       <div class="points-circles fade-up">
         <div class="pc-item">
@@ -988,18 +1096,8 @@ body::before { display: none; } /* noise overlay removed for light theme */
         </div>
       </div>
 
-      <!-- Focus card: 3 rows — Weekly Focus, Today's Date, Earned Badges -->
-      <div class="focus-head fade-up">
-        <div class="focus-row focus-row-focus">
-          <span class="focus-bull">🎯</span>
-          <span class="focus-label" id="weekly-focus-week">Wk 1</span>
-          <span class="focus-text" id="weekly-focus-text">—</span>
-        </div>
-        <div class="focus-row focus-row-date" id="date-label">—</div>
-        <div class="focus-row focus-row-badges" id="focus-badges">
-          <span class="focus-badges-empty">No badges yet — keep grinding 🔥</span>
-        </div>
-      </div>
+      <!-- Day strip: 7 days of current week, click to switch, ✓ on logged days -->
+      <div class="day-strip" id="day-strip"></div>
 
       <div class="quick-actions">
         <button class="qa-btn" onclick="copyFromYesterday()">↺ Copy yesterday</button>
@@ -1009,17 +1107,12 @@ body::before { display: none; } /* noise overlay removed for light theme */
 
       <div class="habits-list" id="habits-grid"></div>
 
-      <!-- Standalone shred button → reveals quote inline -->
-      <button class="shred-btn shred-btn-bare" id="fortune-cta" onclick="shredAndReveal()">
-        Shred It 🐉<span class="shred-sub-inline">— gym wisdom awaits</span>
-      </button>
+      <!-- Shred It button → reveals today's quote inline -->
+      <button class="shred-btn shred-btn-bare" id="fortune-cta" onclick="shredAndReveal()">Shred It 🐉</button>
       <div class="fortune-quote-bare" id="fortune-quote">
         <div class="quote-meta">
-          <div class="quote-label">🥠 Today's Wisdom</div>
-          <div class="quote-date-info">
-            <span class="quote-date" id="quote-date-label"></span>
-            <button class="quote-edit-btn" id="quote-edit-btn" onclick="toggleQuoteEdit()" style="display:none">✏️ Edit</button>
-          </div>
+          <div class="quote-label">🥠 Today's Quote</div>
+          <button class="quote-edit-btn" id="quote-edit-btn" onclick="toggleQuoteEdit()" style="display:none">✏️ Edit</button>
         </div>
         <div class="quote-text" id="quote-text">The only bad workout is the one that didn't happen.</div>
         <div class="quote-author" id="quote-author">Coach</div>
@@ -1329,7 +1422,6 @@ function renderQuote(){
   const q=getQuote(currentDay);
   document.getElementById('quote-text').textContent=q.text;
   document.getElementById('quote-author').textContent=q.author;
-  document.getElementById('quote-date-label').textContent=formatDate(currentDay);
   const eb=document.getElementById('quote-edit-btn');if(eb)eb.style.display=state.isAdmin?'block':'none';
   const ab=document.getElementById('admin-btn');if(ab)ab.classList.toggle('show',!!state.isAdmin);
   const sv=state.quotes&&state.quotes[currentDay];
@@ -1410,11 +1502,12 @@ async function saveProgramConfigToSupabase(){
   if(error)showToast('Save failed: '+error.message);
 }
 async function loadAllUsersAndLogs(){
-  const [profilesRes,logsRes,bmsRes,quotesRes]=await Promise.all([
+  const [profilesRes,logsRes,bmsRes,quotesRes,userQuotesRes]=await Promise.all([
     sb.from('profiles').select('id,email,name,is_admin'),
     sb.from('habit_logs').select('user_id,log_date,habits'),
     sb.from('benchmarks').select('user_id,metric_key,value'),
     sb.from('quotes').select('quote_date,quote_text,author'),
+    sb.from('user_quotes').select('text,author,approved').eq('approved',true),
   ]);
   if(profilesRes.error){console.error(profilesRes.error);return;}
   state.users=profilesRes.data.map(p=>({id:p.id,name:p.name||p.email.split('@')[0],email:p.email,is_admin:!!p.is_admin,logs:{},benchmarks:{}}));
@@ -1423,6 +1516,8 @@ async function loadAllUsersAndLogs(){
   (bmsRes.data ||[]).forEach(b=>{const u=byId[b.user_id];if(u)u.benchmarks[b.metric_key]=b.value;});
   state.quotes={};
   (quotesRes.data||[]).forEach(q=>{state.quotes[q.quote_date]={text:q.quote_text,author:q.author||'Coach'};});
+  // Approved user-submitted quotes feed the rotating pool alongside DEFAULT_QUOTES
+  state.approvedQuotes=(userQuotesRes&&userQuotesRes.data||[]).map(q=>({text:q.text,author:q.author||'Anonymous'}));
 }
 async function upsertHabitLog(date,habits){
   const u=currentUser();if(!u)return;
@@ -1530,7 +1625,33 @@ function renderAll(){
   paintRing('ring-weekly', weekPts,  MAX_DAILY*7);
   paintRing('ring-program',stats.totalPts, elapsed*MAX_DAILY);
 
-  renderProgramInfo();renderEarnedBadgePills(stats);renderLog();renderQuote();renderFortune();renderSummerCountdown();
+  renderProgramInfo();renderEarnedBadgePills(stats);renderDayStrip();renderLog();renderQuote();renderFortune();renderSummerCountdown();
+}
+function renderDayStrip(){
+  const strip=document.getElementById('day-strip');if(!strip)return;
+  const u=currentUser();if(!u)return;
+  strip.innerHTML='';
+  const cw=currentWeekNum();
+  const wkStart=weekStartDate(cw);
+  const today=todayKey();
+  const dayLetters=['S','M','T','W','T','F','S'];
+  for(let d=0;d<7;d++){
+    const key=dayOffset(wkStart,d);
+    const dt=new Date(key+'T12:00:00');
+    const isFuture=key>today;
+    const isToday=key===today;
+    const isSelected=key===currentDay;
+    const log=u.logs[key]||{};
+    const hasData=HABITS.some(h=>log[h.id]);
+    const pill=document.createElement('button');
+    pill.type='button';
+    pill.className='day-strip-pill'+(isSelected?' selected':'')+(isToday?' today':'')+(isFuture?' future':'');
+    pill.innerHTML=`<span class="ds-letter">${dayLetters[dt.getDay()]}</span><span class="ds-num">${dt.getDate()}</span>${hasData?'<span class="ds-check">✓</span>':''}`;
+    if(!isFuture){
+      pill.onclick=(()=>{const k=key;return()=>{currentDay=k;renderDayStrip();renderLog();renderQuote();renderFortune();renderEarnedBadgePills(computeUserStats(currentUser()));paintRing('ring-daily',userPtsForDay(currentUser(),k),MAX_DAILY);};})();
+    }
+    strip.appendChild(pill);
+  }
 }
 function renderEarnedBadgePills(stats){
   const c=document.getElementById('focus-badges');if(!c)return;
@@ -1639,53 +1760,26 @@ function shredAndReveal(){
   setTimeout(()=>{renderFortune();},1800);
 }
 
-/* ═══ SHRED ANIMATION ═══ */
+/* ═══ SHRED ANIMATION (barbell drop + confetti) ═══ */
 function launchShred(isPerfect){
   const overlay=document.getElementById('shred-overlay');
   const textEl=document.getElementById('shred-text');
   const subEl=document.getElementById('shred-sub');
-  const canvas=document.getElementById('shred-canvas');
 
   textEl.textContent=isPerfect?'PERFECT DAY! 🔥':'SHREDDED! 🐉';
-  subEl.textContent=isPerfect?'20/20 — You\'re unstoppable!':'Day logged. Keep grinding.';
+  subEl.textContent=isPerfect?"22/22 — You're unstoppable!":'Day logged. Keep grinding.';
 
+  // Restart CSS animation by toggling class (force reflow between)
+  overlay.classList.remove('active');
+  void overlay.offsetWidth;
   overlay.classList.add('active');
-  animateShredCanvas(canvas);
-  launchConfetti();
 
-  setTimeout(()=>{overlay.classList.remove('active');},2000);
-}
+  // Confetti syncs with the impact (~0.55s into the animation)
+  setTimeout(launchConfetti, 520);
+  // Subtle screen shake on impact
+  setTimeout(()=>{document.body.classList.add('shake-impact');setTimeout(()=>document.body.classList.remove('shake-impact'),360);}, 540);
 
-function animateShredCanvas(canvas){
-  const W=window.innerWidth,H=window.innerHeight;
-  canvas.width=W;canvas.height=H;
-  const ctx=canvas.getContext('2d');
-  const strips=[];
-  const count=20;
-  for(let i=0;i<count;i++){
-    const x=(W/count)*i;
-    const w=(W/count)+1;
-    strips.push({x,y:0,w,h:H,vy:3+Math.random()*4,rot:0,rotV:(Math.random()-0.5)*0.08,color:`rgba(222,51,65,${0.1+Math.random()*0.15})`});
-  }
-  let frame=0;
-  function draw(){
-    ctx.clearRect(0,0,W,H);
-    let done=true;
-    strips.forEach((s,i)=>{
-      ctx.save();
-      ctx.translate(s.x+s.w/2,s.y+s.h/2);
-      ctx.rotate(s.rot);
-      ctx.fillStyle=s.color;
-      ctx.fillRect(-s.w/2,-s.h/2,s.w,s.h);
-      ctx.restore();
-      s.y+=s.vy*(1+(frame*0.02));
-      s.rot+=s.rotV;
-      if(s.y<H+s.h)done=false;
-    });
-    frame++;
-    if(!done&&frame<80)requestAnimationFrame(draw);
-  }
-  draw();
+  setTimeout(()=>{overlay.classList.remove('active');},1900);
 }
 
 /* ═══ WEEKLY VIEW ═══ */
@@ -1909,9 +2003,11 @@ function badgeProgress(b,stats){
   }
 }
 function pickRotatingQuote(dayKey){
-  // Stable hash on dayKey so the same day shows the same default quote across reloads
+  // Stable hash on dayKey so the same day shows the same quote across reloads.
+  // Pool = DEFAULT_QUOTES + admin/user-submitted approved quotes from Supabase.
   let h=0;for(let i=0;i<dayKey.length;i++)h=(h*31+dayKey.charCodeAt(i))|0;
-  return DEFAULT_QUOTES[Math.abs(h)%DEFAULT_QUOTES.length];
+  const pool=DEFAULT_QUOTES.concat(state.approvedQuotes||[]);
+  return pool[Math.abs(h)%pool.length];
 }
 function strengthMsg(rate){
   if(rate>=1)return 'Perfect week — untouchable';
@@ -2013,12 +2109,15 @@ async function submitSuggestedQuote(){
   if(!text){showToast('Add the quote text');return;}
   const u=currentUser();
   try{
+    // Save to Supabase pool (auto-approved if submitted by an admin)
+    await sb.from('user_quotes').insert({text,author:author||null,submitted_by:u?u.id:null,approved:!!(state.isAdmin)});
+    // Ping Slack so admins can review/approve
     const res=await fetch('/api/notify-slack',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:'quote_suggestion',data:{text,author,userEmail:(u&&u.email)||'anonymous',timestamp:new Date().toISOString()}})});
     if(!res.ok)throw new Error('bad status '+res.status);
     document.getElementById('suggest-text').value='';
     document.getElementById('suggest-author').value='';
     document.getElementById('quote-suggest-form').classList.remove('open');
-    showToast('Quote sent to Coach 🚀');
+    showToast(state.isAdmin?'Quote saved + sent 🚀':'Quote sent to Coach 🚀');
   }catch(e){showToast("Couldn't send — try again");}
 }
 
