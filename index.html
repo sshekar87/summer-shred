@@ -337,11 +337,22 @@ body::before { display: none; } /* noise overlay removed for light theme */
 .week-summary {
   background: var(--bg2); border: 1px solid var(--border); border-radius: 12px;
   padding: 0.85rem 1.1rem; margin-bottom: 0.7rem;
-  display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+  display: flex; flex-direction: column; gap: 0.7rem;
+}
+.ws-top-row {
+  display: grid; grid-template-columns: 1fr auto auto; gap: 1rem; align-items: center;
 }
 .ws-week { font-size: 1rem; font-weight: 800; color: var(--text); margin-bottom: 0.15rem; }
 .ws-dates { font-size: 0.78rem; color: var(--text-dim); font-weight: 600; }
-.ws-right { min-width: 180px; flex: 1; }
+.ws-total-input-wrap { display: flex; flex-direction: column; gap: 0.25rem; align-items: center; }
+.ws-total-input-wrap label { font-size: 0.66rem; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; color: var(--text-dim); }
+.ws-total-input-wrap input {
+  background: var(--bg3); border: 1px solid var(--border); border-radius: 6px;
+  padding: 0.4rem 0.5rem; color: var(--text); font-family: inherit; font-size: 0.95rem;
+  width: 84px; font-weight: 700; text-align: center;
+}
+.ws-total-input-wrap input:focus { outline: none; border-color: var(--red); }
+.ws-right { min-width: 160px; }
 .ws-pts { font-size: 0.95rem; font-weight: 700; color: var(--text); margin-bottom: 0.35rem; text-align: right; }
 .ws-pts strong { color: var(--red); font-size: 1.15rem; }
 .ws-bar { height: 6px; background: var(--bg4); border-radius: 4px; overflow: hidden; }
@@ -353,20 +364,21 @@ body::before { display: none; } /* noise overlay removed for light theme */
   font-size: 0.6rem; font-weight: 800; letter-spacing: 1px; text-transform: uppercase;
   vertical-align: middle;
 }
-.ws-override-row {
-  flex-basis: 100%; display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;
-  padding-top: 0.6rem; border-top: 1px dashed var(--border); margin-top: 0.2rem;
+.ws-action-row {
+  display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap;
+  padding-top: 0.6rem; border-top: 1px dashed var(--border);
 }
-.ws-override-row label { font-size: 0.78rem; font-weight: 700; color: var(--text-dim); letter-spacing: 0.3px; }
-.ws-override-row input {
-  background: var(--bg3); border: 1px solid var(--border); border-radius: 6px;
-  padding: 0.4rem 0.6rem; color: var(--text); font-family: inherit; font-size: 0.92rem;
-  width: 90px; font-weight: 700;
+.ws-action-row .qa-btn { padding: 0.45rem 0.8rem; font-size: 0.8rem; flex: 0 0 auto; font-weight: 800; }
+.ws-action-row .ws-save-btn { background: var(--red); color: #FFFFFF; border-color: var(--red); }
+.ws-action-row .ws-save-btn:hover { background: var(--red-bright); border-color: var(--red-bright); }
+.ws-action-row .ws-clear-btn { color: var(--red); border-color: rgba(222,51,65,0.3); }
+.ws-warning { font-size: 0.78rem; color: var(--text-dim); font-style: italic; flex: 1; min-width: 180px; }
+.ws-warning.visible { color: var(--sun); font-style: normal; font-weight: 700; }
+@media (max-width: 600px) {
+  .ws-top-row { grid-template-columns: 1fr; }
+  .ws-total-input-wrap, .ws-right { align-items: flex-start; text-align: left; }
+  .ws-pts { text-align: left; }
 }
-.ws-override-row input:focus { outline: none; border-color: var(--red); }
-.ws-override-row .qa-btn { padding: 0.4rem 0.7rem; font-size: 0.78rem; flex: 0 0 auto; }
-.ws-override-row .ws-clear-btn { color: var(--red); border-color: rgba(222,51,65,0.3); }
-.ws-override-hint { font-size: 0.74rem; color: var(--text-dim); font-style: italic; flex: 1 1 100%; }
 
 /* Per-day quick actions inside expanded weekly day */
 .day-quick-actions { margin-bottom: 0.5rem; }
@@ -729,9 +741,9 @@ body.shake-impact { animation: screenShake 0.36s cubic-bezier(0.36, 0.07, 0.19, 
 .mini-habit.checked { background:rgba(222,51,65,0.12); border-color:rgba(222,51,65,0.5); }
 .mini-habit-emoji { font-size:0.9rem; }
 .mini-habit-name { font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:var(--text-dim); }
-.mini-habit.checked .mini-habit-name { color:var(--off-white); }
+.mini-habit.checked .mini-habit-name { color:var(--text); font-weight:800; }
 .mini-habit-pts { font-size:0.65rem; font-weight:700; color:var(--text-muted); }
-.mini-habit.checked .mini-habit-pts { color:var(--red); }
+.mini-habit.checked .mini-habit-pts { color:var(--red); font-weight:800; }
 .day-save-row { display:flex; align-items:center; justify-content:space-between; margin-top:0.75rem; padding-top:0.75rem; border-top:1px solid var(--border); }
 .day-pts-total-inline { font-size:0.88rem; font-weight:700; color:var(--text-dim); }
 .day-pts-total-inline strong { color:var(--red); font-size:1.1rem; }
@@ -900,21 +912,23 @@ body.shake-impact { animation: screenShake 0.36s cubic-bezier(0.36, 0.07, 0.19, 
 .fb-widget { position: fixed; inset: 0; pointer-events: none; z-index: 9000; }
 .fb-widget > * { pointer-events: auto; }
 
-/* Bottom-right corner pill — out of the way of content */
+/* Vertical edge tab — glued to the right side, lower-third (out of content's way) */
 .fb-toggle {
-  position: fixed; right: 1rem; bottom: 1rem;
+  position: fixed; right: 0; bottom: 25%;
   background: var(--red); color: #FFFFFF; border: none;
-  border-radius: 999px;
-  padding: 0.6rem 1rem;
-  cursor: pointer; box-shadow: 0 4px 16px rgba(222,51,65,0.32);
-  transition: background 0.15s, transform 0.2s, box-shadow 0.2s;
+  border-radius: 8px 0 0 8px;
+  padding: 0.95rem 0.45rem;
+  cursor: pointer; box-shadow: -3px 4px 14px rgba(222,51,65,0.28);
+  transition: background 0.15s, padding 0.2s, box-shadow 0.2s;
 }
 .fb-toggle-text {
+  display: inline-block; writing-mode: vertical-rl;
   font-family: 'DM Sans', sans-serif; font-weight: 800;
-  font-size: 0.85rem; letter-spacing: 0.4px;
+  font-size: 0.82rem; letter-spacing: 1.2px;
+  transform: rotate(180deg);
 }
-.fb-toggle:hover { background: var(--red-bright); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(222,51,65,0.42); }
-@media (max-width: 768px) { .fb-toggle { bottom: 4.5rem; } } /* clear bottom-nav on mobile */
+.fb-toggle:hover { background: var(--red-bright); padding-right: 0.65rem; box-shadow: -4px 6px 18px rgba(222,51,65,0.4); }
+@media (max-width: 768px) { .fb-toggle { bottom: 5rem; } } /* clear bottom-nav on mobile */
 
 /* Backdrop scrim — only present when drawer is open */
 .fb-backdrop {
@@ -1085,7 +1099,7 @@ body.shake-impact { animation: screenShake 0.36s cubic-bezier(0.36, 0.07, 0.19, 
         <button class="nav-btn" data-view="weekly" onclick="switchView('weekly',this)">Weekly</button>
         <button class="nav-btn" data-view="coach" onclick="switchView('coach',this)">Coach</button>
         <button class="nav-btn" data-view="leaderboard" onclick="switchView('leaderboard',this)">Leaderboard</button>
-        <button class="nav-btn" data-view="benchmarks" onclick="switchView('benchmarks',this)">Benchmarks</button>
+        <button class="nav-btn" data-view="benchmarks" onclick="switchView('benchmarks',this)">Track</button>
       </nav>
       <button class="admin-btn" id="admin-btn" onclick="openAdminModal()">⚙️ Admin</button>
       <div class="header-user" onclick="logout()">
@@ -1253,7 +1267,7 @@ body.shake-impact { animation: screenShake 0.36s cubic-bezier(0.36, 0.07, 0.19, 
     <!-- ══ BENCHMARKS ══ -->
     <div class="view" id="view-benchmarks">
       <div class="section-header mb15">
-        <div><div class="section-title">Benchmarks</div><div class="section-sub">Track your gains Week 1 → Week 8</div></div>
+        <div><div class="section-title">📊 Track</div><div class="section-sub">Your gains, Week 1 → Week 8</div></div>
       </div>
       <div id="bm-content"></div>
     </div>
@@ -1265,7 +1279,7 @@ body.shake-impact { animation: screenShake 0.36s cubic-bezier(0.36, 0.07, 0.19, 
     <button class="bottom-nav-btn" data-view="weekly" onclick="switchView('weekly',this);syncBottomNav(this)"><span class="icon">📅</span>Weekly</button>
     <button class="bottom-nav-btn" data-view="coach" onclick="switchView('coach',this);syncBottomNav(this)"><span class="icon">🐉</span>Coach</button>
     <button class="bottom-nav-btn" data-view="leaderboard" onclick="switchView('leaderboard',this);syncBottomNav(this)"><span class="icon">🏆</span>Board</button>
-    <button class="bottom-nav-btn" data-view="benchmarks" onclick="switchView('benchmarks',this);syncBottomNav(this)"><span class="icon">💪</span>Bench</button>
+    <button class="bottom-nav-btn" data-view="benchmarks" onclick="switchView('benchmarks',this);syncBottomNav(this)"><span class="icon">📊</span>Track</button>
   </nav>
 </div>
 
@@ -1578,6 +1592,13 @@ async function saveWeekTotalOverride(){
   const v=raw===''?null:parseInt(raw,10);
   if(v!=null&&(isNaN(v)||v<0||v>MAX_DAILY*7)){showToast('Enter 0-'+(MAX_DAILY*7));return;}
   if(v==null){return clearWeekTotalOverride();}
+  // Warn if there are existing daily logs for this week
+  let hasDailyData=false;
+  for(let d=0;d<7;d++){if(Object.keys(u.logs[dayOffset(weekStartDate(selectedWeek),d)]||{}).length){hasDailyData=true;break;}}
+  if(hasDailyData){
+    const ok=confirm("Heads up — you already have daily logs for this week.\n\nSaving a manual weekly total will override what your daily entries add up to. Your individual day data is NOT deleted; it just stops counting until you click 'Clear override'.\n\nContinue and override?");
+    if(!ok)return;
+  }
   const {error}=await sb.from('week_overrides').upsert({user_id:u.id,week_num:selectedWeek,total_pts:v},{onConflict:'user_id,week_num'});
   if(error){showToast('Save failed: '+error.message);return;}
   if(!u.weekOverrides)u.weekOverrides={};
@@ -1887,23 +1908,30 @@ function renderWeeklyView(){
   const focus=WEEKLY_FOCUS[selectedWeek]||'';
   const overridden=isWeekOverridden(u,selectedWeek);
   const overrideVal=overridden?u.weekOverrides[selectedWeek]:'';
+  // Has any daily data this week? (used for warning logic)
+  let hasDailyData=false;
+  for(let d=0;d<7;d++){if(Object.keys(u.logs[dayOffset(weekStartDate(selectedWeek),d)]||{}).length){hasDailyData=true;break;}}
   const summary=document.createElement('div');
   summary.className='week-summary';
   summary.innerHTML=`
-    <div class="ws-left">
-      <div class="ws-week">Week ${selectedWeek}${focus?' · 🎯 '+focus:''}</div>
-      <div class="ws-dates">${fmtR(wsKey)} – ${fmtR(weKey)}</div>
+    <div class="ws-top-row">
+      <div class="ws-left">
+        <div class="ws-week">Week ${selectedWeek}${focus?' · 🎯 '+focus:''}</div>
+        <div class="ws-dates">${fmtR(wsKey)} – ${fmtR(weKey)}</div>
+      </div>
+      <div class="ws-total-input-wrap">
+        <label>Set week total:</label>
+        <input id="week-total-input" type="number" min="0" max="${weekMax}" placeholder="0–${weekMax}" value="${overrideVal}"/>
+      </div>
+      <div class="ws-right">
+        <div class="ws-pts"><strong>${weekPts}</strong> / ${weekMax} pts${overridden?' <span class="ws-override-badge">manual</span>':''}</div>
+        <div class="ws-bar"><div class="ws-bar-fill" style="width:${Math.min(100,Math.round(weekPts/weekMax*100))}%"></div></div>
+      </div>
     </div>
-    <div class="ws-right">
-      <div class="ws-pts"><strong>${weekPts}</strong> / ${weekMax} pts${overridden?' <span class="ws-override-badge">manual</span>':''}</div>
-      <div class="ws-bar"><div class="ws-bar-fill" style="width:${Math.min(100,Math.round(weekPts/weekMax*100))}%"></div></div>
-    </div>
-    <div class="ws-override-row">
-      <label>Set total directly:</label>
-      <input id="week-total-input" type="number" min="0" max="${weekMax}" placeholder="0–${weekMax}" value="${overrideVal}"/>
-      <button class="qa-btn" onclick="saveWeekTotalOverride()">Save</button>
-      ${overridden?'<button class="qa-btn ws-clear-btn" onclick="clearWeekTotalOverride()">Clear</button>':''}
-      <span class="ws-override-hint">${overridden?'Manual total overrides daily logs.':'Or fill day-by-day below.'}</span>
+    <div class="ws-action-row">
+      <button class="qa-btn ws-save-btn" onclick="saveWeekTotalOverride()">Save week total</button>
+      ${overridden?'<button class="qa-btn ws-clear-btn" onclick="clearWeekTotalOverride()">Clear override</button>':''}
+      <span class="ws-warning${hasDailyData||overridden?' visible':''}">${overridden?'⚠️ Manual total currently overrides daily logs.':(hasDailyData?'⚠️ Saving will override your daily logs for this week.':'Or fill day-by-day below.')}</span>
     </div>`;
   grid.appendChild(summary);
 
