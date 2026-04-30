@@ -185,9 +185,10 @@ body::before { display: none; } /* noise overlay removed for light theme */
 .summer-bar {
   background: linear-gradient(135deg, #FFF5F5 0%, #FFFAF5 50%, #FFFFFF 100%);
   border: 1px solid var(--border-hot); border-radius: 12px; padding: 1.1rem 1.5rem;
-  margin-bottom: 1.1rem; display: flex; align-items: center; justify-content: space-between;
-  flex-wrap: wrap; gap: 1rem; position: relative; overflow: hidden;
+  margin-bottom: 1.1rem; display: flex; flex-direction: column; gap: 0.8rem;
+  position: relative; overflow: hidden;
 }
+.summer-top { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
 .summer-bar::before {
   content: ''; position: absolute; inset: 0;
   background: linear-gradient(90deg,transparent,rgba(255,140,66,0.025),transparent);
@@ -201,10 +202,10 @@ body::before { display: none; } /* noise overlay removed for light theme */
 .summer-headline em { color: var(--sun); font-style: normal; }
 .summer-cd { display: flex; gap: 0.45rem; align-items: flex-end; }
 .cd-block { text-align: center; }
-.cd-num { font-size: 2.4rem; font-weight: 800; line-height: 1; background: linear-gradient(180deg,var(--sun-warm),var(--sun)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+.cd-num { font-size: 2.4rem; font-weight: 800; line-height: 1; background: linear-gradient(180deg,var(--sun-warm),var(--sun)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; font-family: 'DM Mono', monospace; font-variant-numeric: tabular-nums; min-width: 1.4em; text-align: center; display: inline-block; }
 .cd-sep { font-size: 1.6rem; font-weight: 800; color: var(--text-muted); padding-bottom: 0.1rem; }
 .cd-unit { font-size: 0.55rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--text-dim); }
-.summer-progress-wrap { flex: 1; min-width: 140px; }
+.summer-progress-wrap { width: 100%; }
 .summer-prog-label { font-size: 0.7rem; font-weight: 600; color: var(--text-dim); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 0.4rem; }
 .summer-prog-bar { height: 5px; background: var(--bg4); border-radius: 4px; overflow: hidden; }
 .summer-prog-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg,var(--red-dim),var(--red),var(--sun)); transition: width 1s ease; }
@@ -333,7 +334,10 @@ body::before { display: none; } /* noise overlay removed for light theme */
 .qa-btn:active { transform: scale(0.97); }
 .qa-icon { font-size: 1.4rem; line-height: 1; margin-bottom: 0.2rem; }
 .qa-main { font-size: 0.82rem; font-weight: 800; line-height: 1.1; }
-.qa-sub  { font-size: 0.78rem; font-weight: 500; line-height: 1.15; text-align: center; color: var(--text); }
+.qa-sub  { font-size: 0.7rem; font-weight: 500; line-height: 1.2; text-align: center; color: var(--text-dim); }
+.qa-btn.qa-selected-copy .qa-sub,
+.qa-btn.qa-selected-clear .qa-sub,
+.qa-btn.qa-selected-check .qa-sub { color: inherit; }
 .qa-btn.qa-icon-only { padding: 0.45rem 0.55rem; min-width: 0; flex: 0 0 auto; }
 .qa-btn.qa-icon-only .qa-icon { margin-bottom: 0; font-size: 1.1rem; }
 .qa-btn.qa-icon-only .qa-main, .qa-btn.qa-icon-only .qa-sub { display: none; }
@@ -695,17 +699,20 @@ body::before { display: none; } /* noise overlay removed for light theme */
 .weekly-view-header {
   display:flex; align-items:center; gap:1rem; margin-bottom:1.25rem; flex-wrap:wrap;
 }
-.week-selector { display:grid; grid-template-columns:repeat(8,1fr); gap:0.3rem; margin-bottom:0.8rem; }
+.week-selector { display:grid; grid-template-columns:repeat(4,1fr); gap:0.5rem; margin-bottom:0.9rem; }
 .week-sel-btn {
-  background:var(--bg2); border:1px solid var(--border); border-radius:6px;
-  color:var(--text-dim); font-size:0.78rem; font-weight:800; letter-spacing:0.5px;
-  padding:0.45rem 0.2rem; cursor:pointer; transition:all 0.15s; text-transform:uppercase;
-  text-align:center; white-space:nowrap;
+  background:var(--bg2); border:1px solid var(--border); border-radius:8px;
+  color:var(--text-dim); padding:0.55rem 0.5rem; cursor:pointer; transition:all 0.15s;
+  text-align:center; white-space:nowrap; font-family:inherit;
+  display:flex; flex-direction:column; align-items:center; gap:0.1rem;
 }
-.week-sel-btn:hover { border-color:var(--red); color:var(--text); }
-.week-sel-btn.current-week:not(.active) { border-color:rgba(222,51,65,0.5); color:var(--red); }
-.week-sel-btn.active { background:rgba(222,51,65,0.14); color:var(--text); border-color:var(--red); border-width:2px; padding:calc(0.45rem - 1px) calc(0.2rem - 1px); }
-@media (max-width:480px){ .week-sel-btn{ font-size:0.7rem; padding:0.4rem 0.15rem; } }
+.week-sel-btn .wsb-num { font-size:0.6rem; font-weight:700; letter-spacing:1.2px; text-transform:uppercase; color:var(--text-dim); }
+.week-sel-btn .wsb-date { font-size:0.95rem; font-weight:800; color:var(--text); line-height:1; }
+.week-sel-btn:hover { border-color:var(--red); }
+.week-sel-btn.current-week:not(.active) { border-color:rgba(222,51,65,0.55); }
+.week-sel-btn.current-week:not(.active) .wsb-num { color:var(--red); }
+.week-sel-btn.active { background:rgba(222,51,65,0.14); border-color:var(--red); border-width:2px; padding:calc(0.55rem - 1px) calc(0.5rem - 1px); }
+.week-sel-btn.active .wsb-num { color:var(--red); }
 
 .weekly-grid { display:flex; flex-direction:column; gap:0.6rem; margin-bottom:1.5rem; }
 
@@ -836,6 +843,21 @@ body::before { display: none; } /* noise overlay removed for light theme */
 .bm-time-input input::-webkit-inner-spin-button { -webkit-appearance:none; margin:0; }
 .bm-time-input input:focus { border-color:var(--red); }
 .bm-colon { color:var(--text-dim); font-weight:800; font-size:1.1rem; }
+.bm-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+.bm-table thead tr { border-bottom: 1px solid var(--border); }
+.bm-table tbody tr { border-bottom: 1px solid var(--border); }
+.bm-table tr.bm-row-me { background: rgba(222,51,65,0.04); }
+.bm-col-name { text-align: left; padding: 0.6rem 0.5rem 0.5rem; color: var(--text-dim); font-size: 0.7rem; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; vertical-align: bottom; }
+.bm-col-vert { padding: 0.5rem 0.2rem; vertical-align: bottom; height: 100px; }
+.bm-col-vert-inner {
+  writing-mode: vertical-rl; transform: rotate(180deg);
+  white-space: nowrap; color: var(--text-dim); font-size: 0.7rem;
+  font-weight: 800; letter-spacing: 1px; text-transform: uppercase;
+  margin: 0 auto;
+}
+.bm-col-name-cell { padding: 0.5rem; font-weight: 700; white-space: nowrap; }
+.bm-col-val { text-align: center; padding: 0.5rem 0.4rem; font-size: 1rem; font-weight: 800; color: var(--text-muted); font-variant-numeric: tabular-nums; }
+.bm-col-val.has-val { color: var(--red); }
 .bm-input:focus { border-color:var(--red); }
 .bm-section-header { font-size:var(--font-label); font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--text-dim); margin-bottom:1rem; padding-bottom:0.45rem; border-bottom:1px solid var(--border); }
 
@@ -1098,7 +1120,7 @@ body::before { display: none; } /* noise overlay removed for light theme */
 <div id="app">
   <header class="header">
     <div class="header-inner">
-      <div class="header-logo">LIVE <span>B.I.G</span></div>
+      <div class="header-logo">LIVE <span>B.I.G</span> 365</div>
       <nav class="header-nav">
         <button class="nav-btn active" data-view="log" onclick="switchView('log',this)">Today</button>
         <button class="nav-btn" data-view="weekly" onclick="switchView('weekly',this)">Weekly</button>
@@ -1188,7 +1210,7 @@ body::before { display: none; } /* noise overlay removed for light theme */
           <div class="quote-suggest-form" id="quote-suggest-form">
             <textarea class="q-input" id="suggest-text" rows="3" placeholder="Drop the wisdom..."></textarea>
             <input class="q-input" id="suggest-author" placeholder="Who said it? (optional)"/>
-            <button class="btn-save-quote" onclick="submitSuggestedQuote()">Send to Coach 🚀</button>
+            <button class="btn-save-quote" onclick="submitSuggestedQuote()">Send to Live B.I.G 365 🚀</button>
           </div>
         </div>
       </div>
@@ -1242,14 +1264,13 @@ body::before { display: none; } /* noise overlay removed for light theme */
     <div class="view" id="view-leaderboard">
       <!-- Summer countdown -->
       <div class="summer-bar fade-up">
-        <div class="summer-left">
-          <div class="summer-icon">☀️</div>
-          <div>
-            <div class="summer-label">Countdown to Summer</div>
+        <div class="summer-top">
+          <div class="summer-left">
+            <div class="summer-icon">☀️</div>
             <div class="summer-headline">First day of summer: <em>June 21</em></div>
           </div>
+          <div class="summer-cd" id="summer-cd"></div>
         </div>
-        <div class="summer-cd" id="summer-cd"></div>
         <div class="summer-progress-wrap">
           <div class="summer-prog-label" id="summer-prog-label">Loading...</div>
           <div class="summer-prog-bar"><div class="summer-prog-fill" id="summer-prog-fill" style="width:0%"></div></div>
@@ -1320,7 +1341,6 @@ body::before { display: none; } /* noise overlay removed for light theme */
       <input id="week-total-modal-input" type="number" min="0" placeholder=""/>
       <span class="wt-suffix">/ <span id="wt-max">154</span> pts</span>
     </div>
-    <div id="wt-status" class="wt-status"></div>
     <div class="modal-actions">
       <button class="btn-cancel" onclick="closeWeekTotalModal()">Cancel</button>
       <button class="btn-cancel" id="wt-clear-btn" onclick="clearWeekFromModal()" style="display:none">Clear override</button>
@@ -1668,12 +1688,6 @@ function openWeekTotalModal(){
   inp.value=overridden?u.weekOverrides[selectedWeek]:'';
   document.getElementById('wt-max').textContent=weekMax;
   document.getElementById('wt-clear-btn').style.display=overridden?'':'none';
-  // Status hint inside modal
-  let hasDailyData=false;
-  for(let d=0;d<7;d++){if(Object.keys(u.logs[dayOffset(weekStartDate(selectedWeek),d)]||{}).length){hasDailyData=true;break;}}
-  const status=document.getElementById('wt-status');
-  status.textContent=overridden?'⚠️ Manual total currently active.':(hasDailyData?'⚠️ Saving will overwrite your weekly total. Daily data stays preserved.':'');
-  status.style.display=status.textContent?'block':'none';
   document.getElementById('week-total-modal').classList.add('open');
   setTimeout(()=>inp.focus(),50);
 }
@@ -2024,7 +2038,9 @@ function renderWeeklyView(){
   for(let w=1;w<=PROGRAM_WEEKS;w++){
     const btn=document.createElement('button');
     btn.className='week-sel-btn'+(w===selectedWeek?' active':'')+(w===cw?' current-week':'');
-    btn.textContent='Wk '+w;
+    const startKey=weekStartDate(w);
+    const startLabel=new Date(startKey+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'});
+    btn.innerHTML=`<span class="wsb-num">Wk ${w}</span><span class="wsb-date">${startLabel}</span>`;
     btn.onclick=(()=>{const ww=w;return()=>{selectedWeek=ww;renderWeeklyView();}})();
     sel.appendChild(btn);
   }
@@ -2289,8 +2305,12 @@ function renderBenchmarks(){
   mySection.appendChild(grid);container.appendChild(mySection);
   const allSec=document.createElement('div');allSec.innerHTML=`<div class="bm-section-header mt1">🏆 All Athletes</div>`;
   const allGrid=document.createElement('div');allGrid.className='card';allGrid.style.overflowX='auto';
-  let t=`<table style="width:100%;border-collapse:collapse;font-size:0.82rem"><thead><tr style="border-bottom:1px solid var(--border)"><th style="text-align:left;padding:0.5rem;color:var(--text-dim);font-size:var(--font-label);font-weight:700;letter-spacing:1px;text-transform:uppercase">Athlete</th>${BENCHMARKS_DEF.map(b=>`<th style="text-align:right;padding:0.5rem;color:var(--text-dim);font-size:var(--font-label);font-weight:700;letter-spacing:1px;text-transform:uppercase">${b.name}</th>`).join('')}</tr></thead><tbody>`;
-  state.users.forEach(usr=>{const ubm=usr.benchmarks||{};const isMe=usr.id===state.currentUser;t+=`<tr style="border-bottom:1px solid var(--border);${isMe?'background:rgba(222,51,65,0.04)':''}"><td style="padding:0.5rem;font-weight:700">${usr.name}${isMe?' 🔥':''}</td>${BENCHMARKS_DEF.map(b=>{const v=bmDisplayValue(b,ubm['start_'+b.id]);return `<td style="text-align:right;padding:0.5rem;font-size:1.05rem;font-weight:800;color:${v?'var(--red)':'var(--text-muted)'}">${v||'—'}</td>`;}).join('')}</tr>`;});
+  let t=`<table class="bm-table"><thead><tr><th class="bm-col-name">Athlete</th>${BENCHMARKS_DEF.map(b=>`<th class="bm-col-vert"><div class="bm-col-vert-inner">${b.name}</div></th>`).join('')}</tr></thead><tbody>`;
+  state.users.forEach(usr=>{
+    const ubm=usr.benchmarks||{};const isMe=usr.id===state.currentUser;
+    const shortName=(usr.name||'').split(' ')[0]||usr.name||'';
+    t+=`<tr class="${isMe?'bm-row-me':''}"><td class="bm-col-name-cell">${shortName}${isMe?' (you)':''}</td>${BENCHMARKS_DEF.map(b=>{const v=bmDisplayValue(b,ubm['start_'+b.id]);return `<td class="bm-col-val ${v?'has-val':''}">${v||'—'}</td>`;}).join('')}</tr>`;
+  });
   t+='</tbody></table>';allGrid.innerHTML=t;allSec.appendChild(allGrid);container.appendChild(allSec);
 }
 function saveBm(key,val){
@@ -2452,15 +2472,15 @@ async function submitSuggestedQuote(){
   if(!text){showToast('Add the quote text');return;}
   const u=currentUser();
   try{
-    // Save to Supabase pool (auto-approved if submitted by an admin)
-    await sb.from('user_quotes').insert({text,author:author||null,submitted_by:u?u.id:null,approved:!!(state.isAdmin)});
+    // Save to Supabase pool (auto-approved if submitted by an admin). Blank author -> "Anonymous".
+    await sb.from('user_quotes').insert({text,author:author||'Anonymous',submitted_by:u?u.id:null,approved:!!(state.isAdmin)});
     // Ping Slack so admins can review/approve
     const res=await fetch('/api/notify-slack',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:'quote_suggestion',data:{text,author,userEmail:(u&&u.email)||'anonymous',timestamp:new Date().toISOString()}})});
     if(!res.ok)throw new Error('bad status '+res.status);
     document.getElementById('suggest-text').value='';
     document.getElementById('suggest-author').value='';
     document.getElementById('quote-suggest-form').classList.remove('open');
-    showToast(state.isAdmin?'Quote saved + sent 🚀':'Quote sent to Coach 🚀');
+    showToast(state.isAdmin?'Quote saved + sent 🚀':'Quote sent to Live B.I.G 365 🚀');
   }catch(e){showToast("Couldn't send — try again");}
 }
 
