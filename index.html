@@ -253,22 +253,31 @@ body::before { display: none; } /* noise overlay removed for light theme */
 ═══════════════════════════════════════════ */
 .focus-head {
   background: var(--bg2); border: 1px solid var(--border); border-radius: 14px;
-  padding: 0.95rem 1.1rem; margin-bottom: 0.75rem;
-  display: flex; flex-direction: column; gap: 0.55rem;
+  padding: 1rem 1.2rem; margin-bottom: 0.75rem;
+  display: flex; flex-direction: column; gap: 0.45rem;
 }
-.focus-row { display: flex; align-items: center; flex-wrap: wrap; gap: 0.45rem; }
-.focus-bull { font-size: 1.15rem; line-height: 1; }
-.focus-label { font-size: 0.7rem; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; color: var(--red); padding: 0.18rem 0.5rem; background: rgba(222,51,65,0.12); border-radius: 6px; }
-.focus-text { font-size: 1rem; font-weight: 800; color: var(--text); }
-.focus-row-date { font-size: 1.5rem; font-weight: 800; color: var(--text); line-height: 1.1; }
-.focus-row-badges { gap: 0.4rem; }
+.focus-row { display: flex; align-items: center; flex-wrap: wrap; gap: 0.5rem; }
+.focus-bull { font-size: 1.4rem; line-height: 1; }
+.focus-label { font-size: 1.15rem; font-weight: 800; color: var(--text); letter-spacing: -0.01em; }
+.focus-label::after { content: ':'; margin-left: 1px; color: var(--text-dim); font-weight: 700; }
+.focus-text { font-size: 1.15rem; font-weight: 800; color: var(--red); letter-spacing: -0.01em; }
+.focus-row-date { font-size: 0.95rem; font-weight: 600; color: var(--text-dim); line-height: 1.2; }
+.focus-row-badges { gap: 0.4rem; flex-wrap: nowrap; overflow: hidden; min-height: 28px; }
 .focus-badge-pill {
   display: inline-flex; align-items: center; gap: 0.3rem;
   background: rgba(222,51,65,0.08); border: 1px solid rgba(222,51,65,0.25);
   padding: 0.22rem 0.55rem; border-radius: 999px;
   font-size: 0.72rem; font-weight: 700; color: var(--text);
+  white-space: nowrap; flex-shrink: 1; min-width: 0;
+  overflow: hidden; text-overflow: ellipsis; max-width: 33%;
 }
-.focus-badge-pill .fbp-icon { font-size: 0.9rem; line-height: 1; }
+.focus-badge-pill .fbp-icon { font-size: 0.9rem; line-height: 1; flex-shrink: 0; }
+.focus-more-pill {
+  display: inline-flex; align-items: center;
+  background: var(--bg3); border: 1px solid var(--border);
+  padding: 0.22rem 0.55rem; border-radius: 999px;
+  font-size: 0.7rem; font-weight: 700; color: var(--text-dim); white-space: nowrap;
+}
 .focus-badges-empty { font-size: 0.78rem; color: var(--text-dim); font-style: italic; }
 
 /* ═══════════════════════════════════════════
@@ -280,30 +289,34 @@ body::before { display: none; } /* noise overlay removed for light theme */
 }
 .day-strip-pill {
   position: relative;
-  background: var(--bg2); border: 1px solid var(--border); border-radius: 10px;
+  background: var(--bg3); border: 1px solid var(--border); border-radius: 10px;
   padding: 0.55rem 0.3rem 0.5rem;
   display: flex; flex-direction: column; align-items: center; gap: 0.15rem;
   cursor: pointer; font-family: inherit; transition: all 0.15s;
 }
 .day-strip-pill:hover:not(.future) { border-color: var(--red-dim); }
+/* Done day: green tint + green numerals */
+.day-strip-pill.has-data:not(.selected) {
+  background: rgba(46,156,92,0.10); border-color: rgba(46,156,92,0.45);
+}
+.day-strip-pill.has-data:not(.selected) .ds-num { color: var(--green); }
+.day-strip-pill.has-data:not(.selected) .ds-letter { color: var(--green); }
+/* Selected: red border + light red bg, dark text */
 .day-strip-pill.selected {
   background: rgba(222,51,65,0.16); border-color: var(--red); border-width: 2px;
   padding: calc(0.55rem - 1px) calc(0.3rem - 1px) calc(0.5rem - 1px);
 }
+.day-strip-pill.selected .ds-letter { color: var(--red); font-weight: 800; }
+.day-strip-pill.selected .ds-num { color: var(--text); }
+/* Today underline accent (sun) */
 .day-strip-pill.today:not(.selected) { box-shadow: inset 0 -2px 0 var(--sun); }
 .day-strip-pill.future { opacity: 0.45; cursor: not-allowed; }
 .day-strip-pill .ds-letter {
   font-size: 0.62rem; font-weight: 700; letter-spacing: 1.5px;
   text-transform: uppercase; color: var(--text-dim);
 }
-.day-strip-pill.selected .ds-letter { color: var(--red); font-weight: 800; }
 .day-strip-pill .ds-num {
   font-size: 1.1rem; font-weight: 800; color: var(--text); line-height: 1;
-}
-.day-strip-pill.selected .ds-num { color: var(--text); }
-.day-strip-pill .ds-check {
-  position: absolute; top: 4px; right: 5px;
-  font-size: 0.7rem; font-weight: 800; color: var(--green); line-height: 1;
 }
 
 /* ═══════════════════════════════════════════
@@ -364,38 +377,35 @@ body::before { display: none; } /* noise overlay removed for light theme */
 ═══════════════════════════════════════════ */
 .habits-list { display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 1rem; }
 .habit-row {
-  display: grid; grid-template-columns: 32px 1fr auto 56px; gap: 0.7rem; align-items: center;
+  display: grid; grid-template-columns: 36px 1fr auto; gap: 0.75rem; align-items: center;
   background: var(--bg2); border: 1px solid var(--border); border-radius: 10px;
   padding: 0.65rem 0.9rem; cursor: pointer; transition: all 0.12s;
 }
 .habit-row:hover { border-color: var(--red-dim); }
-.habit-row-emoji { font-size: 1.4rem; line-height: 1; align-self: center; }
+.habit-row-emoji { font-size: 1.5rem; line-height: 1; align-self: center; }
 .habit-row-body { display: flex; flex-direction: column; gap: 0.1rem; min-width: 0; }
-.habit-row-name { font-size: 0.92rem; font-weight: 700; color: var(--text); line-height: 1.15; }
-.habit-row-tip { font-size: 0.72rem; font-weight: 500; color: var(--text-dim); line-height: 1.2; }
+.habit-row-name { font-size: 0.95rem; font-weight: 700; color: var(--text); line-height: 1.15; }
+.habit-row-tip { font-size: 0.74rem; font-weight: 500; color: var(--text-dim); line-height: 1.2; }
+/* Points badge IS the switch — tap row OR badge to toggle. Gray = off, green = on. */
 .habit-row-pts {
-  font-size: 0.72rem; font-weight: 800; color: var(--text-dim);
-  padding: 0.22rem 0.55rem; background: var(--bg3);
-  border: 1px solid var(--border); border-radius: 6px; letter-spacing: 0.5px;
-  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  min-width: 56px; text-align: center;
+  font-size: 0.85rem; font-weight: 800; color: var(--text-dim);
+  padding: 0.45rem 0.7rem; background: var(--bg3);
+  border: 2px solid var(--border); border-radius: 999px; letter-spacing: 0.3px;
+  transition: background 0.18s, color 0.18s, border-color 0.18s, transform 0.12s;
+  user-select: none;
 }
-.habit-row.checked .habit-row-pts { background: var(--green); color: #FFFFFF; border-color: var(--green); }
+.habit-row:hover .habit-row-pts { transform: scale(1.04); }
+.habit-row.checked .habit-row-pts {
+  background: var(--green); color: #FFFFFF; border-color: var(--green);
+  box-shadow: 0 2px 8px rgba(46,156,92,0.25);
+}
 .day-total-bar {
   background: var(--bg2); border: 1px solid var(--border); border-radius: 10px;
   padding: 0.7rem 1rem; margin: 0.6rem 0 0.7rem;
   font-size: 0.92rem; font-weight: 700; color: var(--text-dim); text-align: center;
 }
 .day-total-bar strong { color: var(--red); font-size: 1.15rem; font-weight: 800; }
-.habit-toggle {
-  width: 48px; height: 28px; border-radius: 14px; background: var(--bg4); border: 1px solid var(--border);
-  position: relative; transition: all 0.2s; justify-self: end;
-}
-.habit-toggle::after {
-  content: ''; position: absolute; top: 2px; left: 2px; width: 22px; height: 22px;
-  border-radius: 50%; background: var(--text-dim); transition: all 0.2s;
-}
-.habit-row.checked .habit-toggle { background: var(--green); border-color: var(--green); }
-.habit-row.checked .habit-toggle::after { left: 22px; background: var(--white); }
 
 /* ═══════════════════════════════════════════
    BARE SHRED + FORTUNE QUOTE REVEAL
@@ -890,22 +900,21 @@ body.shake-impact { animation: screenShake 0.36s cubic-bezier(0.36, 0.07, 0.19, 
 .fb-widget { position: fixed; inset: 0; pointer-events: none; z-index: 9000; }
 .fb-widget > * { pointer-events: auto; }
 
-/* Edge tab — always visible, vertically centered on the right */
+/* Bottom-right corner pill — out of the way of content */
 .fb-toggle {
-  position: fixed; right: 0; top: 50%; transform: translateY(-50%);
+  position: fixed; right: 1rem; bottom: 1rem;
   background: var(--red); color: #FFFFFF; border: none;
-  border-radius: 8px 0 0 8px;
-  padding: 0.95rem 0.5rem;
-  cursor: pointer; box-shadow: -3px 4px 14px rgba(222,51,65,0.28);
+  border-radius: 999px;
+  padding: 0.6rem 1rem;
+  cursor: pointer; box-shadow: 0 4px 16px rgba(222,51,65,0.32);
   transition: background 0.15s, transform 0.2s, box-shadow 0.2s;
 }
 .fb-toggle-text {
-  display: inline-block; writing-mode: vertical-rl;
   font-family: 'DM Sans', sans-serif; font-weight: 800;
-  font-size: 0.82rem; letter-spacing: 1.2px;
-  transform: rotate(180deg);
+  font-size: 0.85rem; letter-spacing: 0.4px;
 }
-.fb-toggle:hover { background: var(--red-bright); padding-right: 0.7rem; box-shadow: -4px 6px 18px rgba(222,51,65,0.4); }
+.fb-toggle:hover { background: var(--red-bright); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(222,51,65,0.42); }
+@media (max-width: 768px) { .fb-toggle { bottom: 4.5rem; } } /* clear bottom-nav on mobile */
 
 /* Backdrop scrim — only present when drawer is open */
 .fb-backdrop {
@@ -1652,7 +1661,7 @@ function renderProgramInfo(){
   const wf=document.getElementById('weekly-focus-text');
   if(wf)wf.textContent=WEEKLY_FOCUS[cw]||'—';
   const wfn=document.getElementById('weekly-focus-week');
-  if(wfn)wfn.textContent='Wk '+cw;
+  if(wfn)wfn.textContent='Week '+cw+' Focus';
 }
 
 /* ═══ RENDER ALL ═══ */
@@ -1708,8 +1717,8 @@ function renderDayStrip(){
     const hasData=HABITS.some(h=>log[h.id]);
     const pill=document.createElement('button');
     pill.type='button';
-    pill.className='day-strip-pill'+(isSelected?' selected':'')+(isToday?' today':'')+(isFuture?' future':'');
-    pill.innerHTML=`<span class="ds-letter">${dayLetters[dt.getDay()]}</span><span class="ds-num">${dt.getDate()}</span>${hasData?'<span class="ds-check">✓</span>':''}`;
+    pill.className='day-strip-pill'+(isSelected?' selected':'')+(isToday?' today':'')+(isFuture?' future':'')+(hasData?' has-data':'');
+    pill.innerHTML=`<span class="ds-letter">${dayLetters[dt.getDay()]}</span><span class="ds-num">${dt.getDate()}</span>`;
     if(!isFuture){
       pill.onclick=(()=>{const k=key;return()=>{currentDay=k;renderDayStrip();renderLog();renderQuote();renderFortune();renderEarnedBadgePills(computeUserStats(currentUser()));paintRing('ring-daily',userPtsForDay(currentUser(),k),MAX_DAILY);};})();
     }
@@ -1720,7 +1729,11 @@ function renderEarnedBadgePills(stats){
   const c=document.getElementById('focus-badges');if(!c)return;
   const earned=BADGE_DEFS.filter(b=>b.check(stats));
   if(earned.length===0){c.innerHTML='<span class="focus-badges-empty">No badges yet — keep grinding 🔥</span>';return;}
-  c.innerHTML=earned.map(b=>`<span class="focus-badge-pill" title="${b.desc.replace(/"/g,'&quot;')}"><span class="fbp-icon">${b.icon}</span>${b.name}</span>`).join('');
+  // Show the 3 highest-tier earned badges (BADGE_DEFS is ordered easy → hard, so take from the end)
+  const top3=earned.slice(-3).reverse();
+  const more=earned.length-top3.length;
+  c.innerHTML=top3.map(b=>`<span class="focus-badge-pill" title="${b.desc.replace(/"/g,'&quot;')}"><span class="fbp-icon">${b.icon}</span>${b.name}</span>`).join('')
+    +(more>0?`<span class="focus-more-pill" title="${more} more earned">+${more} more</span>`:'');
 }
 
 /* ═══ WEEK TRACK (still used in some places, but no longer rendered on Today) ═══ */
@@ -1752,7 +1765,7 @@ function renderLog(){
     const checked=!!log[h.id];
     const row=document.createElement('div');
     row.className='habit-row'+(checked?' checked':'');
-    row.innerHTML=`<span class="habit-row-emoji">${h.emoji}</span><div class="habit-row-body"><div class="habit-row-name">${h.name}</div><div class="habit-row-tip">${h.tip}</div></div><span class="habit-row-pts">+${h.pts}pt${h.pts>1?'s':''}</span><div class="habit-toggle"></div>`;
+    row.innerHTML=`<span class="habit-row-emoji">${h.emoji}</span><div class="habit-row-body"><div class="habit-row-name">${h.name}</div><div class="habit-row-tip">${h.tip}</div></div><span class="habit-row-pts">+${h.pts}</span>`;
     row.onclick=()=>toggleHabit(h.id);
     grid.appendChild(row);
   });
