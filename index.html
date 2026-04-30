@@ -331,9 +331,12 @@ body::before { display: none; } /* noise overlay removed for light theme */
 }
 .qa-btn:hover { background: var(--bg4); border-color: var(--red-dim); }
 .qa-btn:active { transform: scale(0.97); }
-.qa-icon { font-size: 1.25rem; line-height: 1; margin-bottom: 0.15rem; }
+.qa-icon { font-size: 1.4rem; line-height: 1; margin-bottom: 0.2rem; }
 .qa-main { font-size: 0.82rem; font-weight: 800; line-height: 1.1; }
-.qa-sub  { font-size: 0.66rem; font-weight: 500; opacity: 0.62; line-height: 1.1; text-align: center; }
+.qa-sub  { font-size: 0.78rem; font-weight: 700; line-height: 1.15; text-align: center; color: var(--text); }
+.qa-btn.qa-icon-only { padding: 0.45rem 0.55rem; min-width: 0; flex: 0 0 auto; }
+.qa-btn.qa-icon-only .qa-icon { margin-bottom: 0; font-size: 1.1rem; }
+.qa-btn.qa-icon-only .qa-main, .qa-btn.qa-icon-only .qa-sub { display: none; }
 /* Mass-action selected states. Cleared as soon as the user toggles any individual habit on that day. */
 .qa-btn.qa-selected-copy {
   background: rgba(33,150,243,0.12); border-color: #2196F3; color: #1565C0;
@@ -623,6 +626,15 @@ body::before { display: none; } /* noise overlay removed for light theme */
 /* ═══════════════════════════════════════════
    SHRED ANIMATION OVERLAY
 ═══════════════════════════════════════════ */
+.wt-input-row { display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin: 0.6rem 0 0.4rem; }
+.wt-input-row input { background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 0.6rem 0.8rem; color: var(--text); font-family: inherit; font-size: 1.05rem; font-weight: 800; width: 110px; text-align: center; outline: none; }
+.wt-input-row input:focus { border-color: var(--red); }
+.wt-suffix { font-size: 0.92rem; font-weight: 700; color: var(--text-dim); }
+.wt-status { font-size: 0.82rem; color: var(--sun); font-weight: 700; margin-bottom: 0.3rem; min-height: 1.2em; }
+.ws-edit-top-btn { padding: 0.5rem 0.9rem; flex-direction: row; gap: 0.4rem; align-self: flex-start; }
+.ws-edit-top-btn .qa-icon { font-size: 1.05rem; margin-bottom: 0; }
+.ws-edit-top-btn .qa-sub { font-size: 0.82rem; font-weight: 700; }
+.ws-status-row { padding-top: 0.6rem; border-top: 1px dashed var(--border); }
 .modal-shred .confirm-icon { font-size: 2.8rem; animation: shredBounce 0.5s ease-out both; }
 .modal-shred h2 { color: var(--red); }
 @keyframes shredBounce {
@@ -720,19 +732,19 @@ body::before { display: none; } /* noise overlay removed for light theme */
 /* Habits inline in weekly row */
 .day-habits-wrap { display:none; border-top:1px solid var(--border); padding:0.85rem 1rem; }
 .day-row.expanded .day-habits-wrap { display:block; }
-.day-habits-inline { display:flex; flex-wrap:wrap; gap:0.45rem; }
+.day-habits-inline { display:flex; flex-wrap:wrap; gap:0.32rem; }
 .mini-habit {
-  display:flex; align-items:center; gap:0.4rem; padding:0.4rem 0.75rem;
-  background:var(--bg3); border:1px solid var(--border); border-radius:20px;
+  display:flex; align-items:center; gap:0.3rem; padding:0.3rem 0.6rem;
+  background:var(--bg3); border:1px solid var(--border); border-radius:999px;
   cursor:pointer; transition:all 0.15s; user-select:none;
 }
 .mini-habit:hover { border-color:rgba(222,51,65,0.4); }
-.mini-habit.checked { background:rgba(222,51,65,0.12); border-color:rgba(222,51,65,0.5); }
-.mini-habit-emoji { font-size:0.9rem; }
-.mini-habit-name { font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:var(--text-dim); }
+.mini-habit.checked { background:rgba(46,156,92,0.10); border-color:rgba(46,156,92,0.45); }
+.mini-habit-emoji { font-size:0.88rem; line-height:1; }
+.mini-habit-name { font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.4px; color:var(--text-dim); }
 .mini-habit.checked .mini-habit-name { color:var(--text); font-weight:800; }
-.mini-habit-pts { font-size:0.65rem; font-weight:700; color:var(--text-muted); }
-.mini-habit.checked .mini-habit-pts { color:var(--red); font-weight:800; }
+.mini-habit-pts { font-size:0.62rem; font-weight:800; color:var(--text-muted); padding: 0.05rem 0.35rem; border-radius: 999px; background: var(--bg2); }
+.mini-habit.checked .mini-habit-pts { background:var(--green); color:#FFFFFF; }
 .day-save-row { display:flex; align-items:center; justify-content:space-between; margin-top:0.75rem; padding-top:0.75rem; border-top:1px solid var(--border); }
 .day-pts-total-inline { font-size:0.88rem; font-weight:700; color:var(--text-dim); }
 .day-pts-total-inline strong { color:var(--red); font-size:1.1rem; }
@@ -1144,9 +1156,9 @@ body::before { display: none; } /* noise overlay removed for light theme */
       <div class="day-strip" id="day-strip"></div>
 
       <div class="quick-actions">
-        <button class="qa-btn" data-action="copy" onclick="copyFromYesterday()"><span class="qa-icon">📋</span><span class="qa-main">Copy yesterday</span><span class="qa-sub">Same as yesterday</span></button>
-        <button class="qa-btn" data-action="clear" onclick="clearAllHabits()"><span class="qa-icon">🗑</span><span class="qa-main">Clear</span><span class="qa-sub">Reset this day</span></button>
-        <button class="qa-btn" data-action="check" onclick="checkAllHabits()"><span class="qa-icon">☑</span><span class="qa-main">Check all</span><span class="qa-sub">Mark all done</span></button>
+        <button class="qa-btn" data-action="copy" onclick="copyFromYesterday()"><span class="qa-icon">📋</span><span class="qa-sub">Copy Yesterday</span></button>
+        <button class="qa-btn" data-action="clear" onclick="clearAllHabits()"><span class="qa-icon">🗑</span><span class="qa-sub">Reset Today</span></button>
+        <button class="qa-btn" data-action="check" onclick="checkAllHabits()"><span class="qa-icon">☑</span><span class="qa-sub">100% Complete</span></button>
       </div>
 
       <div class="habits-list" id="habits-grid"></div>
@@ -1171,11 +1183,12 @@ body::before { display: none; } /* noise overlay removed for light theme */
 
     <!-- ══ WEEKLY VIEW ══ -->
     <div class="view" id="view-weekly">
-      <div class="section-header mb1">
+      <div class="section-header mb1" style="display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap">
         <div>
           <div class="section-title" style="text-transform:none">Week at a glance</div>
           <div class="section-sub">Tap any past day to fill in what you missed</div>
         </div>
+        <button class="qa-btn ws-edit-top-btn" onclick="openWeekTotalModal()"><span class="qa-icon">✏️</span><span class="qa-sub">Edit week total</span></button>
       </div>
       <div class="weekly-view-header">
         <div class="week-selector" id="week-selector"></div>
@@ -1293,6 +1306,25 @@ body::before { display: none; } /* noise overlay removed for light theme */
 </div>
 
 <!-- ════════ ADMIN MODAL ════════ -->
+<!-- ════════ EDIT WEEK TOTAL MODAL ════════ -->
+<div class="modal-overlay" id="week-total-modal" role="dialog" aria-modal="true">
+  <div class="modal modal-confirm">
+    <div class="confirm-icon">✏️</div>
+    <h2 id="wt-title">Edit week total</h2>
+    <p class="confirm-message">Override the daily-log sum with a manual total. Your individual day data is preserved — it just stops counting until you clear the override.</p>
+    <div class="wt-input-row">
+      <input id="week-total-modal-input" type="number" min="0" placeholder=""/>
+      <span class="wt-suffix">/ <span id="wt-max">154</span> pts</span>
+    </div>
+    <div id="wt-status" class="wt-status"></div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeWeekTotalModal()">Cancel</button>
+      <button class="btn-cancel" id="wt-clear-btn" onclick="clearWeekFromModal()" style="display:none">Clear override</button>
+      <button class="btn-save" onclick="saveWeekFromModal()">Save</button>
+    </div>
+  </div>
+</div>
+
 <!-- ════════ GENERIC CONFIRM MODAL (warning, sign-out, etc.) ════════ -->
 <div class="modal-overlay" id="confirm-modal" role="dialog" aria-modal="true">
   <div class="modal modal-confirm">
@@ -1338,7 +1370,7 @@ function weekDeadlineKey(wk){return dayOffset(weekEndDate(wk),4);} // Sat + 4 = 
 
 const HABITS = [
   { id:'train',    emoji:'🏋️', name:'TRAIN',               pts:1, tip:'Hit the gym, class, home, or open gym' },
-  { id:'mobility', emoji:'🧘', name:'SWOLE, FLEXY & SEXY', pts:1, tip:'15 min of stretching & mobility' },
+  { id:'mobility', emoji:'🧘', name:'FLEXY & SEXY',         pts:1, tip:'15 min of stretching & mobility' },
   { id:'sleep',    emoji:'😴', name:'SLEEP',               pts:1, tip:'6–8 hours of sleep' },
   { id:'fasting',  emoji:'⏱️', name:'FASTING',             pts:1, tip:'10–14 hour overnight fast' },
   { id:'veggies',  emoji:'🥦', name:'VEGGIES & FRUIT',     pts:1, tip:'6 servings veg + 2 fruit' },
@@ -1346,7 +1378,7 @@ const HABITS = [
   { id:'alcohol',  emoji:'🚫', name:'NO ALCOHOL',          pts:5, tip:'Skipped the booze today' },
   { id:'bread',    emoji:'🍞', name:'NO BREAD',            pts:5, tip:'No flour-based foods' },
   { id:'sugar',    emoji:'🍬', name:'NO ADDED SUGAR',      pts:5, tip:'No processed sugar or syrups' },
-  { id:'extra',    emoji:'⭐', name:'EXTRA CREDIT',        pts:1, tip:"Crushed this week's focus" },
+  { id:'extra',    emoji:'⭐', name:'EXTRA CREDIT',        pts:5, tip:"Crushed this week's focus" },
 ];
 const MAX_DAILY = HABITS.reduce((a,h)=>a+h.pts,0);
 
@@ -1621,29 +1653,42 @@ async function loadAllUsersAndLogs(){
   // Approved user-submitted quotes feed the rotating pool alongside DEFAULT_QUOTES
   state.approvedQuotes=(userQuotesRes&&userQuotesRes.data||[]).map(q=>({text:q.text,author:q.author||'Anonymous'}));
 }
-function toggleWeekTotalEditor(open){
-  const row=document.getElementById('ws-action-row');if(!row)return;
-  row.classList.toggle('editing',open===undefined?!row.classList.contains('editing'):!!open);
-  if(open){const inp=document.getElementById('week-total-input');if(inp)setTimeout(()=>inp.focus(),50);}
-}
-async function saveWeekTotalOverride(){
+function openWeekTotalModal(){
   const u=currentUser();if(!u)return;
-  const inp=document.getElementById('week-total-input');
-  const raw=inp&&inp.value.trim();
+  const overridden=isWeekOverridden(u,selectedWeek);
+  const weekMax=MAX_DAILY*7;
+  document.getElementById('wt-title').textContent='Edit Week '+selectedWeek+' total';
+  const inp=document.getElementById('week-total-modal-input');
+  inp.max=weekMax;
+  inp.placeholder='0–'+weekMax;
+  inp.value=overridden?u.weekOverrides[selectedWeek]:'';
+  document.getElementById('wt-max').textContent=weekMax;
+  document.getElementById('wt-clear-btn').style.display=overridden?'':'none';
+  // Status hint inside modal
+  let hasDailyData=false;
+  for(let d=0;d<7;d++){if(Object.keys(u.logs[dayOffset(weekStartDate(selectedWeek),d)]||{}).length){hasDailyData=true;break;}}
+  const status=document.getElementById('wt-status');
+  status.textContent=overridden?'⚠️ Manual total currently active.':(hasDailyData?'⚠️ Saving will pause your daily logs for this week.':'');
+  status.style.display=status.textContent?'block':'none';
+  document.getElementById('week-total-modal').classList.add('open');
+  setTimeout(()=>inp.focus(),50);
+}
+function closeWeekTotalModal(){document.getElementById('week-total-modal').classList.remove('open');}
+async function saveWeekFromModal(){
+  const u=currentUser();if(!u)return;
+  const inp=document.getElementById('week-total-modal-input');
+  const raw=(inp&&inp.value||'').trim();
   const v=raw===''?null:parseInt(raw,10);
-  if(v!=null&&(isNaN(v)||v<0||v>MAX_DAILY*7)){showToast('Enter 0-'+(MAX_DAILY*7));return;}
-  if(v==null){return clearWeekTotalOverride();}
-  // Warn if there are existing daily logs for this week
+  const weekMax=MAX_DAILY*7;
+  if(v!=null&&(isNaN(v)||v<0||v>weekMax)){showToast('Enter 0–'+weekMax);return;}
+  if(v==null){return clearWeekFromModal();}
   let hasDailyData=false;
   for(let d=0;d<7;d++){if(Object.keys(u.logs[dayOffset(weekStartDate(selectedWeek),d)]||{}).length){hasDailyData=true;break;}}
   if(hasDailyData){
     const ok=await showConfirm({
       title:'Override daily logs?',
       message:"You already have daily entries for this week.\n\nSaving a manual weekly total takes priority over the daily sum until you clear the override. Your individual day data is NOT deleted — it just stops counting.",
-      confirmText:'Override',
-      cancelText:'Cancel',
-      danger:true,
-      icon:'⚠️'
+      confirmText:'Override',cancelText:'Cancel',danger:true,icon:'⚠️'
     });
     if(!ok)return;
   }
@@ -1651,13 +1696,15 @@ async function saveWeekTotalOverride(){
   if(error){showToast('Save failed: '+error.message);return;}
   if(!u.weekOverrides)u.weekOverrides={};
   u.weekOverrides[selectedWeek]=v;
+  closeWeekTotalModal();
   renderWeeklyView();renderAll();showToast('Week total saved ✓');
 }
-async function clearWeekTotalOverride(){
+async function clearWeekFromModal(){
   const u=currentUser();if(!u)return;
   const {error}=await sb.from('week_overrides').delete().eq('user_id',u.id).eq('week_num',selectedWeek);
   if(error){showToast('Delete failed: '+error.message);return;}
   if(u.weekOverrides)delete u.weekOverrides[selectedWeek];
+  closeWeekTotalModal();
   renderWeeklyView();renderAll();showToast('Override cleared');
 }
 async function upsertHabitLog(date,habits){
@@ -1953,7 +2000,7 @@ function launchShred(isPerfect){
   const modal=document.getElementById('shred-modal');
   document.getElementById('shred-modal-icon').textContent=isPerfect?'🔥':'🐉';
   document.getElementById('shred-modal-title').textContent=isPerfect?'Perfect Day!':'Shredded!';
-  document.getElementById('shred-modal-message').textContent=isPerfect?"22/22 — You're unstoppable!":'Day logged. Keep grinding.';
+  document.getElementById('shred-modal-message').textContent=isPerfect?(MAX_DAILY+'/'+MAX_DAILY+" — You're unstoppable!"):'Day logged. Keep grinding.';
   // Reset animation by removing+re-adding the icon node
   const icon=document.getElementById('shred-modal-icon');
   icon.style.animation='none';void icon.offsetWidth;icon.style.animation='';
@@ -2005,23 +2052,7 @@ function renderWeeklyView(){
         <div class="ws-bar"><div class="ws-bar-fill" style="width:${Math.min(100,Math.round(weekPts/weekMax*100))}%"></div></div>
       </div>
     </div>
-    <div class="ws-action-row" id="ws-action-row">
-      <div class="ws-collapsed-mode">
-        <button class="qa-btn ws-edit-btn" onclick="toggleWeekTotalEditor(true)">✏️ Edit week total</button>
-        ${overridden?'<span class="ws-inline-msg active">Manual total active — daily logs paused</span>':''}
-        ${(!overridden&&isPriorWeek)?'<span class="ws-edit-hint">Tip: missed logging this week? Edit the total directly.</span>':''}
-        ${overridden?'<button class="qa-btn ws-clear-btn" onclick="clearWeekTotalOverride()">Clear override</button>':''}
-      </div>
-      <div class="ws-edit-mode">
-        <label>Set week total:</label>
-        <input id="week-total-input" type="number" min="0" max="${weekMax}" placeholder="0–${weekMax}" value="${overrideVal}"/>
-        <span class="ws-inline-msg${overridden?' active':''}">${overridden?'Manual total active':'Will override daily logs'}</span>
-        <div class="ws-action-buttons">
-          <button class="qa-btn ws-save-btn" onclick="saveWeekTotalOverride()">Save</button>
-          <button class="qa-btn" onclick="toggleWeekTotalEditor(false)">Cancel</button>
-        </div>
-      </div>
-    </div>`;
+    ${overridden?'<div class="ws-status-row"><span class="ws-inline-msg active">Manual total active — daily logs paused</span></div>':''}`;
   grid.appendChild(summary);
 
   for(let d=0;d<7;d++){
@@ -2061,9 +2092,9 @@ function renderWeeklyView(){
       </div>
       <div class="day-habits-wrap" id="day-habits-${key}">
         <div class="quick-actions day-quick-actions">
-          <button class="qa-btn" data-action="copy" data-day="${key}" onclick="event.stopPropagation();copyFromPrevDay('${key}')"><span class="qa-icon">📋</span><span class="qa-main">Copy prev</span><span class="qa-sub">Same as prior day</span></button>
-          <button class="qa-btn" data-action="clear" data-day="${key}" onclick="event.stopPropagation();clearDay('${key}')"><span class="qa-icon">🗑</span><span class="qa-main">Clear</span><span class="qa-sub">Reset this day</span></button>
-          <button class="qa-btn" data-action="check" data-day="${key}" onclick="event.stopPropagation();checkAllDay('${key}')"><span class="qa-icon">☑</span><span class="qa-main">Check all</span><span class="qa-sub">Mark all done</span></button>
+          <button class="qa-btn qa-icon-only" data-action="copy" data-day="${key}" title="Copy from previous day" onclick="event.stopPropagation();copyFromPrevDay('${key}')"><span class="qa-icon">📋</span></button>
+          <button class="qa-btn qa-icon-only" data-action="clear" data-day="${key}" title="Reset this day" onclick="event.stopPropagation();clearDay('${key}')"><span class="qa-icon">🗑</span></button>
+          <button class="qa-btn qa-icon-only" data-action="check" data-day="${key}" title="Mark all done" onclick="event.stopPropagation();checkAllDay('${key}')"><span class="qa-icon">☑</span></button>
         </div>
         <div class="day-habits-inline" id="habits-inline-${key}"></div>
       </div>
