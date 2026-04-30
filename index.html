@@ -797,8 +797,15 @@ body.shake-impact { animation: screenShake 0.36s cubic-bezier(0.36, 0.07, 0.19, 
    BENCHMARKS
 ═══════════════════════════════════════════ */
 .benchmarks-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(205px,1fr)); gap:0.95rem; margin-bottom:1.5rem; }
-.bm-card { background:var(--bg2); border:1px solid var(--border); border-radius:12px; padding:1.1rem; transition:border-color 0.2s; }
+.bm-card { background:var(--bg2); border:1px solid var(--border); border-radius:12px; padding:1rem 1.1rem; transition:border-color 0.2s; }
 .bm-card:hover { border-color:rgba(222,51,65,0.3); }
+.bm-card-head { display:flex; align-items:center; gap:0.55rem; margin-bottom:0.7rem; }
+.bm-card-head .bm-icon { font-size:1.4rem; line-height:1; }
+.bm-card-head .bm-name { font-size:0.95rem; font-weight:800; color:var(--text); flex:1; }
+.bm-card-row { display:flex; align-items:flex-end; gap:0.6rem; }
+.bm-input-group { display:flex; flex-direction:column; gap:0.2rem; flex:1; min-width:0; }
+.bm-input-group label { font-size:0.62rem; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:var(--text-dim); }
+.bm-card-row .bm-arrow { color:var(--text-muted); font-size:1rem; font-weight:700; padding-bottom:0.4rem; }
 .bm-icon { font-size:1.55rem; margin-bottom:0.38rem; }
 .bm-name { font-size:var(--font-label); font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--text-dim); margin-bottom:0.2rem; }
 .bm-values { display:flex; align-items:baseline; gap:0.55rem; margin-bottom:0.58rem; flex-wrap:wrap; }
@@ -811,7 +818,7 @@ body.shake-impact { animation: screenShake 0.36s cubic-bezier(0.36, 0.07, 0.19, 
 .bm-delta.pos { background:rgba(61,170,108,0.13); color:var(--green); }
 .bm-delta.neg { background:rgba(222,51,65,0.13); color:var(--red-bright); }
 .bm-delta.neutral { background:var(--bg3); color:var(--text-muted); }
-.bm-input { width:100%; background:var(--bg3); border:1px solid var(--border); border-radius:6px; padding:0.42rem 0.68rem; color:var(--text); font-family:'DM Sans',sans-serif; font-size:0.85rem; margin-top:0.38rem; outline:none; transition:border-color 0.2s; }
+.bm-input { width:100%; background:var(--bg3); border:1px solid var(--border); border-radius:6px; padding:0.5rem 0.7rem; color:var(--text); font-family:'DM Sans',sans-serif; font-size:0.95rem; font-weight:700; outline:none; transition:border-color 0.2s; }
 .bm-input:focus { border-color:var(--red); }
 .bm-section-header { font-size:var(--font-label); font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--text-dim); margin-bottom:1rem; padding-bottom:0.45rem; border-bottom:1px solid var(--border); }
 
@@ -2061,24 +2068,75 @@ function renderLeaderboard(){
 }
 
 /* ═══ BENCHMARKS ═══ */
+/* Benchmark value helpers — handle 'time' (M:SS) alongside lbs/reps */
+function bmToNumber(b,v){
+  if(!v&&v!==0)return null;
+  if(b.unit==='time'){
+    const s=String(v).trim();
+    if(s.includes(':')){const [m,sec]=s.split(':');const mm=parseInt(m,10),ss=parseInt(sec||'0',10);if(isNaN(mm)||isNaN(ss))return null;return mm*60+ss;}
+    const n=parseInt(s,10);return isNaN(n)?null:n;
+  }
+  const n=parseFloat(v);return isNaN(n)?null:n;
+}
+function bmFmtDelta(b,start,end){
+  const s=bmToNumber(b,start),e=bmToNumber(b,end);
+  if(s==null||e==null)return '<span class="bm-delta neutral">Set both</span>';
+  const better=b.lowerIsBetter?e<s:e>s;
+  const diff=b.lowerIsBetter?s-e:e-s;
+  const sign=diff>=0?(better?'+':'-'):(better?'-':'+');
+  let body;
+  if(b.unit==='time'){
+    const abs=Math.abs(diff);
+    body=`${sign}${Math.floor(abs/60)}:${String(Math.round(abs%60)).padStart(2,'0')}`;
+  }else{
+    body=`${sign}${Math.abs(diff).toFixed(0)} ${b.unit}`;
+  }
+  return `<span class="bm-delta ${better?'pos':'neg'}">${body}</span>`;
+}
+function bmDisplayValue(b,v){
+  if(!v)return '';
+  if(b.unit==='time'){
+    if(String(v).includes(':'))return v;
+    const n=parseInt(v,10);if(isNaN(n))return v;
+    return Math.floor(n/60)+':'+String(n%60).padStart(2,'0');
+  }
+  return v;
+}
+
 function renderBenchmarks(){
   const u=currentUser();if(!u)return;
   const bm=u.benchmarks||{};const container=document.getElementById('bm-content');container.innerHTML='';
-  const mySection=document.createElement('div');mySection.innerHTML=`<div class="bm-section-header">📊 My Benchmarks</div>`;
+  const mySection=document.createElement('div');mySection.innerHTML=`<div class="bm-section-header">📊 My Track</div>`;
   const grid=document.createElement('div');grid.className='benchmarks-grid';
   BENCHMARKS_DEF.forEach(b=>{
     const start=bm['start_'+b.id]||'',end=bm['end_'+b.id]||'';
-    let dh='<span class="bm-delta neutral">TBD</span>';
-    if(start&&end){const s=parseFloat(start),e=parseFloat(end);const better=b.lowerIsBetter?e<s:e>s;const diff=b.lowerIsBetter?s-e:e-s;const sign=diff>=0?(better?'+':'-'):(better?'-':'+');dh=`<span class="bm-delta ${better?'pos':'neg'}">${sign}${Math.abs(diff).toFixed(1)} ${b.unit==='lbs'||b.unit==='reps'?b.unit:''}</span>`;}
+    const delta=bmFmtDelta(b,start,end);
+    const placeholder=b.unit==='time'?'M:SS':b.unit;
     const card=document.createElement('div');card.className='bm-card';
-    card.innerHTML=`<div class="bm-icon">${b.icon}</div><div class="bm-name">${b.name}</div><div class="bm-values"><span class="bm-start">${start||'—'}</span><span class="bm-arrow">→</span><span class="bm-end ${end?'':'empty'}">${end||'End'}</span><span class="bm-unit">${b.unit}</span></div>${dh}<input class="bm-input" placeholder="Start ${b.unit}" value="${start}" oninput="saveBm('start_${b.id}',this.value)"/><input class="bm-input" placeholder="End ${b.unit}" value="${end}" oninput="saveBm('end_${b.id}',this.value)"/>`;
+    card.innerHTML=`
+      <div class="bm-card-head">
+        <span class="bm-icon">${b.icon}</span>
+        <span class="bm-name">${b.name}</span>
+        ${delta}
+      </div>
+      <div class="bm-card-row">
+        <div class="bm-input-group">
+          <label>Start</label>
+          <input class="bm-input" type="text" inputmode="${b.unit==='time'?'numeric':'decimal'}" placeholder="${placeholder}" value="${bmDisplayValue(b,start)}" oninput="saveBm('start_${b.id}',this.value)"/>
+        </div>
+        <span class="bm-arrow">→</span>
+        <div class="bm-input-group">
+          <label>Finish</label>
+          <input class="bm-input" type="text" inputmode="${b.unit==='time'?'numeric':'decimal'}" placeholder="${placeholder}" value="${bmDisplayValue(b,end)}" oninput="saveBm('end_${b.id}',this.value)"/>
+        </div>
+      </div>`;
     grid.appendChild(card);
   });
   mySection.appendChild(grid);container.appendChild(mySection);
   const allSec=document.createElement('div');allSec.innerHTML=`<div class="bm-section-header mt1">🏆 All Athletes</div>`;
   const allGrid=document.createElement('div');allGrid.className='card';allGrid.style.overflowX='auto';
   let t=`<table style="width:100%;border-collapse:collapse;font-size:0.82rem"><thead><tr style="border-bottom:1px solid var(--border)"><th style="text-align:left;padding:0.5rem;color:var(--text-dim);font-size:var(--font-label);font-weight:700;letter-spacing:1px;text-transform:uppercase">Athlete</th>${BENCHMARKS_DEF.map(b=>`<th style="text-align:right;padding:0.5rem;color:var(--text-dim);font-size:var(--font-label);font-weight:700;letter-spacing:1px;text-transform:uppercase">${b.name}</th>`).join('')}</tr></thead><tbody>`;
-  state.users.forEach(usr=>{const ubm=usr.benchmarks||{};const isMe=usr.id===state.currentUser;t+=`<tr style="border-bottom:1px solid var(--border);${isMe?'background:rgba(222,51,65,0.04)':''}"><td style="padding:0.5rem;font-weight:700">${usr.name}${isMe?' 🔥':''}</td>${BENCHMARKS_DEF.map(b=>`<td style="text-align:right;padding:0.5rem;font-size:1.05rem;font-weight:800;color:${ubm['start_'+b.id]?'var(--red)':'var(--text-muted)'}">${ubm['start_'+b.id]||'—'}</td>`).join('')}</tr>`;});
+  state.users.forEach(usr=>{const ubm=usr.benchmarks||{};const isMe=usr.id===state.currentUser;t+=`<tr style="border-bottom:1px solid var(--border);${isMe?'background:rgba(222,51,65,0.04)':''}"><td style="padding:0.5rem;font-weight:700">${usr.name}${isMe?' 🔥':''}</td>${BENCHMARKS_DEF.map(b=>{const v=bmDisplayValue(b,ubm['start_'+b.id]);return `<td style="text-align:right;padding:0.5rem;font-size:1.05rem;font-weight:800;color:${v?'var(--red)':'var(--text-muted)'}">${v||'—'}</td>`;}).join('')}</tr>`;});
   t+='</tbody></table>';allGrid.innerHTML=t;allSec.appendChild(allGrid);container.appendChild(allSec);
 }
 function saveBm(key,val){const u=currentUser();if(!u.benchmarks)u.benchmarks={};u.benchmarks[key]=val;clearTimeout(saveBm._t);saveBm._t=setTimeout(()=>{upsertBenchmark(key,val);renderBenchmarks();},800);}
