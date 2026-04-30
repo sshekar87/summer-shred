@@ -367,6 +367,12 @@ body::before { display: none; } /* noise overlay removed for light theme */
   width: 90px; font-weight: 700; text-align: center;
 }
 .ws-action-row input:focus { outline: none; border-color: var(--red); }
+.ws-inline-msg {
+  font-size: 0.76rem; color: var(--text-dim); font-style: italic;
+  white-space: nowrap;
+}
+.ws-inline-msg.active { color: var(--sun); font-style: normal; font-weight: 700; }
+.ws-action-buttons { margin-left: auto; display: flex; gap: 0.4rem; }
 .ws-action-row .qa-btn { padding: 0.45rem 0.8rem; font-size: 0.8rem; flex: 0 0 auto; font-weight: 800; }
 .ws-action-row .ws-save-btn { background: var(--red); color: #FFFFFF; border-color: var(--red); }
 .ws-action-row .ws-save-btn:hover { background: var(--red-bright); border-color: var(--red-bright); }
@@ -471,6 +477,12 @@ body::before { display: none; } /* noise overlay removed for light theme */
 .modal-actions button { flex: 1; padding: 0.7rem; border-radius: 8px; font-weight: 700; cursor: pointer; font-family: inherit; font-size: 0.9rem; border: none; }
 .modal-actions .btn-cancel { background: var(--bg3); color: var(--text-dim); border: 1px solid var(--border); }
 .modal-actions .btn-save { background: var(--red); color: var(--white); }
+.modal-actions .btn-danger { background: var(--red); color: #FFFFFF; }
+.modal-actions .btn-danger:hover { background: var(--red-bright); }
+.modal-confirm { max-width: 420px; text-align: center; padding: 1.6rem 1.4rem 1.3rem; }
+.modal-confirm .confirm-icon { font-size: 2.4rem; margin-bottom: 0.5rem; line-height: 1; }
+.modal-confirm h2 { font-size: 1.2rem; font-weight: 800; margin-bottom: 0.4rem; }
+.modal-confirm .confirm-message { font-size: 0.92rem; color: var(--text-dim); line-height: 1.5; margin-bottom: 0.5rem; white-space: pre-line; }
 
 /* ═══════════════════════════════════════════
    DAILY QUOTE
@@ -1265,6 +1277,19 @@ body::before { display: none; } /* noise overlay removed for light theme */
 </div>
 
 <!-- ════════ ADMIN MODAL ════════ -->
+<!-- ════════ GENERIC CONFIRM MODAL (warning, sign-out, etc.) ════════ -->
+<div class="modal-overlay" id="confirm-modal" role="dialog" aria-modal="true">
+  <div class="modal modal-confirm">
+    <div class="confirm-icon" id="confirm-icon">⚠️</div>
+    <h2 id="confirm-title">Are you sure?</h2>
+    <p class="confirm-message" id="confirm-message"></p>
+    <div class="modal-actions">
+      <button class="btn-cancel" id="confirm-cancel">Cancel</button>
+      <button class="btn-save" id="confirm-ok">Confirm</button>
+    </div>
+  </div>
+</div>
+
 <div class="modal-overlay" id="admin-modal">
   <div class="modal">
     <h2>⚙️ Program Settings</h2>
@@ -1459,6 +1484,40 @@ function saveQuote(){
 }
 
 /* ═══ ADMIN MODAL ═══ */
+/* ═══ Reusable confirm modal — replaces native confirm() popups ═══ */
+function showConfirm(opts){
+  opts=opts||{};
+  return new Promise(resolve=>{
+    const modal=document.getElementById('confirm-modal');
+    const titleEl=document.getElementById('confirm-title');
+    const msgEl=document.getElementById('confirm-message');
+    const iconEl=document.getElementById('confirm-icon');
+    const okBtn=document.getElementById('confirm-ok');
+    const cancelBtn=document.getElementById('confirm-cancel');
+    titleEl.textContent=opts.title||'Are you sure?';
+    msgEl.textContent=opts.message||'';
+    iconEl.textContent=opts.icon||'⚠️';
+    okBtn.textContent=opts.confirmText||'Confirm';
+    cancelBtn.textContent=opts.cancelText||'Cancel';
+    okBtn.classList.toggle('btn-danger',!!opts.danger);
+    function cleanup(){
+      modal.classList.remove('open');
+      okBtn.onclick=null;cancelBtn.onclick=null;modal.onclick=null;
+      document.removeEventListener('keydown',keyHandler);
+    }
+    function keyHandler(e){
+      if(e.key==='Escape'){cleanup();resolve(false);}
+      else if(e.key==='Enter'){cleanup();resolve(true);}
+    }
+    okBtn.onclick=()=>{cleanup();resolve(true);};
+    cancelBtn.onclick=()=>{cleanup();resolve(false);};
+    modal.onclick=(e)=>{if(e.target===modal){cleanup();resolve(false);}};
+    document.addEventListener('keydown',keyHandler);
+    modal.classList.add('open');
+    setTimeout(()=>cancelBtn.focus(),50);
+  });
+}
+
 function openAdminModal(){
   const iso=d=>d.toISOString().split('T')[0];
   document.getElementById('adm-start').value=iso(PROGRAM_START);
@@ -1477,7 +1536,10 @@ async function saveAdminConfig(){
   const summer=document.getElementById('adm-summer').value;
   if(!start||!summer){showToast('Pick both dates');return;}
   const startDay=new Date(start+'T12:00:00').getDay();
-  if(startDay!==0&&!confirm('Program start is not a Sunday. Continue anyway?'))return;
+  if(startDay!==0){
+    const ok=await showConfirm({title:'Not a Sunday',message:'Program start is not a Sunday. The week structure assumes Sun-Sat. Continue anyway?',confirmText:'Continue',icon:'📅'});
+    if(!ok)return;
+  }
   const focus={};
   for(let w=1;w<=PROGRAM_WEEKS;w++){focus[w]=document.getElementById('adm-wf-'+w).value.trim();}
   PROGRAM_START=new Date(start+'T00:00:00');
@@ -1498,7 +1560,8 @@ async function handleMagicLink(){
   document.getElementById('magic-sent').style.display='block';
 }
 async function logout(){
-  if(!confirm('Log out?'))return;
+  const ok=await showConfirm({title:'Log out?',message:'You can sign back in any time with a fresh magic link.',confirmText:'Log out',icon:'👋',danger:true});
+  if(!ok)return;
   await sb.auth.signOut();
   state=initState();
   document.getElementById('auth-screen').style.display='flex';
@@ -1553,7 +1616,14 @@ async function saveWeekTotalOverride(){
   let hasDailyData=false;
   for(let d=0;d<7;d++){if(Object.keys(u.logs[dayOffset(weekStartDate(selectedWeek),d)]||{}).length){hasDailyData=true;break;}}
   if(hasDailyData){
-    const ok=confirm("Heads up — you already have daily logs for this week.\n\nSaving a manual weekly total will override what your daily entries add up to. Your individual day data is NOT deleted; it just stops counting until you click 'Clear override'.\n\nContinue and override?");
+    const ok=await showConfirm({
+      title:'Override daily logs?',
+      message:"You already have daily entries for this week.\n\nSaving a manual weekly total takes priority over the daily sum until you clear the override. Your individual day data is NOT deleted — it just stops counting.",
+      confirmText:'Override',
+      cancelText:'Cancel',
+      danger:true,
+      icon:'⚠️'
+    });
     if(!ok)return;
   }
   const {error}=await sb.from('week_overrides').upsert({user_id:u.id,week_num:selectedWeek,total_pts:v},{onConflict:'user_id,week_num'});
@@ -1876,8 +1946,11 @@ function renderWeeklyView(){
     <div class="ws-action-row">
       <label>Set week total:</label>
       <input id="week-total-input" type="number" min="0" max="${weekMax}" placeholder="0–${weekMax}" value="${overrideVal}"/>
-      <button class="qa-btn ws-save-btn" onclick="saveWeekTotalOverride()">Save</button>
-      ${overridden?'<button class="qa-btn ws-clear-btn" onclick="clearWeekTotalOverride()">Clear override</button>':''}
+      <span class="ws-inline-msg${overridden?' active':''}">${overridden?'Manual total active':'Will override daily logs'}</span>
+      <div class="ws-action-buttons">
+        <button class="qa-btn ws-save-btn" onclick="saveWeekTotalOverride()">Save</button>
+        ${overridden?'<button class="qa-btn ws-clear-btn" onclick="clearWeekTotalOverride()">Clear</button>':''}
+      </div>
     </div>`;
   grid.appendChild(summary);
 
