@@ -776,52 +776,79 @@ body::before { display: none; } /* noise overlay removed for light theme */
 .badge-prog-frac { font-size: 0.78rem; font-weight: 700; color: var(--red); }
 
 /* ═══════════════════════════════════════════
-   FLOATING FEEDBACK WIDGET
+   SIDE-TAB FEEDBACK DRAWER
 ═══════════════════════════════════════════ */
-.fb-widget { position: fixed; right: 1rem; bottom: 1rem; z-index: 9000; }
-@media (max-width: 768px) { .fb-widget { bottom: 4.4rem; right: 0.7rem; } }
+.fb-widget { position: fixed; inset: 0; pointer-events: none; z-index: 9000; }
+.fb-widget > * { pointer-events: auto; }
+
+/* Edge tab — always visible, vertically centered on the right */
 .fb-toggle {
-  background: var(--red); color: #FFFFFF; border: none; border-radius: 999px;
-  padding: 0.6rem 1rem; font-family: 'DM Sans', sans-serif; font-weight: 800;
-  font-size: 0.85rem; letter-spacing: 0.3px; cursor: pointer;
-  box-shadow: 0 4px 16px rgba(222,51,65,0.35); transition: all 0.15s;
+  position: fixed; right: 0; top: 50%; transform: translateY(-50%);
+  background: var(--red); color: #FFFFFF; border: none;
+  border-radius: 8px 0 0 8px;
+  padding: 0.95rem 0.5rem;
+  cursor: pointer; box-shadow: -3px 4px 14px rgba(222,51,65,0.28);
+  transition: background 0.15s, transform 0.2s, box-shadow 0.2s;
 }
-.fb-toggle:hover { background: var(--red-bright); transform: translateY(-1px); }
+.fb-toggle-text {
+  display: inline-block; writing-mode: vertical-rl;
+  font-family: 'DM Sans', sans-serif; font-weight: 800;
+  font-size: 0.82rem; letter-spacing: 1.2px;
+  transform: rotate(180deg);
+}
+.fb-toggle:hover { background: var(--red-bright); padding-right: 0.7rem; box-shadow: -4px 6px 18px rgba(222,51,65,0.4); }
+
+/* Backdrop scrim — only present when drawer is open */
+.fb-backdrop {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.4);
+  opacity: 0; pointer-events: none; transition: opacity 0.2s;
+}
+.fb-widget.open .fb-backdrop { opacity: 1; pointer-events: auto; }
 .fb-widget.open .fb-toggle { display: none; }
+
+/* Slide-out drawer */
 .fb-panel {
-  display: none; width: 320px; max-width: calc(100vw - 1.5rem);
-  background: var(--bg2); border: 1px solid var(--border); border-radius: 14px;
-  padding: 1rem 1.1rem; box-shadow: 0 10px 40px rgba(0,0,0,0.18);
-  position: relative;
+  position: fixed; right: 0; top: 0; bottom: 0;
+  width: 360px; max-width: 92vw;
+  background: var(--bg2); border-left: 1px solid var(--border);
+  box-shadow: -10px 0 30px rgba(0,0,0,0.18);
+  padding: 1.6rem 1.4rem 1.4rem;
+  transform: translateX(100%); transition: transform 0.28s ease;
+  display: flex; flex-direction: column;
 }
-.fb-widget.open .fb-panel { display: block; }
+.fb-widget.open .fb-panel { transform: translateX(0); }
+
 .fb-close {
-  position: absolute; top: 0.4rem; right: 0.55rem;
-  background: none; border: none; color: var(--text-dim); font-size: 1.4rem;
-  cursor: pointer; line-height: 1; padding: 0.2rem 0.45rem;
+  position: absolute; top: 0.6rem; right: 0.7rem;
+  background: none; border: none; color: var(--text-dim); font-size: 1.6rem;
+  cursor: pointer; line-height: 1; padding: 0.2rem 0.55rem; border-radius: 6px;
 }
-.fb-close:hover { color: var(--text); }
-.fb-title { font-size: 1rem; font-weight: 800; color: var(--text); margin-bottom: 0.15rem; }
-.fb-sub { font-size: 0.8rem; color: var(--text-dim); margin-bottom: 0.7rem; }
-.fb-stars { display: flex; gap: 0.25rem; margin-bottom: 0.7rem; }
+.fb-close:hover { color: var(--text); background: var(--bg3); }
+.fb-title { font-size: 1.15rem; font-weight: 800; color: var(--text); margin-bottom: 0.15rem; }
+.fb-sub { font-size: 0.85rem; color: var(--text-dim); margin-bottom: 1rem; }
+.fb-stars { display: flex; gap: 0.3rem; margin-bottom: 0.9rem; }
 .fb-star {
   background: none; border: none; cursor: pointer; padding: 0.15rem;
-  font-size: 1.6rem; color: var(--bg4); transition: all 0.12s; line-height: 1;
+  font-size: 1.9rem; color: var(--bg4); transition: all 0.12s; line-height: 1;
 }
-.fb-star:hover, .fb-star.active { color: var(--sun-warm); transform: scale(1.05); }
+.fb-star:hover, .fb-star.active { color: var(--sun-warm); transform: scale(1.08); }
 .fb-textarea {
   width: 100%; background: var(--bg3); border: 1px solid var(--border); border-radius: 8px;
-  padding: 0.55rem 0.7rem; color: var(--text); font-family: inherit; font-size: 0.88rem;
-  resize: vertical; min-height: 60px; margin-bottom: 0.6rem;
+  padding: 0.65rem 0.8rem; color: var(--text); font-family: inherit; font-size: 0.92rem;
+  resize: vertical; min-height: 90px; margin-bottom: 0.8rem;
 }
 .fb-textarea:focus { outline: none; border-color: var(--red); }
 .fb-submit {
   width: 100%; background: var(--red); color: #FFFFFF; border: none; border-radius: 8px;
-  padding: 0.6rem; font-family: inherit; font-weight: 800; font-size: 0.9rem;
+  padding: 0.75rem; font-family: inherit; font-weight: 800; font-size: 0.95rem;
   letter-spacing: 0.5px; cursor: pointer; transition: all 0.15s;
 }
 .fb-submit:hover:not(:disabled) { background: var(--red-bright); }
 .fb-submit:disabled { background: var(--bg4); color: var(--text-muted); cursor: not-allowed; }
+
+@media (max-width: 480px) {
+  .fb-panel { width: 100vw; max-width: 100vw; }
+}
 
 /* ═══════════════════════════════════════════
    SHRED PARTICLES
@@ -1105,10 +1132,13 @@ body::before { display: none; } /* noise overlay removed for light theme */
 
 <div class="saved-flash" id="saved-flash">✓ Logged!</div>
 
-<!-- ════════ FLOATING FEEDBACK WIDGET ════════ -->
+<!-- ════════ SIDE-TAB FEEDBACK DRAWER ════════ -->
 <div class="fb-widget" id="fb-widget">
-  <button class="fb-toggle" onclick="openFeedback()" aria-label="Send feedback">💬 Feedback</button>
-  <div class="fb-panel" id="fb-panel" role="dialog" aria-label="Send feedback">
+  <div class="fb-backdrop" onclick="closeFeedback()"></div>
+  <button class="fb-toggle" onclick="openFeedback()" aria-label="Send feedback">
+    <span class="fb-toggle-text">💬  Feedback</span>
+  </button>
+  <aside class="fb-panel" id="fb-panel" role="dialog" aria-label="Send feedback">
     <button class="fb-close" onclick="closeFeedback()" aria-label="Close">×</button>
     <div class="fb-title">Send feedback</div>
     <div class="fb-sub">How's the app working for you?</div>
@@ -1119,9 +1149,9 @@ body::before { display: none; } /* noise overlay removed for light theme */
       <button class="fb-star" data-rating="4" onclick="setFbRating(4)" aria-label="4 stars">★</button>
       <button class="fb-star" data-rating="5" onclick="setFbRating(5)" aria-label="5 stars">★</button>
     </div>
-    <textarea class="fb-textarea" id="fb-message" rows="3" placeholder="What's on your mind?"></textarea>
+    <textarea class="fb-textarea" id="fb-message" rows="4" placeholder="What's on your mind?"></textarea>
     <button class="fb-submit" id="fb-submit" disabled onclick="submitFeedback()">Send</button>
-  </div>
+  </aside>
 </div>
 
 <!-- ════════ ADMIN MODAL ════════ -->
