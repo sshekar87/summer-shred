@@ -340,18 +340,10 @@ body::before { display: none; } /* noise overlay removed for light theme */
   display: flex; flex-direction: column; gap: 0.7rem;
 }
 .ws-top-row {
-  display: grid; grid-template-columns: 1fr auto auto; gap: 1rem; align-items: center;
+  display: grid; grid-template-columns: 1fr auto; gap: 1rem; align-items: center;
 }
 .ws-week { font-size: 1rem; font-weight: 800; color: var(--text); margin-bottom: 0.15rem; }
 .ws-dates { font-size: 0.78rem; color: var(--text-dim); font-weight: 600; }
-.ws-total-input-wrap { display: flex; flex-direction: column; gap: 0.25rem; align-items: center; }
-.ws-total-input-wrap label { font-size: 0.66rem; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; color: var(--text-dim); }
-.ws-total-input-wrap input {
-  background: var(--bg3); border: 1px solid var(--border); border-radius: 6px;
-  padding: 0.4rem 0.5rem; color: var(--text); font-family: inherit; font-size: 0.95rem;
-  width: 84px; font-weight: 700; text-align: center;
-}
-.ws-total-input-wrap input:focus { outline: none; border-color: var(--red); }
 .ws-right { min-width: 160px; }
 .ws-pts { font-size: 0.95rem; font-weight: 700; color: var(--text); margin-bottom: 0.35rem; text-align: right; }
 .ws-pts strong { color: var(--red); font-size: 1.15rem; }
@@ -365,18 +357,23 @@ body::before { display: none; } /* noise overlay removed for light theme */
   vertical-align: middle;
 }
 .ws-action-row {
-  display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap;
+  display: flex; align-items: center; gap: 0.55rem; flex-wrap: wrap;
   padding-top: 0.6rem; border-top: 1px dashed var(--border);
 }
+.ws-action-row label { font-size: 0.78rem; font-weight: 700; color: var(--text-dim); letter-spacing: 0.3px; }
+.ws-action-row input {
+  background: var(--bg3); border: 1px solid var(--border); border-radius: 6px;
+  padding: 0.42rem 0.55rem; color: var(--text); font-family: inherit; font-size: 0.95rem;
+  width: 90px; font-weight: 700; text-align: center;
+}
+.ws-action-row input:focus { outline: none; border-color: var(--red); }
 .ws-action-row .qa-btn { padding: 0.45rem 0.8rem; font-size: 0.8rem; flex: 0 0 auto; font-weight: 800; }
 .ws-action-row .ws-save-btn { background: var(--red); color: #FFFFFF; border-color: var(--red); }
 .ws-action-row .ws-save-btn:hover { background: var(--red-bright); border-color: var(--red-bright); }
 .ws-action-row .ws-clear-btn { color: var(--red); border-color: rgba(222,51,65,0.3); }
-.ws-warning { font-size: 0.78rem; color: var(--text-dim); font-style: italic; flex: 1; min-width: 180px; }
-.ws-warning.visible { color: var(--sun); font-style: normal; font-weight: 700; }
 @media (max-width: 600px) {
   .ws-top-row { grid-template-columns: 1fr; }
-  .ws-total-input-wrap, .ws-right { align-items: flex-start; text-align: left; }
+  .ws-right { align-items: flex-start; text-align: left; }
   .ws-pts { text-align: left; }
 }
 
@@ -595,51 +592,13 @@ body::before { display: none; } /* noise overlay removed for light theme */
   position:fixed; inset:0; z-index:9997; pointer-events:none;
   display:flex; align-items:center; justify-content:center;
   opacity:0; transition:opacity 0.3s;
-  background: rgba(247,247,247,0.55); backdrop-filter: blur(2px);
 }
 #shred-overlay.active { opacity:1; }
 .shred-text-wrap { text-align:center; position:relative; z-index:2; }
-.barbell-drop {
-  position:absolute; left:50%; top:50%;
-  width:min(520px,80vw); height:auto;
-  transform: translate(-50%, -50%) translateY(-130vh) rotate(-4deg);
-  filter: drop-shadow(0 18px 22px rgba(0,0,0,0.25));
-}
-#shred-overlay.active .barbell-drop { animation: barbellSlam 1.6s cubic-bezier(0.45,0,0.4,1) forwards; }
-@keyframes barbellSlam {
-  0%   { transform: translate(-50%,-50%) translateY(-130vh) rotate(-4deg); opacity:0; }
-  6%   { opacity:1; }
-  55%  { transform: translate(-50%,-50%) translateY(0) rotate(2deg); }
-  60%  { transform: translate(-50%,-50%) translateY(0) rotate(2deg); }
-  68%  { transform: translate(-50%,-50%) translateY(-26px) rotate(-1.5deg); }
-  78%  { transform: translate(-50%,-50%) translateY(0) rotate(0.8deg); }
-  86%  { transform: translate(-50%,-50%) translateY(-10px) rotate(-0.4deg); }
-  100% { transform: translate(-50%,-50%) translateY(0) rotate(0); opacity:0.95; }
-}
-.shred-impact {
-  position:absolute; left:50%; top:50%;
-  width:0; height:6px; border-radius:3px;
-  background: radial-gradient(closest-side, var(--red), transparent 70%);
-  transform: translate(-50%, 14px);
-  opacity:0; pointer-events:none;
-}
-#shred-overlay.active .shred-impact { animation: impactFlash 0.6s ease-out 0.55s forwards; }
-@keyframes impactFlash {
-  0%   { width:0; opacity:0; }
-  20%  { width:90vw; opacity:0.9; }
-  100% { width:120vw; opacity:0; }
-}
-#shred-overlay.active .shred-text-wrap { animation: shredTextRise 0.8s ease-out 0.6s both; }
+#shred-overlay.active .shred-text-wrap { animation: shredTextRise 0.5s ease-out both; }
 @keyframes shredTextRise {
-  0%   { transform: translateY(20px); opacity:0; }
-  100% { transform: translateY(0); opacity:1; }
-}
-body.shake-impact { animation: screenShake 0.36s cubic-bezier(0.36, 0.07, 0.19, 0.97) both; }
-@keyframes screenShake {
-  10%, 90% { transform: translate3d(-2px, 0, 0); }
-  20%, 80% { transform: translate3d(3px, 0, 0); }
-  30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
-  40%, 60% { transform: translate3d(4px, 0, 0); }
+  0%   { transform: translateY(14px) scale(0.96); opacity:0; }
+  100% { transform: translateY(0) scale(1); opacity:1; }
 }
 .shred-text {
   font-size: clamp(3rem,10vw,6rem); font-weight:900; color:var(--text);
@@ -1034,28 +993,8 @@ body.shake-impact { animation: screenShake 0.36s cubic-bezier(0.36, 0.07, 0.19, 
 </head>
 <body>
 
-<!-- SHRED OVERLAY (barbell drop + confetti) -->
+<!-- SHRED OVERLAY (just confetti + a brief celebratory line) -->
 <div id="shred-overlay">
-  <svg class="barbell-drop" id="barbell-drop" viewBox="0 0 480 120" aria-hidden="true">
-    <!-- Bar (knurled steel) -->
-    <rect x="50" y="55" width="380" height="10" fill="#9a9a9a" rx="2"/>
-    <rect x="50" y="55" width="380" height="3" fill="#cfcfcf" rx="1"/>
-    <!-- Inner collars -->
-    <rect x="118" y="42" width="6" height="36" fill="#666" rx="1"/>
-    <rect x="356" y="42" width="6" height="36" fill="#666" rx="1"/>
-    <!-- Plates: outer black 45s + inner red 25s -->
-    <circle cx="76"  cy="60" r="44" fill="#1a1a1a"/>
-    <circle cx="76"  cy="60" r="40" fill="none" stroke="#3a3a3a" stroke-width="2"/>
-    <circle cx="76"  cy="60" r="6"  fill="#666"/>
-    <circle cx="106" cy="60" r="32" fill="#DE3341"/>
-    <circle cx="106" cy="60" r="28" fill="none" stroke="#A8242F" stroke-width="2"/>
-    <circle cx="404" cy="60" r="44" fill="#1a1a1a"/>
-    <circle cx="404" cy="60" r="40" fill="none" stroke="#3a3a3a" stroke-width="2"/>
-    <circle cx="404" cy="60" r="6"  fill="#666"/>
-    <circle cx="374" cy="60" r="32" fill="#DE3341"/>
-    <circle cx="374" cy="60" r="28" fill="none" stroke="#A8242F" stroke-width="2"/>
-  </svg>
-  <div class="shred-impact" id="shred-impact"></div>
   <div class="shred-text-wrap">
     <div class="shred-text" id="shred-text">SHREDDED! 🐉</div>
     <div class="shred-sub" id="shred-sub">Day logged. Keep going.</div>
@@ -1387,7 +1326,7 @@ const BADGE_DEFS = [
   {id:'streak7',      icon:'🌋',name:'Inferno',        desc:'7-day streak',                        check:(u)=>u.maxStreak>=7},
   {id:'no_booze_week',icon:'🥤',name:'Sober Warrior',  desc:'No alcohol 7 straight days',          check:(u)=>u.soberStreak>=7},
   {id:'clean_week',   icon:'🥗',name:'Clean Machine',  desc:'No sugar + no bread for a full week', check:(u)=>u.cleanWeek>=7},
-  {id:'week1_done',   icon:'✅',name:'Wk 1 Complete',  desc:'Finish Week 1 with any points',       check:(u)=>u.weeksCompleted>=1},
+  {id:'week1_done',   icon:'✅',name:'Wk 1 Done',      desc:'Finish Week 1 with any points',       check:(u)=>u.weeksCompleted>=1},
   {id:'500pts',       icon:'🏅',name:'500 Club',       desc:'Reach 500 total points',              check:(u)=>u.totalPts>=500},
   {id:'1000pts',      icon:'🏆',name:'1K Legend',      desc:'Reach 1,000 total points',            check:(u)=>u.totalPts>=1000},
   {id:'all8weeks',    icon:'🎖️',name:'Summer Shredder',desc:'Complete all 8 weeks',                check:(u)=>u.weeksCompleted>=8},
@@ -1700,7 +1639,7 @@ function renderProgramInfo(){
   const wf=document.getElementById('weekly-focus-text');
   if(wf)wf.textContent=WEEKLY_FOCUS[cw]||'—';
   const wfn=document.getElementById('weekly-focus-week');
-  if(wfn)wfn.textContent='Week '+cw+' Focus';
+  if(wfn)wfn.textContent='Week '+cw;
 }
 
 /* ═══ RENDER ALL ═══ */
@@ -1878,7 +1817,7 @@ function shredAndReveal(){
   setTimeout(()=>{renderFortune();},1800);
 }
 
-/* ═══ SHRED ANIMATION (barbell drop + confetti) ═══ */
+/* ═══ SHRED ANIMATION (simple confetti + brief text) ═══ */
 function launchShred(isPerfect){
   const overlay=document.getElementById('shred-overlay');
   const textEl=document.getElementById('shred-text');
@@ -1887,17 +1826,12 @@ function launchShred(isPerfect){
   textEl.textContent=isPerfect?'PERFECT DAY! 🔥':'SHREDDED! 🐉';
   subEl.textContent=isPerfect?"22/22 — You're unstoppable!":'Day logged. Keep grinding.';
 
-  // Restart CSS animation by toggling class (force reflow between)
   overlay.classList.remove('active');
   void overlay.offsetWidth;
   overlay.classList.add('active');
 
-  // Confetti syncs with the impact (~0.55s into the animation)
-  setTimeout(launchConfetti, 520);
-  // Subtle screen shake on impact
-  setTimeout(()=>{document.body.classList.add('shake-impact');setTimeout(()=>document.body.classList.remove('shake-impact'),360);}, 540);
-
-  setTimeout(()=>{overlay.classList.remove('active');},1900);
+  launchConfetti();
+  setTimeout(()=>{overlay.classList.remove('active');},1700);
 }
 
 /* ═══ WEEKLY VIEW ═══ */
@@ -1926,9 +1860,6 @@ function renderWeeklyView(){
   const focus=WEEKLY_FOCUS[selectedWeek]||'';
   const overridden=isWeekOverridden(u,selectedWeek);
   const overrideVal=overridden?u.weekOverrides[selectedWeek]:'';
-  // Has any daily data this week? (used for warning logic)
-  let hasDailyData=false;
-  for(let d=0;d<7;d++){if(Object.keys(u.logs[dayOffset(weekStartDate(selectedWeek),d)]||{}).length){hasDailyData=true;break;}}
   const summary=document.createElement('div');
   summary.className='week-summary';
   summary.innerHTML=`
@@ -1937,19 +1868,16 @@ function renderWeeklyView(){
         <div class="ws-week">Week ${selectedWeek}${focus?' · 🎯 '+focus:''}</div>
         <div class="ws-dates">${fmtR(wsKey)} – ${fmtR(weKey)}</div>
       </div>
-      <div class="ws-total-input-wrap">
-        <label>Set week total:</label>
-        <input id="week-total-input" type="number" min="0" max="${weekMax}" placeholder="0–${weekMax}" value="${overrideVal}"/>
-      </div>
       <div class="ws-right">
         <div class="ws-pts"><strong>${weekPts}</strong> / ${weekMax} pts${overridden?' <span class="ws-override-badge">manual</span>':''}</div>
         <div class="ws-bar"><div class="ws-bar-fill" style="width:${Math.min(100,Math.round(weekPts/weekMax*100))}%"></div></div>
       </div>
     </div>
     <div class="ws-action-row">
-      <button class="qa-btn ws-save-btn" onclick="saveWeekTotalOverride()">Save week total</button>
+      <label>Set week total:</label>
+      <input id="week-total-input" type="number" min="0" max="${weekMax}" placeholder="0–${weekMax}" value="${overrideVal}"/>
+      <button class="qa-btn ws-save-btn" onclick="saveWeekTotalOverride()">Save</button>
       ${overridden?'<button class="qa-btn ws-clear-btn" onclick="clearWeekTotalOverride()">Clear override</button>':''}
-      <span class="ws-warning${hasDailyData||overridden?' visible':''}">${overridden?'⚠️ Manual total currently overrides daily logs.':(hasDailyData?'⚠️ Saving will override your daily logs for this week.':'Or fill day-by-day below.')}</span>
     </div>`;
   grid.appendChild(summary);
 
@@ -2046,7 +1974,19 @@ function toggleHabitForDay(key,habitId){
     const row=container.closest('.day-row');
     if(row){row.classList.toggle('has-data',pts>0);}
   }
+  // Live-update the week summary counter + bar (without rebuilding the grid)
+  updateWeekSummaryCounter();
   renderAll();
+}
+function updateWeekSummaryCounter(){
+  const u=currentUser();if(!u)return;
+  const summary=document.querySelector('.week-summary');if(!summary)return;
+  const weekPts=userPtsForWeek(u,selectedWeek);
+  const weekMax=MAX_DAILY*7;
+  const ptsStrong=summary.querySelector('.ws-pts strong');
+  if(ptsStrong)ptsStrong.textContent=weekPts;
+  const fill=summary.querySelector('.ws-bar-fill');
+  if(fill)fill.style.width=Math.min(100,Math.round(weekPts/weekMax*100))+'%';
 }
 
 function shredDayKey(key){
