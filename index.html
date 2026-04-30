@@ -58,44 +58,58 @@ body::before { display: none; } /* noise overlay removed for light theme */
     radial-gradient(ellipse 50% 35% at 90% 105%, rgba(255,140,66,0.05) 0%, transparent 50%),
     var(--bg);
 }
-.auth-sun {
-  width: 88px; height: 88px; border-radius: 50%;
-  background: radial-gradient(circle, var(--sun-warm) 0%, var(--sun) 45%, var(--red) 100%);
-  box-shadow: 0 0 50px rgba(255,140,66,0.35), 0 0 90px rgba(222,51,65,0.18);
-  margin-bottom: 1.2rem; display: flex; align-items: center; justify-content: center;
-  font-size: 2.6rem; animation: sunPulse 4s ease-in-out infinite;
+.auth-sun-svg {
+  width: 96px; height: 96px; margin-bottom: 1rem;
+  filter: drop-shadow(0 4px 22px rgba(255,140,66,0.35)) drop-shadow(0 0 30px rgba(222,51,65,0.15));
+  animation: sunSpin 24s linear infinite, sunPulse 4s ease-in-out infinite;
+  transform-origin: center;
 }
+.auth-sun-svg .auth-sun-rays { transform-origin: 60px 60px; }
+@keyframes sunSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 @keyframes sunPulse {
-  0%,100% { box-shadow: 0 0 50px rgba(255,140,66,0.3),0 0 80px rgba(222,51,65,0.15); transform: scale(1); }
-  50% { box-shadow: 0 0 80px rgba(255,140,66,0.5),0 0 130px rgba(222,51,65,0.22); transform: scale(1.05); }
+  0%,100% { filter: drop-shadow(0 4px 22px rgba(255,140,66,0.3)) drop-shadow(0 0 30px rgba(222,51,65,0.15)); }
+  50%     { filter: drop-shadow(0 4px 30px rgba(255,140,66,0.55)) drop-shadow(0 0 50px rgba(222,51,65,0.25)); }
 }
 .auth-logo {
-  font-size: clamp(3rem,12vw,6rem); font-weight: 900; letter-spacing: 4px;
-  color: var(--text); line-height: 0.9; text-align: center; text-transform: uppercase;
+  font-size: clamp(2.6rem,9vw,4.4rem); font-weight: 800; letter-spacing: -0.02em;
+  color: var(--text); line-height: 1; text-align: center; font-family: 'DM Sans', sans-serif;
 }
-.auth-logo span { color: var(--red); }
+.auth-logo span { color: var(--red); font-style: italic; font-weight: 900; }
 .auth-sub {
-  font-size: var(--font-label); font-weight: 500; letter-spacing: 6px; color: var(--text-dim);
-  text-transform: uppercase; margin-top: 0.75rem; text-align: center;
+  font-size: 0.95rem; font-weight: 600; letter-spacing: 1px; color: var(--text-dim);
+  margin-top: 0.6rem; text-align: center;
 }
-.auth-program-dates {
-  background: var(--bg2); border: 1px solid var(--border-hot);
-  border-radius: 10px; padding: 0.75rem 1.25rem; margin: 1.25rem 0;
-  text-align: center;
+.auth-quote {
+  font-family: 'DM Sans', serif; font-style: italic; font-weight: 500;
+  font-size: 1rem; color: var(--text); opacity: 0.85;
+  margin: 1.25rem 0 0.5rem; text-align: center; max-width: 360px;
 }
-.auth-program-dates .prog-label {
-  font-size: var(--font-label); font-weight: 700; letter-spacing: 3px; text-transform: uppercase;
-  color: var(--red); margin-bottom: 0.3rem;
+.auth-tagline {
+  font-size: 0.7rem; font-weight: 700; letter-spacing: 3px; text-transform: uppercase;
+  color: var(--red); margin: 1rem 0 0.7rem;
 }
-.auth-program-dates .prog-range {
-  font-size: 1rem; font-weight: 600; color: var(--off-white);
+.auth-countdown { display: flex; gap: 0.65rem; margin: 0 0 1.6rem; }
+.auth-cd-block {
+  position: relative; text-align: center; min-width: 64px;
+  background: linear-gradient(180deg,#2c2c2c 0%,#2c2c2c 50%,#181818 50%,#181818 100%);
+  border: 1px solid #0a0a0a; border-radius: 9px;
+  padding: 0.7rem 0.8rem 0.55rem;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.06);
+  overflow: hidden;
 }
-.auth-program-dates .prog-range span { color: var(--sun); }
-.auth-countdown { display: flex; gap: 0.65rem; margin: 0.5rem 0 1.5rem; }
-.auth-cd-block { text-align: center; background: var(--bg2); border: 1px solid var(--border-hot); border-radius: 8px; padding: 0.55rem 0.85rem; min-width: 54px; }
-.auth-cd-num { font-size: 1.75rem; font-weight: 800; color: var(--sun); line-height: 1; }
-.auth-cd-label { font-size: 0.55rem; font-weight: 700; color: var(--text-dim); letter-spacing: 2px; text-transform: uppercase; }
-.auth-tagline { font-size: var(--font-label); font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--red); margin-bottom: 1.5rem; }
+.auth-cd-block::after {
+  content: ''; position: absolute; left: 0; right: 0; top: 50%;
+  height: 2px; margin-top: -1px; background: rgba(0,0,0,0.65); pointer-events: none;
+  box-shadow: 0 -1px 0 rgba(255,255,255,0.04);
+}
+.auth-cd-num {
+  font-family: 'DM Mono', 'Courier New', monospace;
+  font-size: 1.85rem; font-weight: 700; color: #FFFFFF; line-height: 1; letter-spacing: 1px;
+}
+.auth-cd-label {
+  font-size: 0.55rem; font-weight: 700; color: rgba(255,255,255,0.55);
+  letter-spacing: 2.5px; text-transform: uppercase; margin-top: 0.4rem;
+}
 .auth-card {
   background: var(--bg2); border: 1px solid var(--border); border-top: 2px solid var(--red);
   border-radius: 12px; padding: 2rem; width: 100%; max-width: 420px;
@@ -854,26 +868,41 @@ body::before { display: none; } /* noise overlay removed for light theme */
 
 <!-- ════════ AUTH ════════ -->
 <div id="auth-screen">
-  <div class="auth-sun">☀️</div>
-  <div class="auth-logo">SUMMER<br><span>SHRED</span></div>
-  <div class="auth-sub">8-Week Challenge • 2026</div>
+  <svg class="auth-sun-svg" viewBox="0 0 120 120" aria-hidden="true">
+    <defs>
+      <radialGradient id="sun-grad" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#FFD66B"/>
+        <stop offset="55%" stop-color="#FF8C42"/>
+        <stop offset="100%" stop-color="#DE3341"/>
+      </radialGradient>
+    </defs>
+    <g class="auth-sun-rays" fill="#FF8C42">
+      <rect x="57" y="4"   width="6" height="14" rx="3"/>
+      <rect x="57" y="102" width="6" height="14" rx="3"/>
+      <rect x="4"   y="57" width="14" height="6" rx="3"/>
+      <rect x="102" y="57" width="14" height="6" rx="3"/>
+      <rect x="57" y="4"   width="6" height="14" rx="3" transform="rotate(45 60 60)"/>
+      <rect x="57" y="102" width="6" height="14" rx="3" transform="rotate(45 60 60)"/>
+      <rect x="57" y="4"   width="6" height="14" rx="3" transform="rotate(-45 60 60)"/>
+      <rect x="57" y="102" width="6" height="14" rx="3" transform="rotate(-45 60 60)"/>
+    </g>
+    <circle cx="60" cy="60" r="26" fill="url(#sun-grad)"/>
+  </svg>
 
-  <div class="auth-program-dates">
-    <div class="prog-label">Program Dates</div>
-    <div class="prog-range">
-      <span id="auth-prog-start">—</span> → <span id="auth-prog-end">—</span>
-    </div>
-  </div>
+  <div class="auth-logo">Summer <span>Shred</span></div>
+  <div class="auth-sub" id="auth-prog-range">—</div>
 
-  <div class="auth-countdown" id="auth-cd"></div>
+  <div class="auth-quote">"Be kind, and look mean."</div>
+
   <div class="auth-tagline">☀️ Get ready. Summer is coming.</div>
+  <div class="auth-countdown" id="auth-cd"></div>
 
   <div class="auth-card">
-    <h2>Get Your Magic Link</h2>
-    <p>Enter your email and we'll send you a link to jump in — no password needed.</p>
+    <h2>No password necessary.</h2>
+    <p>Enter your email, and you'll get a login link from Live B.I.G 365.</p>
     <input class="auth-input" id="auth-email" type="email" placeholder="you@example.com"/>
     <button class="btn-primary" onclick="handleMagicLink()">SEND MAGIC LINK →</button>
-    <div class="magic-sent" id="magic-sent">✅ Link sent! Check your inbox.<br/><small style="color:#555;font-size:0.76rem">Use quick access below to demo.</small></div>
+    <div class="magic-sent" id="magic-sent">✅ Link sent! Check your inbox.</div>
   </div>
 
   <div class="demo-links">
@@ -1241,9 +1270,10 @@ function renderSummerCountdown(){
   const authCd=document.getElementById('auth-cd');
   if(authCd){
     if(diff>0){
+      const pad=n=>String(n).padStart(2,'0');
       const days=Math.floor(diff/86400000),hrs=Math.floor((diff%86400000)/3600000),mins=Math.floor((diff%3600000)/60000);
-      authCd.innerHTML=`<div class="auth-cd-block"><div class="auth-cd-num">${days}</div><div class="auth-cd-label">Days</div></div><div class="auth-cd-block"><div class="auth-cd-num">${hrs}</div><div class="auth-cd-label">Hrs</div></div><div class="auth-cd-block"><div class="auth-cd-num">${mins}</div><div class="auth-cd-label">Min</div></div>`;
-    }else{authCd.innerHTML=`<div class="auth-cd-block" style="background:rgba(222,51,65,0.15)"><div class="auth-cd-num" style="color:var(--red)">IT'S SUMMER!</div></div>`;}
+      authCd.innerHTML=`<div class="auth-cd-block"><div class="auth-cd-num">${pad(days)}</div><div class="auth-cd-label">Days</div></div><div class="auth-cd-block"><div class="auth-cd-num">${pad(hrs)}</div><div class="auth-cd-label">Hrs</div></div><div class="auth-cd-block"><div class="auth-cd-num">${pad(mins)}</div><div class="auth-cd-label">Min</div></div>`;
+    }else{authCd.innerHTML=`<div class="auth-cd-block" style="background:linear-gradient(180deg,var(--red) 0%,var(--red) 50%,var(--red-dim) 50%,var(--red-dim) 100%);min-width:auto;padding:0.9rem 1.4rem"><div class="auth-cd-num" style="color:#fff;font-size:1.1rem">IT'S SUMMER!</div></div>`;}
   }
   const cdEl=document.getElementById('summer-cd'),fillEl=document.getElementById('summer-prog-fill'),lblEl=document.getElementById('summer-prog-label');
   if(!cdEl)return;
@@ -1421,10 +1451,14 @@ function renderProgramInfo(){
   const cw=currentWeekNum();
   const fmt=k=>new Date(k+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'});
 
-  // Auth screen dates
-  const as=document.getElementById('auth-prog-start'),ae=document.getElementById('auth-prog-end');
-  if(as)as.textContent=fmt(PROGRAM_START.toISOString().split('T')[0]);
-  if(ae)ae.textContent=fmt(programEndDate().toISOString().split('T')[0]);
+  // Auth screen program-date subtitle (e.g. "April 12 – June 6, 2026")
+  const ar=document.getElementById('auth-prog-range');
+  if(ar){
+    const startD=PROGRAM_START,endD=programEndDate();
+    const fmtLong=d=>d.toLocaleDateString('en-US',{month:'long',day:'numeric'});
+    const yr=endD.getFullYear();
+    ar.textContent=`${fmtLong(startD)} – ${fmtLong(endD)}, ${yr}`;
+  }
 
   // Weekly focus (now in Today view day-head)
   const wf=document.getElementById('weekly-focus-text');
