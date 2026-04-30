@@ -239,14 +239,23 @@ body::before { display: none; } /* noise overlay removed for light theme */
 ═══════════════════════════════════════════ */
 .focus-head {
   background: var(--bg2); border: 1px solid var(--border); border-radius: 14px;
-  padding: 0.85rem 1.1rem; margin-bottom: 0.75rem;
-  display: flex; align-items: center; justify-content: space-between; gap: 0.7rem;
+  padding: 0.95rem 1.1rem; margin-bottom: 0.75rem;
+  display: flex; flex-direction: column; gap: 0.55rem;
 }
-.focus-head-main { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
-.focus-bull { font-size: 1.2rem; line-height: 1; }
-.focus-label { font-size: 0.72rem; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; color: var(--red); padding: 0.18rem 0.5rem; background: rgba(222,51,65,0.12); border-radius: 6px; }
-.focus-text { font-size: 1.05rem; font-weight: 800; color: var(--text); }
-.focus-head-date { font-size: 1.4rem; font-weight: 800; color: var(--text); white-space: nowrap; line-height: 1.1; }
+.focus-row { display: flex; align-items: center; flex-wrap: wrap; gap: 0.45rem; }
+.focus-bull { font-size: 1.15rem; line-height: 1; }
+.focus-label { font-size: 0.7rem; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; color: var(--red); padding: 0.18rem 0.5rem; background: rgba(222,51,65,0.12); border-radius: 6px; }
+.focus-text { font-size: 1rem; font-weight: 800; color: var(--text); }
+.focus-row-date { font-size: 1.5rem; font-weight: 800; color: var(--text); line-height: 1.1; }
+.focus-row-badges { gap: 0.4rem; }
+.focus-badge-pill {
+  display: inline-flex; align-items: center; gap: 0.3rem;
+  background: rgba(222,51,65,0.08); border: 1px solid rgba(222,51,65,0.25);
+  padding: 0.22rem 0.55rem; border-radius: 999px;
+  font-size: 0.72rem; font-weight: 700; color: var(--text);
+}
+.focus-badge-pill .fbp-icon { font-size: 0.9rem; line-height: 1; }
+.focus-badges-empty { font-size: 0.78rem; color: var(--text-dim); font-style: italic; }
 
 /* ═══════════════════════════════════════════
    QUICK ACTIONS (Check all / Copy / Clear)
@@ -675,7 +684,7 @@ body::before { display: none; } /* noise overlay removed for light theme */
 /* ═══════════════════════════════════════════
    MOBILE BOTTOM NAV
 ═══════════════════════════════════════════ */
-.bottom-nav { display:none; position:fixed; bottom:0; left:0; right:0; background:rgba(255,255,255,0.96); border-top:1px solid var(--border); backdrop-filter:blur(10px); padding:0.38rem 0; z-index:100; grid-template-columns:repeat(5,1fr); }
+.bottom-nav { display:none; position:fixed; bottom:0; left:0; right:0; background:rgba(255,255,255,0.96); border-top:1px solid var(--border); backdrop-filter:blur(10px); padding:0.38rem 0; z-index:100; grid-template-columns:repeat(4,1fr); }
 .bottom-nav-btn { display:flex; flex-direction:column; align-items:center; gap:0.18rem; background:none; border:none; color:var(--text-dim); cursor:pointer; padding:0.38rem 0; transition:color 0.15s; font-family:'DM Sans',sans-serif; font-size:0.58rem; font-weight:700; letter-spacing:0.5px; text-transform:uppercase; }
 .bottom-nav-btn .icon { font-size:1.15rem; }
 .bottom-nav-btn.active { color:var(--red); }
@@ -769,7 +778,6 @@ body::before { display: none; } /* noise overlay removed for light theme */
         <button class="nav-btn" data-view="weekly" onclick="switchView('weekly',this)">Weekly</button>
         <button class="nav-btn" data-view="leaderboard" onclick="switchView('leaderboard',this)">Leaderboard</button>
         <button class="nav-btn" data-view="benchmarks" onclick="switchView('benchmarks',this)">Benchmarks</button>
-        <button class="nav-btn" data-view="badges" onclick="switchView('badges',this)">Badges</button>
       </nav>
       <button class="admin-btn" id="admin-btn" onclick="openAdminModal()">⚙️ Admin</button>
       <div class="header-user" onclick="logout()">
@@ -809,14 +817,17 @@ body::before { display: none; } /* noise overlay removed for light theme */
         </div>
       </div>
 
-      <!-- Focus (big) + today's date (small) -->
+      <!-- Focus card: 3 rows — Weekly Focus, Today's Date, Earned Badges -->
       <div class="focus-head fade-up">
-        <div class="focus-head-main">
+        <div class="focus-row focus-row-focus">
           <span class="focus-bull">🎯</span>
           <span class="focus-label" id="weekly-focus-week">Wk 1</span>
           <span class="focus-text" id="weekly-focus-text">—</span>
         </div>
-        <div class="focus-head-date" id="date-label">—</div>
+        <div class="focus-row focus-row-date" id="date-label">—</div>
+        <div class="focus-row focus-row-badges" id="focus-badges">
+          <span class="focus-badges-empty">No badges yet — keep grinding 🔥</span>
+        </div>
       </div>
 
       <div class="quick-actions">
@@ -899,14 +910,6 @@ body::before { display: none; } /* noise overlay removed for light theme */
       <div id="bm-content"></div>
     </div>
 
-    <!-- ══ BADGES ══ -->
-    <div class="view" id="view-badges">
-      <div class="section-header mb15">
-        <div><div class="section-title">Achievements</div><div class="section-sub">Earn badges. Flex on everyone.</div></div>
-      </div>
-      <div class="badges-grid" id="badges-grid"></div>
-    </div>
-
   </main>
 
   <nav class="bottom-nav">
@@ -914,7 +917,6 @@ body::before { display: none; } /* noise overlay removed for light theme */
     <button class="bottom-nav-btn" data-view="weekly" onclick="switchView('weekly',this);syncBottomNav(this)"><span class="icon">📅</span>Weekly</button>
     <button class="bottom-nav-btn" data-view="leaderboard" onclick="switchView('leaderboard',this);syncBottomNav(this)"><span class="icon">🏆</span>Board</button>
     <button class="bottom-nav-btn" data-view="benchmarks" onclick="switchView('benchmarks',this);syncBottomNav(this)"><span class="icon">💪</span>Bench</button>
-    <button class="bottom-nav-btn" data-view="badges" onclick="switchView('badges',this);syncBottomNav(this)"><span class="icon">🎖</span>Badges</button>
   </nav>
 </div>
 
@@ -1291,7 +1293,13 @@ function renderAll(){
   paintRing('ring-weekly', weekPts,  MAX_DAILY*7);
   paintRing('ring-program',stats.totalPts, elapsed*MAX_DAILY);
 
-  renderProgramInfo();renderLog();renderQuote();renderFortune();renderSummerCountdown();
+  renderProgramInfo();renderEarnedBadgePills(stats);renderLog();renderQuote();renderFortune();renderSummerCountdown();
+}
+function renderEarnedBadgePills(stats){
+  const c=document.getElementById('focus-badges');if(!c)return;
+  const earned=BADGE_DEFS.filter(b=>b.check(stats));
+  if(earned.length===0){c.innerHTML='<span class="focus-badges-empty">No badges yet — keep grinding 🔥</span>';return;}
+  c.innerHTML=earned.map(b=>`<span class="focus-badge-pill" title="${b.desc.replace(/"/g,'&quot;')}"><span class="fbp-icon">${b.icon}</span>${b.name}</span>`).join('');
 }
 
 /* ═══ WEEK TRACK (still used in some places, but no longer rendered on Today) ═══ */
