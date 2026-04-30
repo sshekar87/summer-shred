@@ -493,6 +493,97 @@ body::before { display: none; } /* noise overlay removed for light theme */
 }
 .admin-btn:hover { background: rgba(33,150,243,0.2); }
 .admin-btn.show { display: inline-block; }
+.sync-pill {
+  display: inline-flex; align-items: center; gap: 0.3rem;
+  background: rgba(222,51,65,0.10); border: 1px solid rgba(222,51,65,0.35);
+  color: var(--red); padding: 0.3rem 0.6rem; border-radius: 999px;
+  font-size: 0.74rem; font-weight: 700; margin-right: 0.5rem; line-height: 1;
+}
+.sync-pill[hidden] { display: none; }
+
+/* ═══════════════════════════════════════════
+   ADMIN PANEL
+═══════════════════════════════════════════ */
+.admin-tabs { display: flex; gap: 0.4rem; margin-bottom: 1rem; border-bottom: 1px solid var(--border); }
+.admin-tab-btn {
+  background: none; border: none; padding: 0.6rem 1rem;
+  font-family: inherit; font-size: 0.88rem; font-weight: 700; letter-spacing: 0.5px;
+  color: var(--text-dim); cursor: pointer; border-bottom: 2px solid transparent;
+  transition: all 0.15s; margin-bottom: -1px;
+}
+.admin-tab-btn:hover { color: var(--text); }
+.admin-tab-btn.active { color: var(--red); border-bottom-color: var(--red); }
+.admin-tab-content { display: none; }
+.admin-tab-content.active { display: block; }
+/* Users table */
+.admin-users { display: flex; flex-direction: column; gap: 0.45rem; }
+.admin-user-row {
+  background: var(--bg2); border: 1px solid var(--border); border-radius: 10px;
+  padding: 0.7rem 0.9rem;
+  display: grid; grid-template-columns: 1fr auto auto auto; gap: 0.7rem; align-items: center;
+}
+.admin-user-row.inactive { opacity: 0.55; }
+.admin-user-name { font-weight: 800; color: var(--text); font-size: 0.95rem; }
+.admin-user-email { font-size: 0.78rem; color: var(--text-dim); margin-top: 0.1rem; }
+.admin-user-stats { display: flex; gap: 0.85rem; font-size: 0.78rem; color: var(--text-dim); white-space: nowrap; }
+.admin-user-stats strong { color: var(--text); font-weight: 800; font-size: 0.92rem; }
+.admin-user-actions { display: flex; gap: 0.4rem; align-items: center; }
+.admin-toggle {
+  display: inline-flex; align-items: center; gap: 0.35rem;
+  background: var(--bg3); border: 1px solid var(--border); border-radius: 999px;
+  padding: 0.25rem 0.6rem; font-size: 0.72rem; font-weight: 700; color: var(--text-dim);
+  cursor: pointer; transition: all 0.15s;
+}
+.admin-toggle.on { background: rgba(222,51,65,0.12); border-color: var(--red); color: var(--red); }
+.admin-toggle:hover { border-color: var(--red); }
+.admin-action-btn {
+  background: var(--bg3); border: 1px solid var(--border); border-radius: 6px;
+  padding: 0.35rem 0.7rem; font-family: inherit; font-size: 0.72rem; font-weight: 700;
+  color: var(--text-dim); cursor: pointer; transition: all 0.15s;
+}
+.admin-action-btn:hover { border-color: var(--red); color: var(--red); }
+.admin-action-btn.danger { color: var(--red); border-color: rgba(222,51,65,0.35); }
+@media (max-width:600px){
+  .admin-user-row { grid-template-columns: 1fr; gap: 0.45rem; }
+  .admin-user-stats { flex-wrap: wrap; }
+}
+/* Quotes 7-slot */
+.admin-quote-slots { display: flex; flex-direction: column; gap: 0.45rem; margin-top: 0.6rem; }
+.admin-quote-slot {
+  background: var(--bg2); border: 1px solid var(--border); border-radius: 10px;
+  padding: 0.65rem 0.9rem;
+  display: flex; align-items: center; justify-content: space-between; gap: 0.7rem; flex-wrap: wrap;
+}
+.admin-quote-slot.filled { border-left: 3px solid var(--red); }
+.admin-quote-slot.empty { border-style: dashed; }
+.aqs-date { font-size: 0.72rem; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; color: var(--text-dim); min-width: 90px; }
+.aqs-text { flex: 1; min-width: 0; font-size: 0.92rem; color: var(--text); font-style: italic; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.aqs-text.empty { color: var(--text-dim); font-style: italic; opacity: 0.7; }
+.aqs-author { font-size: 0.74rem; color: var(--text-dim); white-space: nowrap; }
+.admin-quote-form {
+  flex-basis: 100%; display: flex; flex-direction: column; gap: 0.5rem;
+  padding-top: 0.5rem; margin-top: 0.5rem; border-top: 1px dashed var(--border);
+}
+.admin-quote-form textarea, .admin-quote-form input {
+  background: var(--bg3); border: 1px solid var(--border); border-radius: 6px;
+  padding: 0.5rem 0.7rem; color: var(--text); font-family: inherit; font-size: 0.92rem; outline: none;
+}
+.admin-quote-form textarea:focus, .admin-quote-form input:focus { border-color: var(--red); }
+.admin-quote-form .form-actions { display: flex; gap: 0.4rem; justify-content: flex-end; }
+/* Settings tab — reuse modal field styles in-page */
+.admin-settings-form { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 1.2rem 1.4rem; }
+.admin-settings-form label { display: block; font-size: 0.7rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-dim); margin: 0.85rem 0 0.3rem; }
+.admin-settings-form input[type="date"], .admin-settings-form input[type="text"] {
+  width: 100%; background: var(--bg3); border: 1px solid var(--border); border-radius: 8px;
+  padding: 0.65rem 0.8rem; color: var(--text); font-family: inherit; font-size: 0.95rem; outline: none;
+}
+.admin-settings-form input:focus { border-color: var(--red); }
+.admin-settings-form .modal-row { display: grid; grid-template-columns: 60px 1fr; gap: 0.5rem; align-items: center; margin-bottom: 0.4rem; }
+.admin-settings-form .modal-row .wk-num { font-size: 0.75rem; font-weight: 800; color: var(--red); letter-spacing: 1px; }
+.admin-settings-form .form-actions { display: flex; gap: 0.5rem; margin-top: 1.2rem; justify-content: flex-end; }
+.admin-settings-form .form-actions button { padding: 0.6rem 1.2rem; border-radius: 8px; font-weight: 800; cursor: pointer; font-family: inherit; font-size: 0.88rem; border: none; }
+.admin-settings-form .btn-save { background: var(--red); color: #FFFFFF; }
+.admin-settings-form .btn-save:hover { background: var(--red-bright); }
 .modal-overlay {
   display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 9999;
   align-items: center; justify-content: center; padding: 1rem;
@@ -1154,7 +1245,8 @@ body::before { display: none; } /* noise overlay removed for light theme */
         <button class="nav-btn" data-view="leaderboard" onclick="switchView('leaderboard',this)">Leaderboard</button>
         <button class="nav-btn" data-view="benchmarks" onclick="switchView('benchmarks',this)">Track</button>
       </nav>
-      <button class="admin-btn" id="admin-btn" onclick="openAdminModal()">⚙️ Admin</button>
+      <div id="sync-indicator" class="sync-pill" hidden>🔄 Syncing <span id="sync-count">0</span></div>
+      <button class="admin-btn" id="admin-btn" onclick="switchView('admin',this)">⚙️ Admin</button>
       <div class="header-user" onclick="logout()">
         <div class="user-avatar" id="hdr-av">?</div>
         <div>
@@ -1321,6 +1413,24 @@ body::before { display: none; } /* noise overlay removed for light theme */
       <div id="bm-content"></div>
     </div>
 
+    <!-- ══ ADMIN ══ -->
+    <div class="view" id="view-admin">
+      <div class="section-header mb1" style="display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap">
+        <div>
+          <div class="section-title" style="text-transform:none">⚙️ Admin Panel</div>
+          <div class="section-sub">Manage members, weekly quotes, and program settings</div>
+        </div>
+      </div>
+      <div class="admin-tabs">
+        <button class="admin-tab-btn active" data-admin-tab="users" onclick="switchAdminTab('users',this)">Users</button>
+        <button class="admin-tab-btn" data-admin-tab="quotes" onclick="switchAdminTab('quotes',this)">Quotes</button>
+        <button class="admin-tab-btn" data-admin-tab="settings" onclick="switchAdminTab('settings',this)">Settings</button>
+      </div>
+      <div class="admin-tab-content active" id="admin-tab-users"></div>
+      <div class="admin-tab-content" id="admin-tab-quotes"></div>
+      <div class="admin-tab-content" id="admin-tab-settings"></div>
+    </div>
+
   </main>
 
   <nav class="bottom-nav">
@@ -1384,23 +1494,6 @@ body::before { display: none; } /* noise overlay removed for light theme */
     <div class="modal-actions">
       <button class="btn-cancel" id="confirm-cancel">Cancel</button>
       <button class="btn-save" id="confirm-ok">Confirm</button>
-    </div>
-  </div>
-</div>
-
-<div class="modal-overlay" id="admin-modal">
-  <div class="modal">
-    <h2>⚙️ Program Settings</h2>
-    <p class="sub">Edit dates and the focus theme for each week. Changes apply to all athletes immediately.</p>
-    <label>Program Start (must be a Sunday)</label>
-    <input type="date" id="adm-start"/>
-    <label>Summer Start</label>
-    <input type="date" id="adm-summer"/>
-    <label style="margin-top:1rem">Weekly Focus</label>
-    <div id="adm-focus-rows"></div>
-    <div class="modal-actions">
-      <button class="btn-cancel" onclick="closeAdminModal()">Cancel</button>
-      <button class="btn-save" onclick="saveAdminConfig()">Save</button>
     </div>
   </div>
 </div>
@@ -1625,19 +1718,176 @@ function showConfirm(opts){
   });
 }
 
-function openAdminModal(){
-  const iso=d=>d.toISOString().split('T')[0];
-  document.getElementById('adm-start').value=iso(PROGRAM_START);
-  document.getElementById('adm-summer').value=iso(SUMMER_START);
-  const rows=document.getElementById('adm-focus-rows');rows.innerHTML='';
-  for(let w=1;w<=PROGRAM_WEEKS;w++){
-    const r=document.createElement('div');r.className='modal-row';
-    r.innerHTML=`<div class="wk-num">WK ${w}</div><input type="text" id="adm-wf-${w}" value="${(WEEKLY_FOCUS[w]||'').replace(/"/g,'&quot;')}" placeholder="Focus theme"/>`;
-    rows.appendChild(r);
-  }
-  document.getElementById('admin-modal').classList.add('open');
+/* ═══ ADMIN PANEL ═══ */
+let selectedAdminTab='users';
+let selectedAdminWeek=null; // initialized lazily on first Quotes-tab render
+let editingQuoteDate=null;  // dateKey currently in inline edit mode
+
+function renderAdminView(){
+  if(!state.isAdmin)return;
+  if(selectedAdminTab==='users')   renderAdminUsers();
+  if(selectedAdminTab==='quotes')  renderAdminQuotes();
+  if(selectedAdminTab==='settings')renderAdminSettings();
 }
-function closeAdminModal(){document.getElementById('admin-modal').classList.remove('open');}
+function switchAdminTab(name,btn){
+  selectedAdminTab=name;
+  document.querySelectorAll('.admin-tab-btn').forEach(b=>b.classList.toggle('active',b===btn));
+  document.querySelectorAll('.admin-tab-content').forEach(c=>c.classList.remove('active'));
+  document.getElementById('admin-tab-'+name).classList.add('active');
+  renderAdminView();
+}
+
+/* ─── Tab: Users ─── */
+function renderAdminUsers(){
+  const c=document.getElementById('admin-tab-users');if(!c)return;
+  const users=[...(state.users||[])].sort((a,b)=>{
+    if((b.is_active!==false)-(a.is_active!==false))return (b.is_active!==false)-(a.is_active!==false);
+    return (a.name||'').localeCompare(b.name||'');
+  });
+  if(users.length===0){c.innerHTML='<div class="coach-empty">No members yet.</div>';return;}
+  c.innerHTML=`<div class="admin-users">${users.map(u=>{
+    const stats=computeUserStats(u);
+    const lastKey=Object.keys(u.logs||{}).sort().pop()||'';
+    const lastLabel=lastKey?new Date(lastKey+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'}):'—';
+    const isActive=u.is_active!==false;
+    const adminOn=!!u.is_admin;
+    return `<div class="admin-user-row${isActive?'':' inactive'}">
+      <div>
+        <div class="admin-user-name">${u.name||u.email}</div>
+        <div class="admin-user-email">${u.email||''}</div>
+      </div>
+      <div class="admin-user-stats">
+        <span><strong>${Object.keys(u.logs||{}).length}</strong> days</span>
+        <span><strong>${stats.totalPts}</strong> pts</span>
+        <span>last <strong>${lastLabel}</strong></span>
+      </div>
+      <button class="admin-toggle ${adminOn?'on':''}" onclick="toggleUserAdmin('${u.id}')">${adminOn?'✓ Admin':'Make admin'}</button>
+      <button class="admin-action-btn ${isActive?'danger':''}" onclick="toggleUserActive('${u.id}')">${isActive?'Deactivate':'Reactivate'}</button>
+    </div>`;
+  }).join('')}</div>`;
+}
+async function toggleUserAdmin(userId){
+  const u=(state.users||[]).find(x=>x.id===userId);if(!u)return;
+  const turningOn=!u.is_admin;
+  const ok=await showConfirm({
+    title:turningOn?'Make admin?':'Remove admin?',
+    message:turningOn
+      ?`${u.name||u.email} will be able to manage members, edit quotes, and change program settings.`
+      :`${u.name||u.email} will lose admin access. They can still log their own habits.`,
+    confirmText:turningOn?'Promote':'Demote',
+    danger:!turningOn,
+    icon:turningOn?'⚙️':'⚠️'
+  });
+  if(!ok)return;
+  const {error}=await sb.from('profiles').update({is_admin:turningOn}).eq('id',userId);
+  if(error){showToast('Update failed: '+error.message);return;}
+  u.is_admin=turningOn;
+  renderAdminUsers();
+  showToast(turningOn?'Admin granted':'Admin removed');
+}
+async function toggleUserActive(userId){
+  const u=(state.users||[]).find(x=>x.id===userId);if(!u)return;
+  const wasActive=u.is_active!==false;
+  const ok=await showConfirm({
+    title:wasActive?'Deactivate member?':'Reactivate member?',
+    message:wasActive
+      ?`${u.name||u.email} will be hidden from the leaderboard. Their data is preserved and they can be reactivated anytime.`
+      :`${u.name||u.email} will appear on the leaderboard again.`,
+    confirmText:wasActive?'Deactivate':'Reactivate',
+    danger:wasActive,
+    icon:wasActive?'⚠️':'✓'
+  });
+  if(!ok)return;
+  const {error}=await sb.from('profiles').update({is_active:!wasActive}).eq('id',userId);
+  if(error){showToast('Update failed: '+error.message);return;}
+  u.is_active=!wasActive;
+  renderAdminUsers();renderLeaderboard();
+  showToast(wasActive?'Member deactivated':'Member reactivated');
+}
+
+/* ─── Tab: Quotes ─── */
+function renderAdminQuotes(){
+  const c=document.getElementById('admin-tab-quotes');if(!c)return;
+  if(selectedAdminWeek===null)selectedAdminWeek=currentWeekNum();
+  const cw=currentWeekNum();
+  const fmtR=k=>new Date(k+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'});
+  const fmtFull=k=>new Date(k+'T12:00:00').toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
+  // Week selector (4x2)
+  const weekPicker=`<div class="week-selector">${Array.from({length:PROGRAM_WEEKS},(_,i)=>{
+    const w=i+1;
+    const startKey=weekStartDate(w);
+    return `<button class="week-sel-btn${w===selectedAdminWeek?' active':''}${w===cw?' current-week':''}" onclick="setAdminWeek(${w})"><span class="wsb-num">Wk ${w}</span><span class="wsb-date">${fmtR(startKey)}</span></button>`;
+  }).join('')}</div>`;
+  // 7 slots
+  const slots=[];
+  for(let d=0;d<7;d++){
+    const key=dayOffset(weekStartDate(selectedAdminWeek),d);
+    const q=state.quotes&&state.quotes[key];
+    const editing=editingQuoteDate===key;
+    if(editing){
+      slots.push(`<div class="admin-quote-slot ${q?'filled':'empty'}">
+        <div class="aqs-date">${fmtFull(key)}</div>
+        <div class="aqs-text">${q?(q.text||'').replace(/</g,'&lt;'):'New quote…'}</div>
+        <div class="admin-quote-form">
+          <textarea id="aq-text-${key}" rows="3" placeholder="Quote text">${q?(q.text||'').replace(/</g,'&lt;'):''}</textarea>
+          <input id="aq-author-${key}" type="text" placeholder="Author (optional)" value="${q?(q.author||'').replace(/"/g,'&quot;'):''}"/>
+          <div class="form-actions">
+            <button class="admin-action-btn" onclick="cancelAdminQuote()">Cancel</button>
+            <button class="admin-action-btn danger" onclick="saveAdminQuote('${key}')">Save</button>
+          </div>
+        </div>
+      </div>`);
+    }else if(q){
+      slots.push(`<div class="admin-quote-slot filled">
+        <div class="aqs-date">${fmtFull(key)}</div>
+        <div class="aqs-text">"${(q.text||'').replace(/</g,'&lt;')}"</div>
+        <div class="aqs-author">— ${q.author||'Coach'}</div>
+        <button class="admin-action-btn" onclick="editAdminQuote('${key}')">✏ Edit</button>
+      </div>`);
+    }else{
+      slots.push(`<div class="admin-quote-slot empty">
+        <div class="aqs-date">${fmtFull(key)}</div>
+        <div class="aqs-text empty">No quote set</div>
+        <button class="admin-action-btn" onclick="editAdminQuote('${key}')">+ Add</button>
+      </div>`);
+    }
+  }
+  c.innerHTML=weekPicker+`<div class="admin-quote-slots">${slots.join('')}</div>`;
+}
+function setAdminWeek(w){selectedAdminWeek=w;editingQuoteDate=null;renderAdminQuotes();}
+function editAdminQuote(key){editingQuoteDate=key;renderAdminQuotes();setTimeout(()=>{const t=document.getElementById('aq-text-'+key);if(t)t.focus();},50);}
+function cancelAdminQuote(){editingQuoteDate=null;renderAdminQuotes();}
+async function saveAdminQuote(key){
+  const text=(document.getElementById('aq-text-'+key)||{}).value;
+  const author=(document.getElementById('aq-author-'+key)||{}).value;
+  if(!text||!text.trim()){showToast('Quote text required');return;}
+  if(!state.quotes)state.quotes={};
+  state.quotes[key]={text:text.trim(),author:(author||'').trim()||'Coach'};
+  await upsertQuote(key,text.trim(),(author||'').trim());
+  editingQuoteDate=null;renderAdminQuotes();showToast('Quote saved ✓');
+}
+
+/* ─── Tab: Settings (program config + weekly focus) ─── */
+function renderAdminSettings(){
+  const c=document.getElementById('admin-tab-settings');if(!c)return;
+  const iso=d=>d.toISOString().split('T')[0];
+  const focusRows=Array.from({length:PROGRAM_WEEKS},(_,i)=>{
+    const w=i+1;
+    return `<div class="modal-row"><div class="wk-num">WK ${w}</div><input type="text" id="adm-wf-${w}" value="${(WEEKLY_FOCUS[w]||'').replace(/"/g,'&quot;')}" placeholder="Focus theme"/></div>`;
+  }).join('');
+  c.innerHTML=`<div class="admin-settings-form">
+    <label>Program Start (must be a Sunday)</label>
+    <input type="date" id="adm-start" value="${iso(PROGRAM_START)}"/>
+    <label>Summer Start</label>
+    <input type="date" id="adm-summer" value="${iso(SUMMER_START)}"/>
+    <label style="margin-top:1rem">Weekly Focus</label>
+    ${focusRows}
+    <div class="form-actions">
+      <button class="btn-save" onclick="saveAdminConfig()">Save settings</button>
+    </div>
+  </div>`;
+}
+
 async function saveAdminConfig(){
   const start=document.getElementById('adm-start').value;
   const summer=document.getElementById('adm-summer').value;
@@ -1653,7 +1903,7 @@ async function saveAdminConfig(){
   SUMMER_START=new Date(summer+'T00:00:00');
   WEEKLY_FOCUS=focus;
   if(typeof saveProgramConfigToSupabase==='function')await saveProgramConfigToSupabase();
-  closeAdminModal();renderAll();showToast('Settings saved!');
+  renderAll();showToast('Settings saved!');
 }
 
 /* ═══ AUTH (Supabase magic link) ═══ */
@@ -1694,7 +1944,7 @@ async function saveProgramConfigToSupabase(){
 }
 async function loadAllUsersAndLogs(){
   const [profilesRes,logsRes,bmsRes,quotesRes,userQuotesRes,weekOvRes]=await Promise.all([
-    sb.from('profiles').select('id,email,name,is_admin'),
+    sb.from('profiles').select('id,email,name,is_admin,is_active'),
     sb.from('habit_logs').select('user_id,log_date,habits'),
     sb.from('benchmarks').select('user_id,metric_key,value'),
     sb.from('quotes').select('quote_date,quote_text,author'),
@@ -1702,7 +1952,7 @@ async function loadAllUsersAndLogs(){
     sb.from('week_overrides').select('user_id,week_num,total_pts'),
   ]);
   if(profilesRes.error){console.error(profilesRes.error);return;}
-  state.users=profilesRes.data.map(p=>({id:p.id,name:p.name||p.email.split('@')[0],email:p.email,is_admin:!!p.is_admin,logs:{},benchmarks:{},weekOverrides:{}}));
+  state.users=profilesRes.data.map(p=>({id:p.id,name:p.name||p.email.split('@')[0],email:p.email,is_admin:!!p.is_admin,is_active:p.is_active!==false,logs:{},benchmarks:{},weekOverrides:{}}));
   const byId=Object.fromEntries(state.users.map(u=>[u.id,u]));
   (logsRes.data||[]).forEach(l=>{const u=byId[l.user_id];if(u)u.logs[l.log_date]=l.habits||{};});
   (bmsRes.data ||[]).forEach(b=>{const u=byId[b.user_id];if(u)u.benchmarks[b.metric_key]=b.value;});
@@ -1760,10 +2010,62 @@ async function clearWeekFromModal(){
   closeWeekTotalModal();
   renderWeeklyView();renderAll();showToast('Override cleared');
 }
+/* ═══ OFFLINE WRITE QUEUE ═══
+   Wraps habit-log upserts so a failed save (offline / network blip) never loses data.
+   Queue persists in localStorage and replays on app load + window.online. */
+const WRITE_QUEUE_KEY='live_big_write_queue';
+const WRITE_BACKOFF_MS=[2000,5000,15000,60000];
+function loadQueue(){try{return JSON.parse(localStorage.getItem(WRITE_QUEUE_KEY))||[];}catch{return [];}}
+function saveQueue(q){localStorage.setItem(WRITE_QUEUE_KEY,JSON.stringify(q));}
+function enqueueWrite(payload){
+  const q=loadQueue();
+  // Coalesce: if there's already a pending write for the same (user_id, log_date), replace it (we always store the latest full habits object)
+  const idx=q.findIndex(e=>e.payload.user_id===payload.user_id&&e.payload.log_date===payload.log_date);
+  const entry={id:crypto.randomUUID?crypto.randomUUID():String(Date.now())+Math.random(),type:'habit_log',payload,queuedAt:Date.now(),attempts:0};
+  if(idx>=0)q[idx]=entry; else q.push(entry);
+  saveQueue(q);
+  renderSyncIndicator();
+  return entry;
+}
+function removeFromQueue(id){
+  const q=loadQueue().filter(e=>e.id!==id);
+  saveQueue(q);
+  renderSyncIndicator();
+}
+function bumpAttempts(id){
+  const q=loadQueue();
+  const e=q.find(x=>x.id===id);
+  if(e){e.attempts++;saveQueue(q);}
+}
+async function trySend(entry){
+  const {error}=await sb.from('habit_logs').upsert(entry.payload,{onConflict:'user_id,log_date'});
+  if(error){
+    bumpAttempts(entry.id);
+    const delay=WRITE_BACKOFF_MS[Math.min(entry.attempts,WRITE_BACKOFF_MS.length-1)];
+    setTimeout(()=>{const fresh=loadQueue().find(x=>x.id===entry.id);if(fresh)trySend(fresh);},delay);
+    renderSyncIndicator();
+    return false;
+  }
+  removeFromQueue(entry.id);
+  return true;
+}
+async function flushQueue(){
+  const q=loadQueue();
+  for(const entry of q){await trySend(entry);}
+}
+function renderSyncIndicator(){
+  const ind=document.getElementById('sync-indicator');if(!ind)return;
+  const n=loadQueue().length;
+  if(n===0){ind.hidden=true;return;}
+  ind.hidden=false;
+  const c=document.getElementById('sync-count');if(c)c.textContent=n;
+}
+window.addEventListener('online',flushQueue);
+
 async function upsertHabitLog(date,habits){
   const u=currentUser();if(!u)return;
-  const {error}=await sb.from('habit_logs').upsert({user_id:u.id,log_date:date,habits},{onConflict:'user_id,log_date'});
-  if(error)showToast('Save failed: '+error.message);
+  const entry=enqueueWrite({user_id:u.id,log_date:date,habits});
+  trySend(entry); // fire-and-forget; queue handles retries on failure
 }
 async function upsertBenchmark(metricKey,value){
   const u=currentUser();if(!u)return;
@@ -1795,6 +2097,7 @@ async function enterAppForUser(authUser){
 
 /* ═══ NAV ═══ */
 function switchView(name,btn){
+  if(name==='admin'&&!state.isAdmin){showToast('Admins only');return;}
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   document.getElementById('view-'+name).classList.add('active');
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
@@ -1804,6 +2107,7 @@ function switchView(name,btn){
   if(name==='log')        renderLog();
   if(name==='weekly')     renderWeeklyView();
   if(name==='coach')      renderCoachView();
+  if(name==='admin')      renderAdminView();
 }
 function syncBottomNav(btn){
   document.querySelectorAll('.bottom-nav-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');
@@ -2235,7 +2539,7 @@ function shredDayKey(key){
 /* ═══ LEADERBOARD ═══ */
 function renderLeaderboard(){
   const cw=currentWeekNum();
-  const sorted=[...state.users].map(u=>({u,weekPts:userPtsForWeek(u,cw),totalPts:userTotalPts(u),stats:computeUserStats(u)})).sort((a,b)=>lbTab==='week'?b.weekPts-a.weekPts:b.totalPts-a.totalPts);
+  const sorted=[...state.users].filter(u=>u.is_active!==false).map(u=>({u,weekPts:userPtsForWeek(u,cw),totalPts:userTotalPts(u),stats:computeUserStats(u)})).sort((a,b)=>lbTab==='week'?b.weekPts-a.weekPts:b.totalPts-a.totalPts);
   const podiumEl=document.getElementById('lb-podium');podiumEl.innerHTML='';
   const top3=sorted.slice(0,3);
   const order=top3.length>=3?[top3[1],top3[0],top3[2]]:top3;
@@ -2606,6 +2910,8 @@ document.head.appendChild(style);
 async function init(){
   // Hide demo pills container — real auth doesn't need them
   const dl=document.querySelector('.demo-links');if(dl)dl.style.display='none';
+  renderSyncIndicator(); // surface any pending writes from a prior session
+  flushQueue();          // attempt to drain them
   await loadProgramConfig();
   renderProgramInfo();renderSummerCountdown();
   setInterval(renderSummerCountdown,1000);
