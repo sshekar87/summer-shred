@@ -286,23 +286,25 @@ body::before { display: none; } /* noise overlay removed for light theme */
   cursor: pointer; font-family: inherit; transition: all 0.15s;
 }
 .day-strip-pill:hover:not(.future) { border-color: var(--red-dim); }
-.day-strip-pill.selected { background: var(--red); border-color: var(--red); }
+.day-strip-pill.selected {
+  background: rgba(222,51,65,0.16); border-color: var(--red); border-width: 2px;
+  padding: calc(0.55rem - 1px) calc(0.3rem - 1px) calc(0.5rem - 1px);
+}
 .day-strip-pill.today:not(.selected) { box-shadow: inset 0 -2px 0 var(--sun); }
 .day-strip-pill.future { opacity: 0.45; cursor: not-allowed; }
 .day-strip-pill .ds-letter {
   font-size: 0.62rem; font-weight: 700; letter-spacing: 1.5px;
   text-transform: uppercase; color: var(--text-dim);
 }
-.day-strip-pill.selected .ds-letter { color: rgba(255,255,255,0.85); }
+.day-strip-pill.selected .ds-letter { color: var(--red); font-weight: 800; }
 .day-strip-pill .ds-num {
   font-size: 1.1rem; font-weight: 800; color: var(--text); line-height: 1;
 }
-.day-strip-pill.selected .ds-num { color: #FFFFFF; }
+.day-strip-pill.selected .ds-num { color: var(--text); }
 .day-strip-pill .ds-check {
   position: absolute; top: 4px; right: 5px;
   font-size: 0.7rem; font-weight: 800; color: var(--green); line-height: 1;
 }
-.day-strip-pill.selected .ds-check { color: #FFFFFF; }
 
 /* ═══════════════════════════════════════════
    QUICK ACTIONS (Check all / Copy / Clear)
@@ -331,6 +333,27 @@ body::before { display: none; } /* noise overlay removed for light theme */
 .ws-pts strong { color: var(--red); font-size: 1.15rem; }
 .ws-bar { height: 6px; background: var(--bg4); border-radius: 4px; overflow: hidden; }
 .ws-bar-fill { height: 100%; background: linear-gradient(90deg,var(--red),var(--sun)); border-radius: 4px; transition: width 0.4s; }
+.ws-override-badge {
+  display: inline-block; margin-left: 0.4rem;
+  background: rgba(255,140,66,0.15); color: var(--sun);
+  padding: 0.1rem 0.4rem; border-radius: 4px;
+  font-size: 0.6rem; font-weight: 800; letter-spacing: 1px; text-transform: uppercase;
+  vertical-align: middle;
+}
+.ws-override-row {
+  flex-basis: 100%; display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;
+  padding-top: 0.6rem; border-top: 1px dashed var(--border); margin-top: 0.2rem;
+}
+.ws-override-row label { font-size: 0.78rem; font-weight: 700; color: var(--text-dim); letter-spacing: 0.3px; }
+.ws-override-row input {
+  background: var(--bg3); border: 1px solid var(--border); border-radius: 6px;
+  padding: 0.4rem 0.6rem; color: var(--text); font-family: inherit; font-size: 0.92rem;
+  width: 90px; font-weight: 700;
+}
+.ws-override-row input:focus { outline: none; border-color: var(--red); }
+.ws-override-row .qa-btn { padding: 0.4rem 0.7rem; font-size: 0.78rem; flex: 0 0 auto; }
+.ws-override-row .ws-clear-btn { color: var(--red); border-color: rgba(222,51,65,0.3); }
+.ws-override-hint { font-size: 0.74rem; color: var(--text-dim); font-style: italic; flex: 1 1 100%; }
 
 /* Per-day quick actions inside expanded weekly day */
 .day-quick-actions { margin-bottom: 0.5rem; }
@@ -346,13 +369,23 @@ body::before { display: none; } /* noise overlay removed for light theme */
   padding: 0.65rem 0.9rem; cursor: pointer; transition: all 0.12s;
 }
 .habit-row:hover { border-color: var(--red-dim); }
-.habit-row.checked { background: rgba(61,170,108,0.06); border-color: rgba(61,170,108,0.4); }
 .habit-row-emoji { font-size: 1.4rem; line-height: 1; align-self: center; }
 .habit-row-body { display: flex; flex-direction: column; gap: 0.1rem; min-width: 0; }
 .habit-row-name { font-size: 0.92rem; font-weight: 700; color: var(--text); line-height: 1.15; }
 .habit-row-tip { font-size: 0.72rem; font-weight: 500; color: var(--text-dim); line-height: 1.2; }
-.habit-row.checked .habit-row-name { color: var(--green); }
-.habit-row-pts { font-size: 0.72rem; font-weight: 700; color: var(--text-dim); padding: 0.2rem 0.5rem; background: var(--bg3); border-radius: 6px; letter-spacing: 0.5px; }
+.habit-row-pts {
+  font-size: 0.72rem; font-weight: 800; color: var(--text-dim);
+  padding: 0.22rem 0.55rem; background: var(--bg3);
+  border: 1px solid var(--border); border-radius: 6px; letter-spacing: 0.5px;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.habit-row.checked .habit-row-pts { background: var(--green); color: #FFFFFF; border-color: var(--green); }
+.day-total-bar {
+  background: var(--bg2); border: 1px solid var(--border); border-radius: 10px;
+  padding: 0.7rem 1rem; margin: 0.6rem 0 0.7rem;
+  font-size: 0.92rem; font-weight: 700; color: var(--text-dim); text-align: center;
+}
+.day-total-bar strong { color: var(--red); font-size: 1.15rem; font-weight: 800; }
 .habit-toggle {
   width: 48px; height: 28px; border-radius: 14px; background: var(--bg4); border: 1px solid var(--border);
   position: relative; transition: all 0.2s; justify-self: end;
@@ -634,17 +667,17 @@ body.shake-impact { animation: screenShake 0.36s cubic-bezier(0.36, 0.07, 0.19, 
 .weekly-view-header {
   display:flex; align-items:center; gap:1rem; margin-bottom:1.25rem; flex-wrap:wrap;
 }
-.week-selector { display:grid; grid-template-columns:repeat(4,1fr); gap:0.4rem; margin-bottom:0.8rem; }
+.week-selector { display:grid; grid-template-columns:repeat(8,1fr); gap:0.3rem; margin-bottom:0.8rem; }
 .week-sel-btn {
   background:var(--bg2); border:1px solid var(--border); border-radius:6px;
-  color:var(--text-dim); font-size:var(--font-label); font-weight:700; letter-spacing:1px;
-  padding:0.5rem 0.6rem; cursor:pointer; transition:all 0.15s; text-transform:uppercase;
-  text-align:center;
+  color:var(--text-dim); font-size:0.78rem; font-weight:800; letter-spacing:0.5px;
+  padding:0.45rem 0.2rem; cursor:pointer; transition:all 0.15s; text-transform:uppercase;
+  text-align:center; white-space:nowrap;
 }
 .week-sel-btn:hover { border-color:var(--red); color:var(--text); }
 .week-sel-btn.current-week:not(.active) { border-color:rgba(222,51,65,0.5); color:var(--red); }
-.week-sel-btn.active { background:rgba(222,51,65,0.14); color:var(--text); border-color:var(--red); border-width:2px; padding:calc(0.5rem - 1px) calc(0.6rem - 1px); }
-@media (max-width:520px){ .week-selector{ grid-template-columns:repeat(4,1fr); } }
+.week-sel-btn.active { background:rgba(222,51,65,0.14); color:var(--text); border-color:var(--red); border-width:2px; padding:calc(0.45rem - 1px) calc(0.2rem - 1px); }
+@media (max-width:480px){ .week-sel-btn{ font-size:0.7rem; padding:0.4rem 0.15rem; } }
 
 .weekly-grid { display:flex; flex-direction:column; gap:0.6rem; margin-bottom:1.5rem; }
 
@@ -1107,6 +1140,10 @@ body.shake-impact { animation: screenShake 0.36s cubic-bezier(0.36, 0.07, 0.19, 
 
       <div class="habits-list" id="habits-grid"></div>
 
+      <div class="day-total-bar">
+        Day total: <strong id="daily-total-num">0</strong> / <span id="daily-total-max">22</span> pts
+      </div>
+
       <!-- Shred It button → reveals today's quote inline -->
       <button class="shred-btn shred-btn-bare" id="fortune-cta" onclick="shredAndReveal()">Shred It 🐉</button>
       <div class="fortune-quote-bare" id="fortune-quote">
@@ -1369,7 +1406,11 @@ function weekEndDate(wk){
 function currentUser(){return state.users.find(u=>u.id===state.currentUser);}
 function initials(n){return n.split(' ').map(p=>p[0]).join('').toUpperCase().slice(0,2);}
 function userPtsForDay(u,k){const l=u.logs[k];if(!l)return 0;return HABITS.reduce((a,h)=>a+(l[h.id]?h.pts:0),0);}
-function userPtsForWeek(u,wk){let p=0;for(let d=0;d<7;d++)p+=userPtsForDay(u,dayOffset(weekStartDate(wk),d));return p;}
+function userPtsForWeek(u,wk){
+  if(u.weekOverrides&&u.weekOverrides[wk]!=null)return u.weekOverrides[wk];
+  let p=0;for(let d=0;d<7;d++)p+=userPtsForDay(u,dayOffset(weekStartDate(wk),d));return p;
+}
+function isWeekOverridden(u,wk){return !!(u&&u.weekOverrides&&u.weekOverrides[wk]!=null);}
 function userTotalPts(u){return Object.keys(u.logs).reduce((a,k)=>a+userPtsForDay(u,k),0);}
 function computeUserStats(u){
   const keys=Object.keys(u.logs).sort();
@@ -1502,22 +1543,44 @@ async function saveProgramConfigToSupabase(){
   if(error)showToast('Save failed: '+error.message);
 }
 async function loadAllUsersAndLogs(){
-  const [profilesRes,logsRes,bmsRes,quotesRes,userQuotesRes]=await Promise.all([
+  const [profilesRes,logsRes,bmsRes,quotesRes,userQuotesRes,weekOvRes]=await Promise.all([
     sb.from('profiles').select('id,email,name,is_admin'),
     sb.from('habit_logs').select('user_id,log_date,habits'),
     sb.from('benchmarks').select('user_id,metric_key,value'),
     sb.from('quotes').select('quote_date,quote_text,author'),
     sb.from('user_quotes').select('text,author,approved').eq('approved',true),
+    sb.from('week_overrides').select('user_id,week_num,total_pts'),
   ]);
   if(profilesRes.error){console.error(profilesRes.error);return;}
-  state.users=profilesRes.data.map(p=>({id:p.id,name:p.name||p.email.split('@')[0],email:p.email,is_admin:!!p.is_admin,logs:{},benchmarks:{}}));
+  state.users=profilesRes.data.map(p=>({id:p.id,name:p.name||p.email.split('@')[0],email:p.email,is_admin:!!p.is_admin,logs:{},benchmarks:{},weekOverrides:{}}));
   const byId=Object.fromEntries(state.users.map(u=>[u.id,u]));
   (logsRes.data||[]).forEach(l=>{const u=byId[l.user_id];if(u)u.logs[l.log_date]=l.habits||{};});
   (bmsRes.data ||[]).forEach(b=>{const u=byId[b.user_id];if(u)u.benchmarks[b.metric_key]=b.value;});
+  (weekOvRes&&weekOvRes.data||[]).forEach(w=>{const u=byId[w.user_id];if(u)u.weekOverrides[w.week_num]=w.total_pts;});
   state.quotes={};
   (quotesRes.data||[]).forEach(q=>{state.quotes[q.quote_date]={text:q.quote_text,author:q.author||'Coach'};});
   // Approved user-submitted quotes feed the rotating pool alongside DEFAULT_QUOTES
   state.approvedQuotes=(userQuotesRes&&userQuotesRes.data||[]).map(q=>({text:q.text,author:q.author||'Anonymous'}));
+}
+async function saveWeekTotalOverride(){
+  const u=currentUser();if(!u)return;
+  const inp=document.getElementById('week-total-input');
+  const raw=inp&&inp.value.trim();
+  const v=raw===''?null:parseInt(raw,10);
+  if(v!=null&&(isNaN(v)||v<0||v>MAX_DAILY*7)){showToast('Enter 0-'+(MAX_DAILY*7));return;}
+  if(v==null){return clearWeekTotalOverride();}
+  const {error}=await sb.from('week_overrides').upsert({user_id:u.id,week_num:selectedWeek,total_pts:v},{onConflict:'user_id,week_num'});
+  if(error){showToast('Save failed: '+error.message);return;}
+  if(!u.weekOverrides)u.weekOverrides={};
+  u.weekOverrides[selectedWeek]=v;
+  renderWeeklyView();renderAll();showToast('Week total saved ✓');
+}
+async function clearWeekTotalOverride(){
+  const u=currentUser();if(!u)return;
+  const {error}=await sb.from('week_overrides').delete().eq('user_id',u.id).eq('week_num',selectedWeek);
+  if(error){showToast('Delete failed: '+error.message);return;}
+  if(u.weekOverrides)delete u.weekOverrides[selectedWeek];
+  renderWeeklyView();renderAll();showToast('Override cleared');
 }
 async function upsertHabitLog(date,habits){
   const u=currentUser();if(!u)return;
@@ -1681,6 +1744,9 @@ function renderLog(){
   const u=currentUser();if(!u)return;
   const log=u.logs[currentDay]||{};
   const dl=document.getElementById('date-label');if(dl)dl.textContent=formatDateLong(currentDay);
+  const dayPts=HABITS.reduce((a,h)=>a+(log[h.id]?h.pts:0),0);
+  const dtn=document.getElementById('daily-total-num');if(dtn)dtn.textContent=dayPts;
+  const dtm=document.getElementById('daily-total-max');if(dtm)dtm.textContent=MAX_DAILY;
   const grid=document.getElementById('habits-grid');grid.innerHTML='';
   HABITS.forEach(h=>{
     const checked=!!log[h.id];
@@ -1790,8 +1856,7 @@ function renderWeeklyView(){
   for(let w=1;w<=PROGRAM_WEEKS;w++){
     const btn=document.createElement('button');
     btn.className='week-sel-btn'+(w===selectedWeek?' active':'')+(w===cw?' current-week':'');
-    const fmt=k=>new Date(k+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'});
-    btn.innerHTML=`Wk ${w}<br><span style="font-size:0.55rem;font-weight:500;opacity:0.7">${fmt(weekStartDate(w))}</span>`;
+    btn.textContent='Wk '+w;
     btn.onclick=(()=>{const ww=w;return()=>{selectedWeek=ww;renderWeeklyView();}})();
     sel.appendChild(btn);
   }
@@ -1807,6 +1872,8 @@ function renderWeeklyView(){
   const wsKey=weekStartDate(selectedWeek),weKey=weekEndDate(selectedWeek);
   const fmtR=k=>new Date(k+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'});
   const focus=WEEKLY_FOCUS[selectedWeek]||'';
+  const overridden=isWeekOverridden(u,selectedWeek);
+  const overrideVal=overridden?u.weekOverrides[selectedWeek]:'';
   const summary=document.createElement('div');
   summary.className='week-summary';
   summary.innerHTML=`
@@ -1815,8 +1882,15 @@ function renderWeeklyView(){
       <div class="ws-dates">${fmtR(wsKey)} – ${fmtR(weKey)}</div>
     </div>
     <div class="ws-right">
-      <div class="ws-pts"><strong>${weekPts}</strong> / ${weekMax} pts</div>
+      <div class="ws-pts"><strong>${weekPts}</strong> / ${weekMax} pts${overridden?' <span class="ws-override-badge">manual</span>':''}</div>
       <div class="ws-bar"><div class="ws-bar-fill" style="width:${Math.min(100,Math.round(weekPts/weekMax*100))}%"></div></div>
+    </div>
+    <div class="ws-override-row">
+      <label>Set total directly:</label>
+      <input id="week-total-input" type="number" min="0" max="${weekMax}" placeholder="0–${weekMax}" value="${overrideVal}"/>
+      <button class="qa-btn" onclick="saveWeekTotalOverride()">Save</button>
+      ${overridden?'<button class="qa-btn ws-clear-btn" onclick="clearWeekTotalOverride()">Clear</button>':''}
+      <span class="ws-override-hint">${overridden?'Manual total overrides daily logs.':'Or fill day-by-day below.'}</span>
     </div>`;
   grid.appendChild(summary);
 
