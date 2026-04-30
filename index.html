@@ -856,8 +856,29 @@ body::before { display: none; } /* noise overlay removed for light theme */
   margin: 0 auto;
 }
 .bm-col-name-cell { padding: 0.5rem; font-weight: 700; white-space: nowrap; }
-.bm-col-val { text-align: center; padding: 0.5rem 0.4rem; font-size: 1rem; font-weight: 800; color: var(--text-muted); font-variant-numeric: tabular-nums; }
-.bm-col-val.has-val { color: var(--red); }
+.bm-col-val { text-align: center; padding: 0.45rem 0.35rem; font-size: 0.95rem; font-weight: 800; color: var(--text-muted); font-variant-numeric: tabular-nums; }
+.bm-col-val.has-val { color: var(--text); }
+.bm-col-val .bm-delta { font-size: 0.78rem; padding: 0.1rem 0.4rem; }
+/* Collapsible athlete cards */
+.bm-athletes { display: flex; flex-direction: column; gap: 0.45rem; }
+.bm-athlete { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+.bm-athlete.is-me { border-color: rgba(222,51,65,0.4); }
+.bm-athlete-head {
+  display: flex; align-items: center; justify-content: space-between; width: 100%;
+  padding: 0.7rem 1rem; background: none; border: none; cursor: pointer;
+  font-family: inherit; font-weight: 700; font-size: 0.95rem; color: var(--text);
+}
+.bm-athlete-head:hover { background: var(--bg3); }
+.bm-athlete-name { display: flex; align-items: center; gap: 0.4rem; }
+.bm-you-tag { color: var(--red); font-size: 0.78rem; font-weight: 700; }
+.bm-athlete-chevron { color: var(--text-dim); font-size: 0.9rem; transition: transform 0.2s; }
+.bm-athlete.expanded .bm-athlete-chevron { transform: rotate(180deg); }
+.bm-athlete-body { display: none; padding: 0 0.6rem 0.7rem; border-top: 1px solid var(--border); }
+.bm-athlete.expanded .bm-athlete-body { display: block; }
+.bm-table-wrap { overflow-x: auto; padding-top: 0.5rem; }
+.bm-athlete-table { width: 100%; border-collapse: collapse; }
+.bm-athlete-table th.bm-col-vert { padding: 0.4rem 0.15rem; vertical-align: bottom; height: 90px; }
+.bm-row-label { text-align: left; padding: 0.4rem 0.5rem; font-size: 0.65rem; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; color: var(--text-dim); white-space: nowrap; }
 .bm-input:focus { border-color:var(--red); }
 .bm-section-header { font-size:var(--font-label); font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--text-dim); margin-bottom:1rem; padding-bottom:0.45rem; border-bottom:1px solid var(--border); }
 
@@ -1221,7 +1242,7 @@ body::before { display: none; } /* noise overlay removed for light theme */
       <div class="section-header mb1">
         <div>
           <div class="section-title" style="text-transform:none">Week at a glance</div>
-          <div class="section-sub">Tap any past day to fill in what you missed</div>
+          <div class="section-sub">Tap any past week and day to fill in what you missed</div>
         </div>
       </div>
       <div class="weekly-view-header">
@@ -1417,16 +1438,16 @@ const BENCHMARKS_DEF = [
 ];
 
 const BADGE_DEFS = [
-  {id:'first_log',    icon:'🎯',name:'First Blood',    desc:'Log your very first day',             check:(u)=>u.totalPts>0},
-  {id:'perfect_day',  icon:'💯',name:'Perfect Day',    desc:'Score all 20 points in one day',      check:(u)=>u.perfectDays>=1},
-  {id:'streak3',      icon:'🔥',name:'On Fire',        desc:'3-day streak',                        check:(u)=>u.maxStreak>=3},
-  {id:'streak7',      icon:'🌋',name:'Inferno',        desc:'7-day streak',                        check:(u)=>u.maxStreak>=7},
-  {id:'no_booze_week',icon:'🥤',name:'Sober Warrior',  desc:'No alcohol 7 straight days',          check:(u)=>u.soberStreak>=7},
-  {id:'clean_week',   icon:'🥗',name:'Clean Machine',  desc:'No sugar + no bread for a full week', check:(u)=>u.cleanWeek>=7},
-  {id:'week1_done',   icon:'✅',name:'Wk 1 Done',      desc:'Finish Week 1 with any points',       check:(u)=>u.weeksCompleted>=1},
-  {id:'500pts',       icon:'🏅',name:'500 Club',       desc:'Reach 500 total points',              check:(u)=>u.totalPts>=500},
-  {id:'1000pts',      icon:'🏆',name:'1K Legend',      desc:'Reach 1,000 total points',            check:(u)=>u.totalPts>=1000},
-  {id:'all8weeks',    icon:'🎖️',name:'Summer Shredder',desc:'Complete all 8 weeks',                check:(u)=>u.weeksCompleted>=8},
+  {id:'perfect_day',   icon:'💯',name:'Perfect Day',    desc:'Score all '+MAX_DAILY+' points in one day', check:(u)=>u.perfectDays>=1},
+  {id:'streak3',       icon:'🔥',name:'On Fire',        desc:'3-day streak',                        check:(u)=>u.maxStreak>=3},
+  {id:'streak7',       icon:'🌋',name:'Inferno',        desc:'7-day streak',                        check:(u)=>u.maxStreak>=7},
+  {id:'habit_streak7', icon:'🎯',name:'Locked In',      desc:'Hit any single habit 7 days in a row',check:(u)=>u.maxHabitStreak>=7},
+  {id:'no_booze_week', icon:'🥤',name:'Sober Warrior',  desc:'No alcohol 7 straight days',          check:(u)=>u.soberStreak>=7},
+  {id:'clean_week',    icon:'🥗',name:'Clean Machine',  desc:'No sugar + no bread for a full week', check:(u)=>u.cleanWeek>=7},
+  {id:'week1_done',    icon:'✅',name:'Wk 1 Done',      desc:'Finish Week 1 with any points',       check:(u)=>u.weeksCompleted>=1},
+  {id:'500pts',        icon:'🏅',name:'500 Club',       desc:'Reach 500 total points',              check:(u)=>u.totalPts>=500},
+  {id:'1000pts',       icon:'🏆',name:'1K Legend',      desc:'Reach 1,000 total points',            check:(u)=>u.totalPts>=1000},
+  {id:'all8weeks',     icon:'🎖️',name:'Summer Shredder',desc:'Complete all 8 weeks',                check:(u)=>u.weeksCompleted>=8},
 ];
 
 const DEFAULT_QUOTES = [
@@ -1492,16 +1513,25 @@ function userTotalPts(u){return Object.keys(u.logs).reduce((a,k)=>a+userPtsForDa
 function computeUserStats(u){
   const keys=Object.keys(u.logs).sort();
   let totalPts=0,perfectDays=0,maxStreak=0,curStreak=0,soberStreak=0,cleanWeek=0,weeksCompleted=0,prevKey=null;
+  // Per-habit consecutive-day streaks
+  const habitStreaks={},habitMaxStreaks={};
+  HABITS.forEach(h=>{habitStreaks[h.id]=0;habitMaxStreaks[h.id]=0;});
   for(const k of keys){
     const pts=userPtsForDay(u,k);totalPts+=pts;
     if(pts>=MAX_DAILY)perfectDays++;
-    const prev=prevKey?dayOffset(prevKey,1):k;
-    curStreak=prev===k?curStreak+1:1;maxStreak=Math.max(maxStreak,curStreak);prevKey=k;
+    const continuous=prevKey===null||dayOffset(prevKey,1)===k;
+    curStreak=continuous?curStreak+1:1;maxStreak=Math.max(maxStreak,curStreak);
     soberStreak=u.logs[k].alcohol?soberStreak+1:0;
     cleanWeek=(u.logs[k].bread&&u.logs[k].sugar)?cleanWeek+1:0;
+    HABITS.forEach(h=>{
+      if(u.logs[k][h.id]){habitStreaks[h.id]=continuous?habitStreaks[h.id]+1:1;habitMaxStreaks[h.id]=Math.max(habitMaxStreaks[h.id],habitStreaks[h.id]);}
+      else{habitStreaks[h.id]=0;}
+    });
+    prevKey=k;
   }
   for(let w=1;w<=PROGRAM_WEEKS;w++){let ok=false;for(let d=0;d<7;d++){const k=dayOffset(weekStartDate(w),d);if(u.logs[k]&&userPtsForDay(u,k)>0){ok=true;break;}}if(ok)weeksCompleted=w;}
-  return{totalPts,perfectDays,maxStreak,curStreak,soberStreak,cleanWeek,weeksCompleted};
+  const maxHabitStreak=Math.max(0,...Object.values(habitMaxStreaks));
+  return{totalPts,perfectDays,maxStreak,curStreak,soberStreak,cleanWeek,weeksCompleted,maxHabitStreak};
 }
 function showToast(msg){const f=document.getElementById('saved-flash');f.textContent=msg;f.classList.add('show');setTimeout(()=>f.classList.remove('show'),2200);}
 
@@ -2067,7 +2097,7 @@ function renderWeeklyView(){
       <div class="ws-left">
         <div class="ws-week-line">
           <div class="ws-week">Week ${selectedWeek}${focus?' · 🎯 '+focus:''}</div>
-          ${showEditBtn?'<button class="qa-btn ws-edit-top-btn" onclick="openWeekTotalModal()"><span class="qa-icon">✏️</span><span class="qa-sub">Edit total</span></button>':''}
+          ${showEditBtn?'<button class="qa-btn ws-edit-top-btn" onclick="openWeekTotalModal()"><span class="qa-icon">✏️</span><span class="qa-sub">Edit weekly total</span></button>':''}
         </div>
         <div class="ws-dates">${fmtR(wsKey)} – ${fmtR(weKey)}</div>
       </div>
@@ -2303,15 +2333,45 @@ function renderBenchmarks(){
     grid.appendChild(card);
   });
   mySection.appendChild(grid);container.appendChild(mySection);
+
+  // All Athletes — collapsible per-user cards with Start / End / Δ rows
   const allSec=document.createElement('div');allSec.innerHTML=`<div class="bm-section-header mt1">🏆 All Athletes</div>`;
-  const allGrid=document.createElement('div');allGrid.className='card';allGrid.style.overflowX='auto';
-  let t=`<table class="bm-table"><thead><tr><th class="bm-col-name">Athlete</th>${BENCHMARKS_DEF.map(b=>`<th class="bm-col-vert"><div class="bm-col-vert-inner">${b.name}</div></th>`).join('')}</tr></thead><tbody>`;
+  const list=document.createElement('div');list.className='bm-athletes';
   state.users.forEach(usr=>{
-    const ubm=usr.benchmarks||{};const isMe=usr.id===state.currentUser;
+    const ubm=usr.benchmarks||{};
+    const isMe=usr.id===state.currentUser;
     const shortName=(usr.name||'').split(' ')[0]||usr.name||'';
-    t+=`<tr class="${isMe?'bm-row-me':''}"><td class="bm-col-name-cell">${shortName}${isMe?' (you)':''}</td>${BENCHMARKS_DEF.map(b=>{const v=bmDisplayValue(b,ubm['start_'+b.id]);return `<td class="bm-col-val ${v?'has-val':''}">${v||'—'}</td>`;}).join('')}</tr>`;
+    const card=document.createElement('div');
+    card.className='bm-athlete'+(isMe?' is-me':'');
+    card.dataset.uid=usr.id;
+    const headHTML=`<button class="bm-athlete-head" onclick="toggleBmAthlete('${usr.id}')">
+      <span class="bm-athlete-name">${shortName}${isMe?' <span class="bm-you-tag">(you)</span>':''}</span>
+      <span class="bm-athlete-chevron">▾</span>
+    </button>`;
+    const colHeaders=BENCHMARKS_DEF.map(b=>`<th class="bm-col-vert"><div class="bm-col-vert-inner">${b.name}</div></th>`).join('');
+    const startRow=BENCHMARKS_DEF.map(b=>{const v=bmDisplayValue(b,ubm['start_'+b.id]);return `<td class="bm-col-val ${v?'has-val':''}">${v||'—'}</td>`;}).join('');
+    const endRow  =BENCHMARKS_DEF.map(b=>{const v=bmDisplayValue(b,ubm['end_'+b.id]);  return `<td class="bm-col-val ${v?'has-val':''}">${v||'—'}</td>`;}).join('');
+    const deltaRow=BENCHMARKS_DEF.map(b=>{
+      const s=ubm['start_'+b.id]||'',e=ubm['end_'+b.id]||'';
+      if(!s||!e)return `<td class="bm-col-val">—</td>`;
+      return `<td class="bm-col-val">${bmFmtDelta(b,s,e)}</td>`;
+    }).join('');
+    const bodyHTML=`<div class="bm-athlete-body"><div class="bm-table-wrap"><table class="bm-athlete-table">
+      <thead><tr><th></th>${colHeaders}</tr></thead>
+      <tbody>
+        <tr><th class="bm-row-label">Start</th>${startRow}</tr>
+        <tr><th class="bm-row-label">End</th>${endRow}</tr>
+        <tr><th class="bm-row-label">Δ</th>${deltaRow}</tr>
+      </tbody>
+    </table></div></div>`;
+    card.innerHTML=headHTML+bodyHTML;
+    list.appendChild(card);
   });
-  t+='</tbody></table>';allGrid.innerHTML=t;allSec.appendChild(allGrid);container.appendChild(allSec);
+  allSec.appendChild(list);container.appendChild(allSec);
+}
+function toggleBmAthlete(uid){
+  const card=document.querySelector(`.bm-athlete[data-uid="${uid}"]`);
+  if(card)card.classList.toggle('expanded');
 }
 function saveBm(key,val){
   const u=currentUser();if(!u.benchmarks)u.benchmarks={};
@@ -2352,10 +2412,10 @@ function computeHabitWindowStats(u,days=7){
 }
 function badgeProgress(b,stats){
   switch(b.id){
-    case 'first_log':    return [Math.min(1,stats.totalPts>0?1:0),1];
     case 'perfect_day':  return [Math.min(1,stats.perfectDays),1];
     case 'streak3':      return [Math.min(3,stats.maxStreak),3];
     case 'streak7':      return [Math.min(7,stats.maxStreak),7];
+    case 'habit_streak7':return [Math.min(7,stats.maxHabitStreak||0),7];
     case 'no_booze_week':return [Math.min(7,stats.soberStreak),7];
     case 'clean_week':   return [Math.min(7,stats.cleanWeek),7];
     case 'week1_done':   return [Math.min(1,stats.weeksCompleted),1];
@@ -2408,7 +2468,7 @@ function renderCoachView(){
       const streakChip=s.streak>=2?`<span class="coach-streak-chip">🔥 ${s.streak}-day streak</span>`:'';
       const row=document.createElement('div');
       row.className='coach-row strong';
-      row.innerHTML=`<span class="coach-row-emoji">${s.habit.emoji}</span><div class="coach-row-body"><div class="coach-row-name">${s.habit.name}</div><div class="coach-row-meta"><span class="coach-row-rate">${s.checked}/${s.total} days</span>${streakChip}<span class="coach-row-msg">${strengthMsg(s.rate)}</span></div></div>`;
+      row.innerHTML=`<span class="coach-row-emoji">${s.habit.emoji}</span><div class="coach-row-body"><div class="coach-row-name">${s.habit.name}</div><div class="coach-row-meta"><span class="coach-row-rate">${s.checked}/${s.total} days</span>${streakChip}</div></div>`;
       strengthsEl.appendChild(row);
     });
   }
