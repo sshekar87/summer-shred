@@ -360,9 +360,12 @@ body::before { display: none; } /* noise overlay removed for light theme */
   vertical-align: middle;
 }
 .ws-action-row {
-  display: flex; align-items: center; gap: 0.55rem; flex-wrap: wrap;
   padding-top: 0.6rem; border-top: 1px dashed var(--border);
 }
+.ws-collapsed-mode { display: flex; align-items: center; gap: 0.55rem; flex-wrap: wrap; }
+.ws-edit-mode { display: none; align-items: center; gap: 0.55rem; flex-wrap: wrap; }
+.ws-action-row.editing .ws-collapsed-mode { display: none; }
+.ws-action-row.editing .ws-edit-mode { display: flex; }
 .ws-action-row label { font-size: 0.78rem; font-weight: 700; color: var(--text-dim); letter-spacing: 0.3px; }
 .ws-action-row input {
   background: var(--bg3); border: 1px solid var(--border); border-radius: 6px;
@@ -375,8 +378,10 @@ body::before { display: none; } /* noise overlay removed for light theme */
   white-space: nowrap;
 }
 .ws-inline-msg.active { color: var(--sun); font-style: normal; font-weight: 700; }
+.ws-edit-hint { font-size: 0.74rem; color: var(--text-dim); font-style: italic; }
 .ws-action-buttons { margin-left: auto; display: flex; gap: 0.4rem; }
 .ws-action-row .qa-btn { padding: 0.45rem 0.8rem; font-size: 0.8rem; flex: 0 0 auto; font-weight: 800; }
+.ws-edit-btn { font-weight: 700 !important; }
 .ws-action-row .ws-save-btn { background: var(--red); color: #FFFFFF; border-color: var(--red); }
 .ws-action-row .ws-save-btn:hover { background: var(--red-bright); border-color: var(--red-bright); }
 .ws-action-row .ws-clear-btn { color: var(--red); border-color: rgba(222,51,65,0.3); }
@@ -1154,8 +1159,8 @@ body::before { display: none; } /* noise overlay removed for light theme */
     <div class="view" id="view-weekly">
       <div class="section-header mb1">
         <div>
-          <div class="section-title">Weekly Log</div>
-          <div class="section-sub">Quickly log any day — tap a week to expand and fill in missed days</div>
+          <div class="section-title" style="text-transform:none">Week at a glance</div>
+          <div class="section-sub">Tap any past day to fill in what you missed</div>
         </div>
       </div>
       <div class="weekly-view-header">
@@ -1602,6 +1607,11 @@ async function loadAllUsersAndLogs(){
   // Approved user-submitted quotes feed the rotating pool alongside DEFAULT_QUOTES
   state.approvedQuotes=(userQuotesRes&&userQuotesRes.data||[]).map(q=>({text:q.text,author:q.author||'Anonymous'}));
 }
+function toggleWeekTotalEditor(open){
+  const row=document.getElementById('ws-action-row');if(!row)return;
+  row.classList.toggle('editing',open===undefined?!row.classList.contains('editing'):!!open);
+  if(open){const inp=document.getElementById('week-total-input');if(inp)setTimeout(()=>inp.focus(),50);}
+}
 async function saveWeekTotalOverride(){
   const u=currentUser();if(!u)return;
   const inp=document.getElementById('week-total-input');
@@ -1927,6 +1937,7 @@ function renderWeeklyView(){
   const focus=WEEKLY_FOCUS[selectedWeek]||'';
   const overridden=isWeekOverridden(u,selectedWeek);
   const overrideVal=overridden?u.weekOverrides[selectedWeek]:'';
+  const isPriorWeek=selectedWeek<currentWeekNum();
   const summary=document.createElement('div');
   summary.className='week-summary';
   summary.innerHTML=`
@@ -1940,13 +1951,21 @@ function renderWeeklyView(){
         <div class="ws-bar"><div class="ws-bar-fill" style="width:${Math.min(100,Math.round(weekPts/weekMax*100))}%"></div></div>
       </div>
     </div>
-    <div class="ws-action-row">
-      <label>Set week total:</label>
-      <input id="week-total-input" type="number" min="0" max="${weekMax}" placeholder="0–${weekMax}" value="${overrideVal}"/>
-      <span class="ws-inline-msg${overridden?' active':''}">${overridden?'Manual total active':'Will override daily logs'}</span>
-      <div class="ws-action-buttons">
-        <button class="qa-btn ws-save-btn" onclick="saveWeekTotalOverride()">Save</button>
-        ${overridden?'<button class="qa-btn ws-clear-btn" onclick="clearWeekTotalOverride()">Clear</button>':''}
+    <div class="ws-action-row" id="ws-action-row">
+      <div class="ws-collapsed-mode">
+        <button class="qa-btn ws-edit-btn" onclick="toggleWeekTotalEditor(true)">✏️ Edit week total</button>
+        ${overridden?'<span class="ws-inline-msg active">Manual total active — daily logs paused</span>':''}
+        ${(!overridden&&isPriorWeek)?'<span class="ws-edit-hint">Tip: missed logging this week? Edit the total directly.</span>':''}
+        ${overridden?'<button class="qa-btn ws-clear-btn" onclick="clearWeekTotalOverride()">Clear override</button>':''}
+      </div>
+      <div class="ws-edit-mode">
+        <label>Set week total:</label>
+        <input id="week-total-input" type="number" min="0" max="${weekMax}" placeholder="0–${weekMax}" value="${overrideVal}"/>
+        <span class="ws-inline-msg${overridden?' active':''}">${overridden?'Manual total active':'Will override daily logs'}</span>
+        <div class="ws-action-buttons">
+          <button class="qa-btn ws-save-btn" onclick="saveWeekTotalOverride()">Save</button>
+          <button class="qa-btn" onclick="toggleWeekTotalEditor(false)">Cancel</button>
+        </div>
       </div>
     </div>`;
   grid.appendChild(summary);
