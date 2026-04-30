@@ -325,14 +325,28 @@ body::before { display: none; } /* noise overlay removed for light theme */
 .quick-actions { display: flex; gap: 0.5rem; margin-bottom: 0.6rem; flex-wrap: wrap; }
 .qa-btn {
   flex: 1; min-width: 100px; background: var(--bg3); border: 1px solid var(--border);
-  color: var(--text); padding: 0.5rem 0.6rem; border-radius: 8px; cursor: pointer;
+  color: var(--text); padding: 0.55rem 0.5rem 0.5rem; border-radius: 8px; cursor: pointer;
   font-family: inherit; transition: all 0.15s;
-  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.05rem;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.1rem;
 }
 .qa-btn:hover { background: var(--bg4); border-color: var(--red-dim); }
 .qa-btn:active { transform: scale(0.97); }
-.qa-main { font-size: 0.84rem; font-weight: 800; line-height: 1.1; }
-.qa-sub  { font-size: 0.66rem; font-weight: 500; opacity: 0.62; line-height: 1.1; }
+.qa-icon { font-size: 1.25rem; line-height: 1; margin-bottom: 0.15rem; }
+.qa-main { font-size: 0.82rem; font-weight: 800; line-height: 1.1; }
+.qa-sub  { font-size: 0.66rem; font-weight: 500; opacity: 0.62; line-height: 1.1; text-align: center; }
+/* Mass-action selected states. Cleared as soon as the user toggles any individual habit on that day. */
+.qa-btn.qa-selected-copy {
+  background: rgba(33,150,243,0.12); border-color: #2196F3; color: #1565C0;
+}
+.qa-btn.qa-selected-copy .qa-sub { color: #1565C0; opacity: 0.85; }
+.qa-btn.qa-selected-clear {
+  background: rgba(222,51,65,0.12); border-color: var(--red); color: var(--red);
+}
+.qa-btn.qa-selected-clear .qa-sub { color: var(--red); opacity: 0.85; }
+.qa-btn.qa-selected-check {
+  background: var(--text); border-color: var(--text); color: #FFFFFF;
+}
+.qa-btn.qa-selected-check .qa-sub { color: #FFFFFF; opacity: 0.85; }
 
 /* ═══════════════════════════════════════════
    WEEK SUMMARY (top of weekly grid)
@@ -1130,9 +1144,9 @@ body::before { display: none; } /* noise overlay removed for light theme */
       <div class="day-strip" id="day-strip"></div>
 
       <div class="quick-actions">
-        <button class="qa-btn" onclick="copyFromYesterday()"><span class="qa-main">Copy yesterday</span><span class="qa-sub">Same as yesterday</span></button>
-        <button class="qa-btn" onclick="clearAllHabits()"><span class="qa-main">Clear</span><span class="qa-sub">Reset this day</span></button>
-        <button class="qa-btn" onclick="checkAllHabits()"><span class="qa-main">Check all</span><span class="qa-sub">Mark all done</span></button>
+        <button class="qa-btn" data-action="copy" onclick="copyFromYesterday()"><span class="qa-icon">📋</span><span class="qa-main">Copy yesterday</span><span class="qa-sub">Same as yesterday</span></button>
+        <button class="qa-btn" data-action="clear" onclick="clearAllHabits()"><span class="qa-icon">🗑</span><span class="qa-main">Clear</span><span class="qa-sub">Reset this day</span></button>
+        <button class="qa-btn" data-action="check" onclick="checkAllHabits()"><span class="qa-icon">☑</span><span class="qa-main">Check all</span><span class="qa-sub">Mark all done</span></button>
       </div>
 
       <div class="habits-list" id="habits-grid"></div>
@@ -1748,11 +1762,15 @@ function renderAll(){
   const dailyPts=userPtsForDay(u,currentDay);
   const weekPts =userPtsForWeek(u,cw);
   const elapsed =elapsedProgramDays();
+  // Running denominator for "this week" — only counts days elapsed in the current week
+  const wkStart=new Date(weekStartDate(cw)+'T12:00:00');
+  const today=new Date(todayKey()+'T12:00:00');
+  const daysIntoWeek=Math.max(1,Math.min(7,Math.floor((today-wkStart)/86400000)+1));
   paintRing('ring-daily',  dailyPts, MAX_DAILY);
-  paintRing('ring-weekly', weekPts,  MAX_DAILY*7);
+  paintRing('ring-weekly', weekPts,  MAX_DAILY*daysIntoWeek);
   paintRing('ring-program',stats.totalPts, elapsed*MAX_DAILY);
 
-  renderProgramInfo();renderEarnedBadgePills(stats);renderDayStrip();renderLog();renderQuote();renderFortune();renderSummerCountdown();
+  renderProgramInfo();renderEarnedBadgePills(stats);renderDayStrip();renderLog();renderQuote();renderFortune();renderSummerCountdown();refreshAllMassActionUI();
 }
 function renderDayStrip(){
   const strip=document.getElementById('day-strip');if(!strip)return;
@@ -1829,21 +1847,54 @@ function toggleHabit(habitId){
   const u=currentUser();if(!u.logs[currentDay])u.logs[currentDay]={};
   u.logs[currentDay][habitId]=!u.logs[currentDay][habitId];
   upsertHabitLog(currentDay,u.logs[currentDay]);
+  setMassAction(currentDay,null); // individual toggle clears any prior mass-action highlight
   renderLog();renderAll();
 }
+
+/* ═══ MASS-ACTION VISUAL STATE ═══ */
+const lastMassActionByDay=new Map(); // key -> 'copy'|'clear'|'check'
+function setMassAction(key,action){
+  if(action)lastMassActionByDay.set(key,action);
+  else lastMassActionByDay.delete(key);
+  refreshMassActionUI(key);
+}
+function refreshMassActionUI(key){
+  // Today view buttons (only if currentDay matches)
+  if(key===currentDay){
+    document.querySelectorAll('#view-log .quick-actions .qa-btn').forEach(btn=>{
+      btn.classList.remove('qa-selected-copy','qa-selected-clear','qa-selected-check');
+    });
+    const action=lastMassActionByDay.get(key);
+    if(action){
+      const btn=document.querySelector(`#view-log .quick-actions .qa-btn[data-action="${action}"]`);
+      if(btn)btn.classList.add('qa-selected-'+action);
+    }
+  }
+  // Per-day weekly buttons
+  document.querySelectorAll(`.qa-btn[data-day="${key}"]`).forEach(btn=>{
+    btn.classList.remove('qa-selected-copy','qa-selected-clear','qa-selected-check');
+  });
+  const wAction=lastMassActionByDay.get(key);
+  if(wAction){
+    const wBtn=document.querySelector(`.qa-btn[data-day="${key}"][data-action="${wAction}"]`);
+    if(wBtn)wBtn.classList.add('qa-selected-'+wAction);
+  }
+}
+function refreshAllMassActionUI(){lastMassActionByDay.forEach((_,key)=>refreshMassActionUI(key));}
 
 /* ═══ QUICK ACTIONS ═══ */
 function checkAllHabits(){
   const u=currentUser();if(!u.logs[currentDay])u.logs[currentDay]={};
   HABITS.forEach(h=>{u.logs[currentDay][h.id]=true;});
   upsertHabitLog(currentDay,u.logs[currentDay]);
+  setMassAction(currentDay,'check');
   renderLog();renderAll();
 }
 function clearAllHabits(){
   const u=currentUser();u.logs[currentDay]={};
   upsertHabitLog(currentDay,{});
-  // Bring the Shred It button back if today was already shredded
   if(shreddedDays.has(currentDay)){shreddedDays.delete(currentDay);saveShredded();}
+  setMassAction(currentDay,'clear');
   renderLog();renderAll();
 }
 function copyFromYesterday(){copyFromPrevDay(currentDay);}
@@ -1852,6 +1903,7 @@ function copyFromPrevDay(key){
   if(!prevLog||Object.keys(prevLog).length===0){showToast('No data from previous day');return;}
   u.logs[key]={...prevLog};
   upsertHabitLog(key,u.logs[key]);
+  setMassAction(key,'copy');
   if(key===currentDay){renderLog();}
   renderAll();
   if(document.getElementById('view-weekly').classList.contains('active'))renderWeeklyView();
@@ -1860,6 +1912,7 @@ function copyFromPrevDay(key){
 function clearDay(key){
   const u=currentUser();u.logs[key]={};upsertHabitLog(key,{});
   if(shreddedDays.has(key)){shreddedDays.delete(key);saveShredded();}
+  setMassAction(key,'clear');
   if(key===currentDay){renderLog();}
   renderAll();
   if(document.getElementById('view-weekly').classList.contains('active'))renderWeeklyView();
@@ -1868,6 +1921,7 @@ function checkAllDay(key){
   const u=currentUser();if(!u.logs[key])u.logs[key]={};
   HABITS.forEach(h=>{u.logs[key][h.id]=true;});
   upsertHabitLog(key,u.logs[key]);
+  setMassAction(key,'check');
   if(key===currentDay){renderLog();}
   renderAll();
   if(document.getElementById('view-weekly').classList.contains('active'))renderWeeklyView();
@@ -2007,9 +2061,9 @@ function renderWeeklyView(){
       </div>
       <div class="day-habits-wrap" id="day-habits-${key}">
         <div class="quick-actions day-quick-actions">
-          <button class="qa-btn" onclick="event.stopPropagation();copyFromPrevDay('${key}')"><span class="qa-main">Copy prev</span><span class="qa-sub">Same as prior day</span></button>
-          <button class="qa-btn" onclick="event.stopPropagation();clearDay('${key}')"><span class="qa-main">Clear</span><span class="qa-sub">Reset this day</span></button>
-          <button class="qa-btn" onclick="event.stopPropagation();checkAllDay('${key}')"><span class="qa-main">Check all</span><span class="qa-sub">Mark all done</span></button>
+          <button class="qa-btn" data-action="copy" data-day="${key}" onclick="event.stopPropagation();copyFromPrevDay('${key}')"><span class="qa-icon">📋</span><span class="qa-main">Copy prev</span><span class="qa-sub">Same as prior day</span></button>
+          <button class="qa-btn" data-action="clear" data-day="${key}" onclick="event.stopPropagation();clearDay('${key}')"><span class="qa-icon">🗑</span><span class="qa-main">Clear</span><span class="qa-sub">Reset this day</span></button>
+          <button class="qa-btn" data-action="check" data-day="${key}" onclick="event.stopPropagation();checkAllDay('${key}')"><span class="qa-icon">☑</span><span class="qa-main">Check all</span><span class="qa-sub">Mark all done</span></button>
         </div>
         <div class="day-habits-inline" id="habits-inline-${key}"></div>
       </div>
@@ -2033,6 +2087,7 @@ function renderWeeklyView(){
       });
     }
   }
+  refreshAllMassActionUI();
 }
 
 const expandedDays=new Set();
@@ -2049,6 +2104,7 @@ function toggleHabitForDay(key,habitId){
   const u=currentUser();if(!u.logs[key])u.logs[key]={};
   u.logs[key][habitId]=!u.logs[key][habitId];
   upsertHabitLog(key,u.logs[key]);
+  setMassAction(key,null); // individual toggle clears mass-action highlight
   // Update mini habit UI + top-right day total
   const container=document.getElementById(`habits-inline-${key}`);
   if(container){
