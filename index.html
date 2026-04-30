@@ -547,29 +547,40 @@ body::before { display: none; } /* noise overlay removed for light theme */
   .admin-user-row { grid-template-columns: 1fr; gap: 0.45rem; }
   .admin-user-stats { flex-wrap: wrap; }
 }
-/* Quotes 7-slot */
-.admin-quote-slots { display: flex; flex-direction: column; gap: 0.45rem; margin-top: 0.6rem; }
-.admin-quote-slot {
-  background: var(--bg2); border: 1px solid var(--border); border-radius: 10px;
-  padding: 0.65rem 0.9rem;
-  display: flex; align-items: center; justify-content: space-between; gap: 0.7rem; flex-wrap: wrap;
+/* Quotes review queue */
+.admin-quote-header {
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+  margin-bottom: 0.8rem; flex-wrap: wrap;
 }
-.admin-quote-slot.filled { border-left: 3px solid var(--red); }
-.admin-quote-slot.empty { border-style: dashed; }
-.aqs-date { font-size: 0.72rem; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; color: var(--text-dim); min-width: 90px; }
-.aqs-text { flex: 1; min-width: 0; font-size: 0.92rem; color: var(--text); font-style: italic; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.aqs-text.empty { color: var(--text-dim); font-style: italic; opacity: 0.7; }
-.aqs-author { font-size: 0.74rem; color: var(--text-dim); white-space: nowrap; }
-.admin-quote-form {
-  flex-basis: 100%; display: flex; flex-direction: column; gap: 0.5rem;
-  padding-top: 0.5rem; margin-top: 0.5rem; border-top: 1px dashed var(--border);
+.admin-quote-help { font-size: 0.82rem; color: var(--text-dim); flex: 1; min-width: 200px; }
+.admin-quote-form-wrap {
+  background: var(--bg2); border: 1px solid var(--border-hot); border-radius: 10px;
+  padding: 0.85rem 1rem; margin-bottom: 1rem;
+  display: flex; flex-direction: column; gap: 0.55rem;
 }
-.admin-quote-form textarea, .admin-quote-form input {
+.admin-quote-form-wrap textarea, .admin-quote-form-wrap input {
   background: var(--bg3); border: 1px solid var(--border); border-radius: 6px;
-  padding: 0.5rem 0.7rem; color: var(--text); font-family: inherit; font-size: 0.92rem; outline: none;
+  padding: 0.55rem 0.75rem; color: var(--text); font-family: inherit; font-size: 0.92rem; outline: none;
 }
-.admin-quote-form textarea:focus, .admin-quote-form input:focus { border-color: var(--red); }
-.admin-quote-form .form-actions { display: flex; gap: 0.4rem; justify-content: flex-end; }
+.admin-quote-form-wrap textarea:focus, .admin-quote-form-wrap input:focus { border-color: var(--red); }
+.admin-quote-form-wrap .form-actions { display: flex; gap: 0.4rem; justify-content: flex-end; }
+.aqr-section { margin-bottom: 1.2rem; }
+.aqr-section-title {
+  font-size: 0.78rem; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase;
+  color: var(--text-dim); margin-bottom: 0.5rem;
+}
+.admin-quote-list { display: flex; flex-direction: column; gap: 0.45rem; }
+.admin-quote-row {
+  background: var(--bg2); border: 1px solid var(--border); border-radius: 10px;
+  padding: 0.75rem 0.95rem;
+  display: flex; align-items: flex-start; gap: 0.85rem; flex-wrap: wrap;
+}
+.aqr-body { flex: 1; min-width: 200px; }
+.aqr-text { font-size: 0.95rem; color: var(--text); font-style: italic; line-height: 1.4; margin-bottom: 0.3rem; }
+.aqr-meta { font-size: 0.72rem; color: var(--text-dim); }
+.aqr-actions { display: flex; gap: 0.35rem; flex-wrap: wrap; }
+.admin-action-btn.approve { color: var(--green); border-color: rgba(46,156,92,0.4); }
+.admin-action-btn.approve:hover { background: rgba(46,156,92,0.08); }
 /* Settings tab — reuse modal field styles in-page */
 .admin-settings-form { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 1.2rem 1.4rem; }
 .admin-settings-form label { display: block; font-size: 0.7rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-dim); margin: 0.85rem 0 0.3rem; }
@@ -1805,66 +1816,99 @@ async function toggleUserActive(userId){
   showToast(wasActive?'Member deactivated':'Member reactivated');
 }
 
-/* ─── Tab: Quotes ─── */
-function renderAdminQuotes(){
+/* ─── Tab: Quotes (review pool — pending vs approved) ─── */
+let adminAddQuoteOpen=false;
+
+async function renderAdminQuotes(){
   const c=document.getElementById('admin-tab-quotes');if(!c)return;
-  if(selectedAdminWeek===null)selectedAdminWeek=currentWeekNum();
-  const cw=currentWeekNum();
-  const fmtR=k=>new Date(k+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'});
-  const fmtFull=k=>new Date(k+'T12:00:00').toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
-  // Week selector (4x2)
-  const weekPicker=`<div class="week-selector">${Array.from({length:PROGRAM_WEEKS},(_,i)=>{
-    const w=i+1;
-    const startKey=weekStartDate(w);
-    return `<button class="week-sel-btn${w===selectedAdminWeek?' active':''}${w===cw?' current-week':''}" onclick="setAdminWeek(${w})"><span class="wsb-num">Wk ${w}</span><span class="wsb-date">${fmtR(startKey)}</span></button>`;
-  }).join('')}</div>`;
-  // 7 slots
-  const slots=[];
-  for(let d=0;d<7;d++){
-    const key=dayOffset(weekStartDate(selectedAdminWeek),d);
-    const q=state.quotes&&state.quotes[key];
-    const editing=editingQuoteDate===key;
-    if(editing){
-      slots.push(`<div class="admin-quote-slot ${q?'filled':'empty'}">
-        <div class="aqs-date">${fmtFull(key)}</div>
-        <div class="aqs-text">${q?(q.text||'').replace(/</g,'&lt;'):'New quote…'}</div>
-        <div class="admin-quote-form">
-          <textarea id="aq-text-${key}" rows="3" placeholder="Quote text">${q?(q.text||'').replace(/</g,'&lt;'):''}</textarea>
-          <input id="aq-author-${key}" type="text" placeholder="Author (optional)" value="${q?(q.author||'').replace(/"/g,'&quot;'):''}"/>
-          <div class="form-actions">
-            <button class="admin-action-btn" onclick="cancelAdminQuote()">Cancel</button>
-            <button class="admin-action-btn danger" onclick="saveAdminQuote('${key}')">Save</button>
-          </div>
-        </div>
-      </div>`);
-    }else if(q){
-      slots.push(`<div class="admin-quote-slot filled">
-        <div class="aqs-date">${fmtFull(key)}</div>
-        <div class="aqs-text">"${(q.text||'').replace(/</g,'&lt;')}"</div>
-        <div class="aqs-author">— ${q.author||'Coach'}</div>
-        <button class="admin-action-btn" onclick="editAdminQuote('${key}')">✏ Edit</button>
-      </div>`);
-    }else{
-      slots.push(`<div class="admin-quote-slot empty">
-        <div class="aqs-date">${fmtFull(key)}</div>
-        <div class="aqs-text empty">No quote set</div>
-        <button class="admin-action-btn" onclick="editAdminQuote('${key}')">+ Add</button>
-      </div>`);
-    }
-  }
-  c.innerHTML=weekPicker+`<div class="admin-quote-slots">${slots.join('')}</div>`;
+  c.innerHTML='<div class="coach-empty">Loading…</div>';
+  const {data,error}=await sb.from('user_quotes')
+    .select('id,text,author,submitted_by,approved,created_at')
+    .order('approved',{ascending:true})
+    .order('created_at',{ascending:false});
+  if(error){c.innerHTML='<div class="coach-empty">Failed to load: '+error.message+'</div>';return;}
+  const all=data||[];
+  const pending=all.filter(q=>!q.approved);
+  const approved=all.filter(q=>q.approved);
+  const submitterName=(uid)=>{
+    if(!uid)return 'Anonymous';
+    const u=(state.users||[]).find(x=>x.id===uid);
+    return u?(u.name||(u.email||'').split('@')[0]):'Unknown';
+  };
+  const fmtDate=(iso)=>iso?new Date(iso).toLocaleDateString('en-US',{month:'short',day:'numeric'}):'';
+  const renderRow=(q,isPending)=>`<div class="admin-quote-row">
+    <div class="aqr-body">
+      <div class="aqr-text">"${(q.text||'').replace(/</g,'&lt;')}"</div>
+      <div class="aqr-meta">— ${(q.author||'Anonymous').replace(/</g,'&lt;')} · submitted by ${submitterName(q.submitted_by)} · ${fmtDate(q.created_at)}</div>
+    </div>
+    <div class="aqr-actions">
+      ${isPending?`<button class="admin-action-btn approve" onclick="approveAdminQuote('${q.id}')">✓ Approve</button>`:`<button class="admin-action-btn" onclick="unapproveAdminQuote('${q.id}')">↺ Unapprove</button>`}
+      <button class="admin-action-btn danger" onclick="deleteAdminQuote('${q.id}')">${isPending?'✗ Reject':'🗑 Delete'}</button>
+    </div>
+  </div>`;
+  c.innerHTML=`
+    <div class="admin-quote-header">
+      <div class="admin-quote-help">Approve quotes to add them to today's rotation. Today's wisdom is auto-picked from approved + default quotes (deterministic by date).</div>
+      <button class="admin-action-btn approve" onclick="toggleAddQuote()">${adminAddQuoteOpen?'Close':'+ Add quote'}</button>
+    </div>
+    ${adminAddQuoteOpen?`<div class="admin-quote-form-wrap">
+      <textarea id="aq-add-text" rows="3" placeholder="Quote text"></textarea>
+      <input id="aq-add-author" type="text" placeholder="Author (optional)"/>
+      <div class="form-actions">
+        <button class="admin-action-btn" onclick="toggleAddQuote()">Cancel</button>
+        <button class="admin-action-btn approve" onclick="addAdminQuote()">Save (auto-approved)</button>
+      </div>
+    </div>`:''}
+    <div class="aqr-section">
+      <div class="aqr-section-title">⏳ Pending review (${pending.length})</div>
+      ${pending.length===0?'<div class="coach-empty">Nothing pending — quotes users submit will land here.</div>':`<div class="admin-quote-list">${pending.map(q=>renderRow(q,true)).join('')}</div>`}
+    </div>
+    <div class="aqr-section">
+      <div class="aqr-section-title">✓ In rotation (${approved.length})</div>
+      ${approved.length===0?'<div class="coach-empty">No approved quotes yet — defaults from the codebase still rotate.</div>':`<div class="admin-quote-list">${approved.map(q=>renderRow(q,false)).join('')}</div>`}
+    </div>`;
 }
-function setAdminWeek(w){selectedAdminWeek=w;editingQuoteDate=null;renderAdminQuotes();}
-function editAdminQuote(key){editingQuoteDate=key;renderAdminQuotes();setTimeout(()=>{const t=document.getElementById('aq-text-'+key);if(t)t.focus();},50);}
-function cancelAdminQuote(){editingQuoteDate=null;renderAdminQuotes();}
-async function saveAdminQuote(key){
-  const text=(document.getElementById('aq-text-'+key)||{}).value;
-  const author=(document.getElementById('aq-author-'+key)||{}).value;
+function toggleAddQuote(){adminAddQuoteOpen=!adminAddQuoteOpen;renderAdminQuotes();}
+async function addAdminQuote(){
+  const text=(document.getElementById('aq-add-text')||{}).value;
+  const author=(document.getElementById('aq-add-author')||{}).value;
   if(!text||!text.trim()){showToast('Quote text required');return;}
-  if(!state.quotes)state.quotes={};
-  state.quotes[key]={text:text.trim(),author:(author||'').trim()||'Coach'};
-  await upsertQuote(key,text.trim(),(author||'').trim());
-  editingQuoteDate=null;renderAdminQuotes();showToast('Quote saved ✓');
+  const u=currentUser();
+  const {error}=await sb.from('user_quotes').insert({text:text.trim(),author:(author||'').trim()||'Anonymous',submitted_by:u?u.id:null,approved:true});
+  if(error){showToast('Save failed: '+error.message);return;}
+  adminAddQuoteOpen=false;
+  await refreshApprovedQuotesPool();
+  await renderAdminQuotes();
+  showToast('Quote added ✓');
+}
+async function approveAdminQuote(id){
+  const {error}=await sb.from('user_quotes').update({approved:true}).eq('id',id);
+  if(error){showToast('Approve failed: '+error.message);return;}
+  await refreshApprovedQuotesPool();
+  await renderAdminQuotes();
+  showToast('Approved — now in rotation ✓');
+}
+async function unapproveAdminQuote(id){
+  const ok=await showConfirm({title:'Take out of rotation?',message:'This quote stops showing as the daily wisdom. It moves back to Pending; you can re-approve it later.',confirmText:'Take out',icon:'↺'});
+  if(!ok)return;
+  const {error}=await sb.from('user_quotes').update({approved:false}).eq('id',id);
+  if(error){showToast('Update failed: '+error.message);return;}
+  await refreshApprovedQuotesPool();
+  await renderAdminQuotes();
+  showToast('Removed from rotation');
+}
+async function deleteAdminQuote(id){
+  const ok=await showConfirm({title:'Delete quote?',message:'This permanently deletes the quote. Cannot be undone.',confirmText:'Delete',danger:true,icon:'🗑'});
+  if(!ok)return;
+  const {error}=await sb.from('user_quotes').delete().eq('id',id);
+  if(error){showToast('Delete failed: '+error.message);return;}
+  await refreshApprovedQuotesPool();
+  await renderAdminQuotes();
+  showToast('Deleted');
+}
+async function refreshApprovedQuotesPool(){
+  const {data}=await sb.from('user_quotes').select('text,author').eq('approved',true);
+  state.approvedQuotes=(data||[]).map(q=>({text:q.text,author:q.author||'Anonymous'}));
 }
 
 /* ─── Tab: Settings (program config + weekly focus) ─── */
