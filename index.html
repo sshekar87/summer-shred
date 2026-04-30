@@ -819,6 +819,17 @@ body.shake-impact { animation: screenShake 0.36s cubic-bezier(0.36, 0.07, 0.19, 
 .bm-delta.neg { background:rgba(222,51,65,0.13); color:var(--red-bright); }
 .bm-delta.neutral { background:var(--bg3); color:var(--text-muted); }
 .bm-input { width:100%; background:var(--bg3); border:1px solid var(--border); border-radius:6px; padding:0.5rem 0.7rem; color:var(--text); font-family:'DM Sans',sans-serif; font-size:0.95rem; font-weight:700; outline:none; transition:border-color 0.2s; }
+.bm-time-input { display:flex; align-items:center; gap:0.35rem; }
+.bm-time-input input {
+  flex:1; min-width:0; background:var(--bg3); border:1px solid var(--border); border-radius:6px;
+  padding:0.5rem 0.4rem; color:var(--text); font-family:inherit; font-size:0.95rem; font-weight:700;
+  outline:none; transition:border-color 0.2s; text-align:center;
+  -moz-appearance:textfield;
+}
+.bm-time-input input::-webkit-outer-spin-button,
+.bm-time-input input::-webkit-inner-spin-button { -webkit-appearance:none; margin:0; }
+.bm-time-input input:focus { border-color:var(--red); }
+.bm-colon { color:var(--text-dim); font-weight:800; font-size:1.1rem; }
 .bm-input:focus { border-color:var(--red); }
 .bm-section-header { font-size:var(--font-label); font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--text-dim); margin-bottom:1rem; padding-bottom:0.45rem; border-bottom:1px solid var(--border); }
 
@@ -1301,7 +1312,7 @@ body.shake-impact { animation: screenShake 0.36s cubic-bezier(0.36, 0.07, 0.19, 
   <aside class="fb-panel" id="fb-panel" role="dialog" aria-label="Send feedback">
     <button class="fb-close" onclick="closeFeedback()" aria-label="Close">×</button>
     <div class="fb-title">Send feedback</div>
-    <div class="fb-sub">How's the app working for you?</div>
+    <div class="fb-sub">What's working well? What would you change?</div>
     <div class="fb-stars" id="fb-stars" role="radiogroup" aria-label="Rating">
       <button class="fb-star" data-rating="1" onclick="setFbRating(1)" aria-label="1 star">★</button>
       <button class="fb-star" data-rating="2" onclick="setFbRating(2)" aria-label="2 stars">★</button>
@@ -1309,7 +1320,7 @@ body.shake-impact { animation: screenShake 0.36s cubic-bezier(0.36, 0.07, 0.19, 
       <button class="fb-star" data-rating="4" onclick="setFbRating(4)" aria-label="4 stars">★</button>
       <button class="fb-star" data-rating="5" onclick="setFbRating(5)" aria-label="5 stars">★</button>
     </div>
-    <textarea class="fb-textarea" id="fb-message" rows="4" placeholder="What's on your mind?"></textarea>
+    <textarea class="fb-textarea" id="fb-message" rows="4" placeholder="What's working well? What would you change?"></textarea>
     <button class="fb-submit" id="fb-submit" disabled onclick="submitFeedback()">Send</button>
   </aside>
 </div>
@@ -1971,7 +1982,7 @@ function renderWeeklyView(){
         </div>
         <div class="day-pts-summary">
           <div>
-            <div class="day-pts-num">${pts}</div>
+            <div class="day-pts-num" id="day-pts-num-${key}">${pts}</div>
             <div class="day-pts-label">/ ${MAX_DAILY} pts</div>
           </div>
           ${isFuture?'<span style="font-size:0.75rem;color:var(--text-muted)">Upcoming</span>':'<span class="day-chevron">▾</span>'}
@@ -1984,9 +1995,6 @@ function renderWeeklyView(){
           <button class="qa-btn" onclick="event.stopPropagation();checkAllDay('${key}')">✓ Check all</button>
         </div>
         <div class="day-habits-inline" id="habits-inline-${key}"></div>
-        <div class="day-save-row">
-          <div class="day-pts-total-inline">Day total: <strong id="day-pts-total-${key}">${pts}</strong> / ${MAX_DAILY} pts</div>
-        </div>
       </div>
     `;
     grid.appendChild(row);
@@ -2024,7 +2032,7 @@ function toggleHabitForDay(key,habitId){
   const u=currentUser();if(!u.logs[key])u.logs[key]={};
   u.logs[key][habitId]=!u.logs[key][habitId];
   upsertHabitLog(key,u.logs[key]);
-  // Update mini habit UI
+  // Update mini habit UI + top-right day total
   const container=document.getElementById(`habits-inline-${key}`);
   if(container){
     const minis=container.querySelectorAll('.mini-habit');
@@ -2033,8 +2041,8 @@ function toggleHabitForDay(key,habitId){
       if(minis[i])minis[i].classList.toggle('checked',!!log[h.id]);
     });
     const pts=userPtsForDay(u,key);
-    const ptsTotalEl=document.getElementById(`day-pts-total-${key}`);
-    if(ptsTotalEl)ptsTotalEl.textContent=pts;
+    const ptsNumEl=document.getElementById(`day-pts-num-${key}`);
+    if(ptsNumEl)ptsNumEl.textContent=pts;
     const row=container.closest('.day-row');
     if(row){row.classList.toggle('has-data',pts>0);}
   }
@@ -2102,6 +2110,29 @@ function bmDisplayValue(b,v){
   }
   return v;
 }
+function bmBuildInput(b,partKey,value){
+  if(b.unit==='time'){
+    const v=bmDisplayValue(b,value);
+    const [mPart,sPart]=v&&v.includes(':')?v.split(':'):['',''];
+    return `<div class="bm-time-input" data-key="${partKey}">
+      <input type="number" inputmode="numeric" min="0" placeholder="m"  data-part="m" value="${mPart||''}" oninput="saveBmTimePart(this)" aria-label="minutes"/>
+      <span class="bm-colon">:</span>
+      <input type="number" inputmode="numeric" min="0" max="59" placeholder="ss" data-part="s" value="${sPart||''}" oninput="saveBmTimePart(this)" aria-label="seconds"/>
+    </div>`;
+  }
+  return `<input class="bm-input" type="text" inputmode="decimal" placeholder="${b.unit}" value="${value||''}" oninput="saveBm('${partKey}',this.value)"/>`;
+}
+function saveBmTimePart(el){
+  const wrap=el.parentElement;
+  const key=wrap.dataset.key;
+  const mEl=wrap.querySelector('[data-part="m"]');
+  const sEl=wrap.querySelector('[data-part="s"]');
+  const mRaw=mEl.value.trim(),sRaw=sEl.value.trim();
+  if(!mRaw&&!sRaw){saveBm(key,'');return;}
+  const m=parseInt(mRaw||'0',10),s=parseInt(sRaw||'0',10);
+  if(isNaN(m)||isNaN(s))return;
+  saveBm(key,`${m}:${String(Math.min(59,s)).padStart(2,'0')}`);
+}
 
 function renderBenchmarks(){
   const u=currentUser();if(!u)return;
@@ -2111,8 +2142,7 @@ function renderBenchmarks(){
   BENCHMARKS_DEF.forEach(b=>{
     const start=bm['start_'+b.id]||'',end=bm['end_'+b.id]||'';
     const delta=bmFmtDelta(b,start,end);
-    const placeholder=b.unit==='time'?'M:SS':b.unit;
-    const card=document.createElement('div');card.className='bm-card';
+    const card=document.createElement('div');card.className='bm-card';card.dataset.bmId=b.id;
     card.innerHTML=`
       <div class="bm-card-head">
         <span class="bm-icon">${b.icon}</span>
@@ -2122,12 +2152,12 @@ function renderBenchmarks(){
       <div class="bm-card-row">
         <div class="bm-input-group">
           <label>Start</label>
-          <input class="bm-input" type="text" inputmode="${b.unit==='time'?'numeric':'decimal'}" placeholder="${placeholder}" value="${bmDisplayValue(b,start)}" oninput="saveBm('start_${b.id}',this.value)"/>
+          ${bmBuildInput(b,'start_'+b.id,start)}
         </div>
         <span class="bm-arrow">→</span>
         <div class="bm-input-group">
           <label>Finish</label>
-          <input class="bm-input" type="text" inputmode="${b.unit==='time'?'numeric':'decimal'}" placeholder="${placeholder}" value="${bmDisplayValue(b,end)}" oninput="saveBm('end_${b.id}',this.value)"/>
+          ${bmBuildInput(b,'end_'+b.id,end)}
         </div>
       </div>`;
     grid.appendChild(card);
@@ -2139,7 +2169,23 @@ function renderBenchmarks(){
   state.users.forEach(usr=>{const ubm=usr.benchmarks||{};const isMe=usr.id===state.currentUser;t+=`<tr style="border-bottom:1px solid var(--border);${isMe?'background:rgba(222,51,65,0.04)':''}"><td style="padding:0.5rem;font-weight:700">${usr.name}${isMe?' 🔥':''}</td>${BENCHMARKS_DEF.map(b=>{const v=bmDisplayValue(b,ubm['start_'+b.id]);return `<td style="text-align:right;padding:0.5rem;font-size:1.05rem;font-weight:800;color:${v?'var(--red)':'var(--text-muted)'}">${v||'—'}</td>`;}).join('')}</tr>`;});
   t+='</tbody></table>';allGrid.innerHTML=t;allSec.appendChild(allGrid);container.appendChild(allSec);
 }
-function saveBm(key,val){const u=currentUser();if(!u.benchmarks)u.benchmarks={};u.benchmarks[key]=val;clearTimeout(saveBm._t);saveBm._t=setTimeout(()=>{upsertBenchmark(key,val);renderBenchmarks();},800);}
+function saveBm(key,val){
+  const u=currentUser();if(!u.benchmarks)u.benchmarks={};
+  u.benchmarks[key]=val;
+  // Update the delta on the affected card immediately (cheap in-place update — preserves input focus)
+  const b=BENCHMARKS_DEF.find(x=>key==='start_'+x.id||key==='end_'+x.id);
+  if(b){
+    const card=document.querySelector('.bm-card[data-bm-id="'+b.id+'"]');
+    if(card){
+      const head=card.querySelector('.bm-card-head');
+      const oldDelta=head&&head.querySelector('.bm-delta');
+      if(oldDelta){oldDelta.outerHTML=bmFmtDelta(b,u.benchmarks['start_'+b.id]||'',u.benchmarks['end_'+b.id]||'');}
+    }
+  }
+  // Debounced persist
+  clearTimeout(saveBm._t);
+  saveBm._t=setTimeout(()=>{upsertBenchmark(key,val);},700);
+}
 
 /* ═══ COACH TAB ═══ */
 function currentHabitStreak(u,habitId){
