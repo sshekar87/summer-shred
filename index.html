@@ -325,11 +325,14 @@ body::before { display: none; } /* noise overlay removed for light theme */
 .quick-actions { display: flex; gap: 0.5rem; margin-bottom: 0.6rem; flex-wrap: wrap; }
 .qa-btn {
   flex: 1; min-width: 100px; background: var(--bg3); border: 1px solid var(--border);
-  color: var(--text); padding: 0.55rem 0.6rem; border-radius: 8px; cursor: pointer;
-  font-family: inherit; font-size: 0.8rem; font-weight: 700; transition: all 0.15s;
+  color: var(--text); padding: 0.5rem 0.6rem; border-radius: 8px; cursor: pointer;
+  font-family: inherit; transition: all 0.15s;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.05rem;
 }
 .qa-btn:hover { background: var(--bg4); border-color: var(--red-dim); }
 .qa-btn:active { transform: scale(0.97); }
+.qa-main { font-size: 0.84rem; font-weight: 800; line-height: 1.1; }
+.qa-sub  { font-size: 0.66rem; font-weight: 500; opacity: 0.62; line-height: 1.1; }
 
 /* ═══════════════════════════════════════════
    WEEK SUMMARY (top of weekly grid)
@@ -401,19 +404,18 @@ body::before { display: none; } /* noise overlay removed for light theme */
 .habit-row-body { display: flex; flex-direction: column; gap: 0.1rem; min-width: 0; }
 .habit-row-name { font-size: 0.95rem; font-weight: 700; color: var(--text); line-height: 1.15; }
 .habit-row-tip { font-size: 0.74rem; font-weight: 500; color: var(--text-dim); line-height: 1.2; }
-/* Points badge IS the switch — tap row OR badge to toggle. Gray = off, green = on. */
+/* Points badge acts as a toggle pill — slim, switch-like. Gray = off, green = on. */
 .habit-row-pts {
-  min-width: 56px; text-align: center;
-  font-size: 0.85rem; font-weight: 800; color: var(--text-dim);
-  padding: 0.45rem 0.7rem; background: var(--bg3);
-  border: 2px solid var(--border); border-radius: 999px; letter-spacing: 0.3px;
-  transition: background 0.18s, color 0.18s, border-color 0.18s, transform 0.12s;
-  user-select: none;
+  min-width: 40px; text-align: center;
+  font-size: 0.72rem; font-weight: 800; color: var(--text-dim);
+  padding: 0.18rem 0.55rem; background: var(--bg3);
+  border: 1px solid var(--border); border-radius: 999px; letter-spacing: 0.3px;
+  transition: background 0.18s, color 0.18s, border-color 0.18s;
+  user-select: none; line-height: 1.4;
 }
-.habit-row:hover .habit-row-pts { transform: scale(1.04); }
+.habit-row:hover .habit-row-pts { border-color: var(--red-dim); }
 .habit-row.checked .habit-row-pts {
   background: var(--green); color: #FFFFFF; border-color: var(--green);
-  box-shadow: 0 2px 8px rgba(46,156,92,0.25);
 }
 .day-total-bar {
   background: var(--bg2); border: 1px solid var(--border); border-radius: 10px;
@@ -435,10 +437,12 @@ body::before { display: none; } /* noise overlay removed for light theme */
 }
 .fortune-quote-bare { display: none; }
 .fortune-quote-bare.revealed {
-  display: block; background: linear-gradient(135deg, rgba(255,140,66,0.08), rgba(222,51,65,0.05));
+  display: block; position: relative;
+  background: linear-gradient(135deg, rgba(255,140,66,0.08), rgba(222,51,65,0.05));
   border: 1px solid var(--border-hot); border-radius: 14px; padding: 1.2rem 1.4rem;
   margin: 0.6rem 0 1rem; animation: fortuneReveal 0.6s ease-out;
 }
+.fortune-quote-bare .quote-edit-btn { position: absolute; top: 0.6rem; right: 0.7rem; }
 @keyframes fortuneReveal {
   0% { opacity: 0; transform: scale(0.94) translateY(6px); }
   100% { opacity: 1; transform: scale(1) translateY(0); }
@@ -600,17 +604,12 @@ body::before { display: none; } /* noise overlay removed for light theme */
 /* ═══════════════════════════════════════════
    SHRED ANIMATION OVERLAY
 ═══════════════════════════════════════════ */
-#shred-overlay {
-  position:fixed; inset:0; z-index:9997; pointer-events:none;
-  display:flex; align-items:center; justify-content:center;
-  opacity:0; transition:opacity 0.3s;
-}
-#shred-overlay.active { opacity:1; }
-.shred-text-wrap { text-align:center; position:relative; z-index:2; }
-#shred-overlay.active .shred-text-wrap { animation: shredTextRise 0.5s ease-out both; }
-@keyframes shredTextRise {
-  0%   { transform: translateY(14px) scale(0.96); opacity:0; }
-  100% { transform: translateY(0) scale(1); opacity:1; }
+.modal-shred .confirm-icon { font-size: 2.8rem; animation: shredBounce 0.5s ease-out both; }
+.modal-shred h2 { color: var(--red); }
+@keyframes shredBounce {
+  0%   { transform: scale(0.6) rotate(-6deg); opacity: 0; }
+  60%  { transform: scale(1.15) rotate(4deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0); }
 }
 .shred-text {
   font-size: clamp(3rem,10vw,6rem); font-weight:900; color:var(--text);
@@ -1005,11 +1004,12 @@ body::before { display: none; } /* noise overlay removed for light theme */
 </head>
 <body>
 
-<!-- SHRED OVERLAY (just confetti + a brief celebratory line) -->
-<div id="shred-overlay">
-  <div class="shred-text-wrap">
-    <div class="shred-text" id="shred-text">SHREDDED! 🐉</div>
-    <div class="shred-sub" id="shred-sub">Day logged. Keep going.</div>
+<!-- Shred success modal (pop-out style, auto-dismisses) -->
+<div class="modal-overlay" id="shred-modal" role="dialog" aria-modal="true">
+  <div class="modal modal-confirm modal-shred">
+    <div class="confirm-icon" id="shred-modal-icon">🐉</div>
+    <h2 id="shred-modal-title">Shredded!</h2>
+    <p class="confirm-message" id="shred-modal-message">Day logged. Keep grinding.</p>
   </div>
 </div>
 
@@ -1125,9 +1125,9 @@ body::before { display: none; } /* noise overlay removed for light theme */
       <div class="day-strip" id="day-strip"></div>
 
       <div class="quick-actions">
-        <button class="qa-btn" onclick="copyFromYesterday()">↺ Copy yesterday</button>
-        <button class="qa-btn" onclick="clearAllHabits()">✗ Clear</button>
-        <button class="qa-btn" onclick="checkAllHabits()">✓ Check all</button>
+        <button class="qa-btn" onclick="copyFromYesterday()"><span class="qa-main">Copy yesterday</span><span class="qa-sub">Same as yesterday</span></button>
+        <button class="qa-btn" onclick="clearAllHabits()"><span class="qa-main">Clear</span><span class="qa-sub">Reset this day</span></button>
+        <button class="qa-btn" onclick="checkAllHabits()"><span class="qa-main">Check all</span><span class="qa-sub">Mark all done</span></button>
       </div>
 
       <div class="habits-list" id="habits-grid"></div>
@@ -1139,10 +1139,7 @@ body::before { display: none; } /* noise overlay removed for light theme */
       <!-- Shred It button → reveals today's quote inline -->
       <button class="shred-btn shred-btn-bare" id="fortune-cta" onclick="shredAndReveal()">Shred It 🐉</button>
       <div class="fortune-quote-bare" id="fortune-quote">
-        <div class="quote-meta">
-          <div class="quote-label">🥠 Today's Quote</div>
-          <button class="quote-edit-btn" id="quote-edit-btn" onclick="toggleQuoteEdit()" style="display:none">✏️ Edit</button>
-        </div>
+        <button class="quote-edit-btn" id="quote-edit-btn" onclick="toggleQuoteEdit()" style="display:none">✏️ Edit</button>
         <div class="quote-text" id="quote-text">The only bad workout is the one that didn't happen.</div>
         <div class="quote-author" id="quote-author">Coach</div>
         <div class="quote-edit-form" id="quote-edit-form">
@@ -1887,21 +1884,21 @@ function shredAndReveal(){
   setTimeout(()=>{renderFortune();},1800);
 }
 
-/* ═══ SHRED ANIMATION (simple confetti + brief text) ═══ */
+/* ═══ SHRED CELEBRATION (small pop-out modal + confetti) ═══ */
 function launchShred(isPerfect){
-  const overlay=document.getElementById('shred-overlay');
-  const textEl=document.getElementById('shred-text');
-  const subEl=document.getElementById('shred-sub');
-
-  textEl.textContent=isPerfect?'PERFECT DAY! 🔥':'SHREDDED! 🐉';
-  subEl.textContent=isPerfect?"22/22 — You're unstoppable!":'Day logged. Keep grinding.';
-
-  overlay.classList.remove('active');
-  void overlay.offsetWidth;
-  overlay.classList.add('active');
-
+  const modal=document.getElementById('shred-modal');
+  document.getElementById('shred-modal-icon').textContent=isPerfect?'🔥':'🐉';
+  document.getElementById('shred-modal-title').textContent=isPerfect?'Perfect Day!':'Shredded!';
+  document.getElementById('shred-modal-message').textContent=isPerfect?"22/22 — You're unstoppable!":'Day logged. Keep grinding.';
+  // Reset animation by removing+re-adding the icon node
+  const icon=document.getElementById('shred-modal-icon');
+  icon.style.animation='none';void icon.offsetWidth;icon.style.animation='';
+  modal.classList.add('open');
   launchConfetti();
-  setTimeout(()=>{overlay.classList.remove('active');},1700);
+  // Tap anywhere on overlay to dismiss + auto-close
+  modal.onclick=()=>modal.classList.remove('open');
+  clearTimeout(launchShred._t);
+  launchShred._t=setTimeout(()=>modal.classList.remove('open'),1900);
 }
 
 /* ═══ WEEKLY VIEW ═══ */
@@ -1991,9 +1988,9 @@ function renderWeeklyView(){
       </div>
       <div class="day-habits-wrap" id="day-habits-${key}">
         <div class="quick-actions day-quick-actions">
-          <button class="qa-btn" onclick="event.stopPropagation();copyFromPrevDay('${key}')">↺ Copy prev</button>
-          <button class="qa-btn" onclick="event.stopPropagation();clearDay('${key}')">✗ Clear</button>
-          <button class="qa-btn" onclick="event.stopPropagation();checkAllDay('${key}')">✓ Check all</button>
+          <button class="qa-btn" onclick="event.stopPropagation();copyFromPrevDay('${key}')"><span class="qa-main">Copy prev</span><span class="qa-sub">Same as prior day</span></button>
+          <button class="qa-btn" onclick="event.stopPropagation();clearDay('${key}')"><span class="qa-main">Clear</span><span class="qa-sub">Reset this day</span></button>
+          <button class="qa-btn" onclick="event.stopPropagation();checkAllDay('${key}')"><span class="qa-main">Check all</span><span class="qa-sub">Mark all done</span></button>
         </div>
         <div class="day-habits-inline" id="habits-inline-${key}"></div>
       </div>
