@@ -2334,8 +2334,19 @@ function renderBenchmarks(){
   });
   mySection.appendChild(grid);container.appendChild(mySection);
 
-  // All Athletes — collapsible per-user cards with Start / End / Δ rows
-  const allSec=document.createElement('div');allSec.innerHTML=`<div class="bm-section-header mt1">🏆 All Athletes</div>`;
+  // Starting Numbers — single-row-per-athlete snapshot table (at-a-glance view)
+  const startSec=document.createElement('div');startSec.innerHTML=`<div class="bm-section-header mt1">🏆 Starting Numbers</div>`;
+  const startWrap=document.createElement('div');startWrap.className='bm-table-wrap card';startWrap.style.padding='0.5rem 0.75rem';
+  let st=`<table class="bm-table"><thead><tr><th class="bm-col-name">Athlete</th>${BENCHMARKS_DEF.map(b=>`<th class="bm-col-vert"><div class="bm-col-vert-inner">${b.name}</div></th>`).join('')}</tr></thead><tbody>`;
+  state.users.forEach(usr=>{
+    const ubm=usr.benchmarks||{};const isMe=usr.id===state.currentUser;
+    const shortName=(usr.name||'').split(' ')[0]||usr.name||'';
+    st+=`<tr class="${isMe?'bm-row-me':''}"><td class="bm-col-name-cell">${shortName}${isMe?' <span class="bm-you-tag">(you)</span>':''}</td>${BENCHMARKS_DEF.map(b=>{const v=bmDisplayValue(b,ubm['start_'+b.id]);return `<td class="bm-col-val ${v?'has-val':''}">${v||'—'}</td>`;}).join('')}</tr>`;
+  });
+  st+='</tbody></table>';startWrap.innerHTML=st;startSec.appendChild(startWrap);container.appendChild(startSec);
+
+  // Progress by Athlete — collapsible per-user cards with Start / End / Δ rows
+  const allSec=document.createElement('div');allSec.innerHTML=`<div class="bm-section-header mt1">📈 Progress by Athlete</div>`;
   const list=document.createElement('div');list.className='bm-athletes';
   state.users.forEach(usr=>{
     const ubm=usr.benchmarks||{};
