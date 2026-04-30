@@ -684,7 +684,7 @@ body::before { display: none; } /* noise overlay removed for light theme */
 /* ═══════════════════════════════════════════
    MOBILE BOTTOM NAV
 ═══════════════════════════════════════════ */
-.bottom-nav { display:none; position:fixed; bottom:0; left:0; right:0; background:rgba(255,255,255,0.96); border-top:1px solid var(--border); backdrop-filter:blur(10px); padding:0.38rem 0; z-index:100; grid-template-columns:repeat(4,1fr); }
+.bottom-nav { display:none; position:fixed; bottom:0; left:0; right:0; background:rgba(255,255,255,0.96); border-top:1px solid var(--border); backdrop-filter:blur(10px); padding:0.38rem 0; z-index:100; grid-template-columns:repeat(5,1fr); }
 .bottom-nav-btn { display:flex; flex-direction:column; align-items:center; gap:0.18rem; background:none; border:none; color:var(--text-dim); cursor:pointer; padding:0.38rem 0; transition:color 0.15s; font-family:'DM Sans',sans-serif; font-size:0.58rem; font-weight:700; letter-spacing:0.5px; text-transform:uppercase; }
 .bottom-nav-btn .icon { font-size:1.15rem; }
 .bottom-nav-btn.active { color:var(--red); }
@@ -694,6 +694,120 @@ body::before { display: none; } /* noise overlay removed for light theme */
 ═══════════════════════════════════════════ */
 .saved-flash { position:fixed; bottom:2rem; left:50%; transform:translateX(-50%); background:var(--green); color:var(--white); padding:0.7rem 2rem; border-radius:8px; font-family:'DM Sans',sans-serif; font-weight:700; font-size:0.95rem; letter-spacing:0.5px; opacity:0; pointer-events:none; z-index:9999; transition:opacity 0.3s; white-space:nowrap; }
 .saved-flash.show { opacity:1; }
+
+/* ═══════════════════════════════════════════
+   COACH TAB
+═══════════════════════════════════════════ */
+.coach-quote {
+  background: linear-gradient(135deg, rgba(255,140,66,0.06), rgba(222,51,65,0.04));
+  border: 1px solid var(--border-hot); border-left: 3px solid var(--red);
+  border-radius: 14px; padding: 1.1rem 1.3rem; margin-bottom: 1.2rem;
+}
+.coach-quote .quote-meta { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.6rem; gap: 0.5rem; flex-wrap: wrap; }
+.coach-quote .quote-text { font-size: 1.15rem; font-weight: 600; color: var(--text); line-height: 1.45; font-style: italic; margin-bottom: 0.4rem; }
+.coach-quote .quote-author { font-size: 0.85rem; font-weight: 700; color: var(--text-dim); letter-spacing: 0.5px; }
+.quote-suggest-form { display: none; margin-top: 0.8rem; padding-top: 0.8rem; border-top: 1px solid var(--border); flex-direction: column; gap: 0.5rem; }
+.quote-suggest-form.open { display: flex; }
+.quote-suggest-form .q-input {
+  width: 100%; background: var(--bg3); border: 1px solid var(--border); border-radius: 8px;
+  padding: 0.6rem 0.75rem; color: var(--text); font-family: inherit; font-size: 0.9rem;
+}
+.quote-suggest-form .q-input:focus { outline: none; border-color: var(--red); }
+
+.section-header.mt1 { margin-top: 1.2rem; }
+.coach-list { display: flex; flex-direction: column; gap: 0.5rem; }
+.coach-row {
+  display: grid; grid-template-columns: 36px 1fr auto; gap: 0.7rem; align-items: center;
+  background: var(--bg2); border: 1px solid var(--border); border-radius: 10px;
+  padding: 0.7rem 0.9rem;
+}
+.coach-row.strong { border-left: 3px solid var(--green); }
+.coach-row.weak   { border-left: 3px solid var(--sun); }
+.coach-row-emoji { font-size: 1.5rem; line-height: 1; }
+.coach-row-body { display: flex; flex-direction: column; gap: 0.2rem; min-width: 0; }
+.coach-row-name { font-size: 0.95rem; font-weight: 800; color: var(--text); }
+.coach-row-meta { font-size: 0.78rem; color: var(--text-dim); display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+.coach-row-rate { font-weight: 700; color: var(--text); }
+.coach-row-msg { font-style: italic; }
+.coach-streak-chip {
+  display: inline-flex; align-items: center; gap: 0.25rem;
+  background: rgba(255,140,66,0.12); border: 1px solid rgba(255,140,66,0.3);
+  border-radius: 999px; padding: 0.15rem 0.5rem;
+  font-size: 0.7rem; font-weight: 800; color: var(--sun); letter-spacing: 0.3px;
+}
+.coach-empty {
+  background: var(--bg2); border: 1px dashed var(--border); border-radius: 10px;
+  padding: 1rem 1.2rem; text-align: center; color: var(--text-dim); font-size: 0.9rem;
+}
+
+/* Earned badges grid */
+.badges-earned { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 0.6rem; }
+.badge-card-coach {
+  background: var(--bg2); border: 1px solid rgba(222,51,65,0.4); border-radius: 12px;
+  padding: 0.85rem 0.9rem; text-align: center;
+}
+.badge-card-coach .b-icon { font-size: 2rem; line-height: 1; margin-bottom: 0.3rem; }
+.badge-card-coach .b-name { font-size: 0.85rem; font-weight: 800; color: var(--text); margin-bottom: 0.15rem; }
+.badge-card-coach .b-desc { font-size: 0.72rem; color: var(--text-dim); line-height: 1.25; }
+
+/* Almost-there progress badges */
+.badges-progress { display: flex; flex-direction: column; gap: 0.5rem; }
+.badge-prog {
+  background: var(--bg2); border: 1px solid var(--border); border-radius: 10px;
+  padding: 0.7rem 0.9rem;
+}
+.badge-prog-top { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.4rem; }
+.badge-prog-icon { font-size: 1.4rem; opacity: 0.5; }
+.badge-prog-name { font-size: 0.9rem; font-weight: 800; color: var(--text); flex: 1; }
+.badge-prog-frac { font-size: 0.78rem; font-weight: 700; color: var(--red); }
+
+/* ═══════════════════════════════════════════
+   FLOATING FEEDBACK WIDGET
+═══════════════════════════════════════════ */
+.fb-widget { position: fixed; right: 1rem; bottom: 1rem; z-index: 9000; }
+@media (max-width: 768px) { .fb-widget { bottom: 4.4rem; right: 0.7rem; } }
+.fb-toggle {
+  background: var(--red); color: #FFFFFF; border: none; border-radius: 999px;
+  padding: 0.6rem 1rem; font-family: 'DM Sans', sans-serif; font-weight: 800;
+  font-size: 0.85rem; letter-spacing: 0.3px; cursor: pointer;
+  box-shadow: 0 4px 16px rgba(222,51,65,0.35); transition: all 0.15s;
+}
+.fb-toggle:hover { background: var(--red-bright); transform: translateY(-1px); }
+.fb-widget.open .fb-toggle { display: none; }
+.fb-panel {
+  display: none; width: 320px; max-width: calc(100vw - 1.5rem);
+  background: var(--bg2); border: 1px solid var(--border); border-radius: 14px;
+  padding: 1rem 1.1rem; box-shadow: 0 10px 40px rgba(0,0,0,0.18);
+  position: relative;
+}
+.fb-widget.open .fb-panel { display: block; }
+.fb-close {
+  position: absolute; top: 0.4rem; right: 0.55rem;
+  background: none; border: none; color: var(--text-dim); font-size: 1.4rem;
+  cursor: pointer; line-height: 1; padding: 0.2rem 0.45rem;
+}
+.fb-close:hover { color: var(--text); }
+.fb-title { font-size: 1rem; font-weight: 800; color: var(--text); margin-bottom: 0.15rem; }
+.fb-sub { font-size: 0.8rem; color: var(--text-dim); margin-bottom: 0.7rem; }
+.fb-stars { display: flex; gap: 0.25rem; margin-bottom: 0.7rem; }
+.fb-star {
+  background: none; border: none; cursor: pointer; padding: 0.15rem;
+  font-size: 1.6rem; color: var(--bg4); transition: all 0.12s; line-height: 1;
+}
+.fb-star:hover, .fb-star.active { color: var(--sun-warm); transform: scale(1.05); }
+.fb-textarea {
+  width: 100%; background: var(--bg3); border: 1px solid var(--border); border-radius: 8px;
+  padding: 0.55rem 0.7rem; color: var(--text); font-family: inherit; font-size: 0.88rem;
+  resize: vertical; min-height: 60px; margin-bottom: 0.6rem;
+}
+.fb-textarea:focus { outline: none; border-color: var(--red); }
+.fb-submit {
+  width: 100%; background: var(--red); color: #FFFFFF; border: none; border-radius: 8px;
+  padding: 0.6rem; font-family: inherit; font-weight: 800; font-size: 0.9rem;
+  letter-spacing: 0.5px; cursor: pointer; transition: all 0.15s;
+}
+.fb-submit:hover:not(:disabled) { background: var(--red-bright); }
+.fb-submit:disabled { background: var(--bg4); color: var(--text-muted); cursor: not-allowed; }
 
 /* ═══════════════════════════════════════════
    SHRED PARTICLES
@@ -776,6 +890,7 @@ body::before { display: none; } /* noise overlay removed for light theme */
       <nav class="header-nav">
         <button class="nav-btn active" data-view="log" onclick="switchView('log',this)">Today</button>
         <button class="nav-btn" data-view="weekly" onclick="switchView('weekly',this)">Weekly</button>
+        <button class="nav-btn" data-view="coach" onclick="switchView('coach',this)">Coach</button>
         <button class="nav-btn" data-view="leaderboard" onclick="switchView('leaderboard',this)">Leaderboard</button>
         <button class="nav-btn" data-view="benchmarks" onclick="switchView('benchmarks',this)">Benchmarks</button>
       </nav>
@@ -874,6 +989,44 @@ body::before { display: none; } /* noise overlay removed for light theme */
       <div class="weekly-grid" id="weekly-grid"></div>
     </div>
 
+    <!-- ══ COACH ══ -->
+    <div class="view" id="view-coach">
+      <!-- Quote of the day card with submit-quote toggle -->
+      <div class="coach-quote fade-up" id="coach-quote">
+        <div class="quote-meta">
+          <div class="quote-label">💬 Quote of the Day</div>
+          <button class="qa-btn" onclick="toggleQuoteSuggest()">✨ Suggest a quote</button>
+        </div>
+        <div class="quote-text" id="coach-quote-text">—</div>
+        <div class="quote-author" id="coach-quote-author">—</div>
+        <div class="quote-suggest-form" id="quote-suggest-form">
+          <textarea class="q-input" id="suggest-text" rows="3" placeholder="Drop the wisdom..."></textarea>
+          <input class="q-input" id="suggest-author" placeholder="Who said it? (optional)"/>
+          <button class="btn-save-quote" onclick="submitSuggestedQuote()">Send to Coach 🚀</button>
+        </div>
+      </div>
+
+      <div class="section-header mb1">
+        <div><div class="section-title">🔥 You're Crushing It</div><div class="section-sub">Habits you've owned the last 7 days</div></div>
+      </div>
+      <div class="coach-list" id="coach-strengths"></div>
+
+      <div class="section-header mb1 mt1">
+        <div><div class="section-title">💚 Worth a Look</div><div class="section-sub">Gentle nudges — small wins compound</div></div>
+      </div>
+      <div class="coach-list" id="coach-watchlist"></div>
+
+      <div class="section-header mb1 mt1">
+        <div><div class="section-title">🏆 Earned Badges</div><div class="section-sub">Flex 'em</div></div>
+      </div>
+      <div class="badges-earned" id="coach-badges-earned"></div>
+
+      <div class="section-header mb1 mt1">
+        <div><div class="section-title">🎯 Almost There</div><div class="section-sub">Closest unlocks — keep going</div></div>
+      </div>
+      <div class="badges-progress" id="coach-badges-progress"></div>
+    </div>
+
     <!-- ══ LEADERBOARD ══ -->
     <div class="view" id="view-leaderboard">
       <!-- Summer countdown -->
@@ -915,12 +1068,32 @@ body::before { display: none; } /* noise overlay removed for light theme */
   <nav class="bottom-nav">
     <button class="bottom-nav-btn active" data-view="log" onclick="switchView('log',this);syncBottomNav(this)"><span class="icon">📝</span>Today</button>
     <button class="bottom-nav-btn" data-view="weekly" onclick="switchView('weekly',this);syncBottomNav(this)"><span class="icon">📅</span>Weekly</button>
+    <button class="bottom-nav-btn" data-view="coach" onclick="switchView('coach',this);syncBottomNav(this)"><span class="icon">🐉</span>Coach</button>
     <button class="bottom-nav-btn" data-view="leaderboard" onclick="switchView('leaderboard',this);syncBottomNav(this)"><span class="icon">🏆</span>Board</button>
     <button class="bottom-nav-btn" data-view="benchmarks" onclick="switchView('benchmarks',this);syncBottomNav(this)"><span class="icon">💪</span>Bench</button>
   </nav>
 </div>
 
 <div class="saved-flash" id="saved-flash">✓ Logged!</div>
+
+<!-- ════════ FLOATING FEEDBACK WIDGET ════════ -->
+<div class="fb-widget" id="fb-widget">
+  <button class="fb-toggle" onclick="openFeedback()" aria-label="Send feedback">💬 Feedback</button>
+  <div class="fb-panel" id="fb-panel" role="dialog" aria-label="Send feedback">
+    <button class="fb-close" onclick="closeFeedback()" aria-label="Close">×</button>
+    <div class="fb-title">Send feedback</div>
+    <div class="fb-sub">How's the app working for you?</div>
+    <div class="fb-stars" id="fb-stars" role="radiogroup" aria-label="Rating">
+      <button class="fb-star" data-rating="1" onclick="setFbRating(1)" aria-label="1 star">★</button>
+      <button class="fb-star" data-rating="2" onclick="setFbRating(2)" aria-label="2 stars">★</button>
+      <button class="fb-star" data-rating="3" onclick="setFbRating(3)" aria-label="3 stars">★</button>
+      <button class="fb-star" data-rating="4" onclick="setFbRating(4)" aria-label="4 stars">★</button>
+      <button class="fb-star" data-rating="5" onclick="setFbRating(5)" aria-label="5 stars">★</button>
+    </div>
+    <textarea class="fb-textarea" id="fb-message" rows="3" placeholder="What's on your mind?"></textarea>
+    <button class="fb-submit" id="fb-submit" disabled onclick="submitFeedback()">Send</button>
+  </div>
+</div>
 
 <!-- ════════ ADMIN MODAL ════════ -->
 <div class="modal-overlay" id="admin-modal">
@@ -1232,9 +1405,9 @@ function switchView(name,btn){
   if(btn&&btn.classList.contains('nav-btn'))btn.classList.add('active');
   if(name==='leaderboard')renderLeaderboard();
   if(name==='benchmarks') renderBenchmarks();
-  if(name==='badges')     renderBadges();
   if(name==='log')        renderLog();
   if(name==='weekly')     renderWeeklyView();
+  if(name==='coach')      renderCoachView();
 }
 function syncBottomNav(btn){
   document.querySelectorAll('.bottom-nav-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');
@@ -1637,10 +1810,180 @@ function renderBenchmarks(){
 }
 function saveBm(key,val){const u=currentUser();if(!u.benchmarks)u.benchmarks={};u.benchmarks[key]=val;clearTimeout(saveBm._t);saveBm._t=setTimeout(()=>{upsertBenchmark(key,val);renderBenchmarks();},800);}
 
-/* ═══ BADGES ═══ */
-function renderBadges(){
-  const u=currentUser(),stats=computeUserStats(u),grid=document.getElementById('badges-grid');grid.innerHTML='';
-  BADGE_DEFS.forEach(b=>{const earned=b.check(stats);const card=document.createElement('div');card.className='badge-card'+(earned?' earned':' locked');card.innerHTML=`<span class="badge-icon">${earned?b.icon:'🔒'}</span><div class="badge-name">${b.name}</div><div class="badge-desc">${b.desc}</div>`;grid.appendChild(card);});
+/* ═══ COACH TAB ═══ */
+function currentHabitStreak(u,habitId){
+  let key=todayKey();
+  if(!u.logs[key]||!u.logs[key][habitId])key=dayOffset(key,-1);
+  let n=0,guard=400;
+  while(guard-->0&&u.logs[key]&&u.logs[key][habitId]){n++;key=dayOffset(key,-1);}
+  return n;
+}
+function computeHabitWindowStats(u,days=7){
+  const today=todayKey();
+  return HABITS.map(h=>{
+    let checked=0;
+    for(let d=0;d<days;d++){
+      const k=dayOffset(today,-d);
+      if(u.logs[k]&&u.logs[k][h.id])checked++;
+    }
+    return {habit:h,checked,total:days,rate:checked/days,streak:currentHabitStreak(u,h.id)};
+  });
+}
+function badgeProgress(b,stats){
+  switch(b.id){
+    case 'first_log':    return [Math.min(1,stats.totalPts>0?1:0),1];
+    case 'perfect_day':  return [Math.min(1,stats.perfectDays),1];
+    case 'streak3':      return [Math.min(3,stats.maxStreak),3];
+    case 'streak7':      return [Math.min(7,stats.maxStreak),7];
+    case 'no_booze_week':return [Math.min(7,stats.soberStreak),7];
+    case 'clean_week':   return [Math.min(7,stats.cleanWeek),7];
+    case 'week1_done':   return [Math.min(1,stats.weeksCompleted),1];
+    case '500pts':       return [Math.min(500,stats.totalPts),500];
+    case '1000pts':      return [Math.min(1000,stats.totalPts),1000];
+    case 'all8weeks':    return [Math.min(8,stats.weeksCompleted),8];
+    default:             return [b.check(stats)?1:0,1];
+  }
+}
+function pickRotatingQuote(dayKey){
+  // Stable hash on dayKey so the same day shows the same default quote across reloads
+  let h=0;for(let i=0;i<dayKey.length;i++)h=(h*31+dayKey.charCodeAt(i))|0;
+  return DEFAULT_QUOTES[Math.abs(h)%DEFAULT_QUOTES.length];
+}
+function strengthMsg(rate){
+  if(rate>=1)return 'Perfect week — untouchable';
+  if(rate>=0.85)return 'Strong rhythm — keep it';
+  if(rate>=0.7)return "You're owning this";
+  return 'Solid — building it up';
+}
+function watchlistMsg(rate){
+  if(rate<=0.15)return 'Easy win waiting';
+  if(rate<=0.3)return 'One good day starts the rebound';
+  return 'Almost a habit — one more push';
+}
+function renderCoachView(){
+  const u=currentUser();if(!u)return;
+  const stats=computeUserStats(u);
+
+  // Quote of the day (admin-saved overrides default rotation)
+  const t=todayKey();
+  const q=(state.quotes&&state.quotes[t])||pickRotatingQuote(t);
+  document.getElementById('coach-quote-text').textContent=q.text;
+  document.getElementById('coach-quote-author').textContent=q.author?'— '+q.author:'';
+
+  const habitStats=computeHabitWindowStats(u,7);
+  const sorted=[...habitStats].sort((a,b)=>b.rate-a.rate);
+  const totalLogged=habitStats.reduce((a,h)=>a+h.checked,0);
+
+  // Strengths: ≥60% rate, max 3; otherwise show top 3 anyway when there's data
+  const strengthsEl=document.getElementById('coach-strengths');strengthsEl.innerHTML='';
+  if(totalLogged===0){
+    strengthsEl.innerHTML='<div class="coach-empty">Log a day to unlock your insights 💪</div>';
+  }else{
+    let strengths=sorted.filter(h=>h.rate>=0.6).slice(0,3);
+    if(strengths.length===0)strengths=sorted.slice(0,3);
+    strengths.forEach(s=>{
+      const streakChip=s.streak>=2?`<span class="coach-streak-chip">🔥 ${s.streak}-day streak</span>`:'';
+      const row=document.createElement('div');
+      row.className='coach-row strong';
+      row.innerHTML=`<span class="coach-row-emoji">${s.habit.emoji}</span><div class="coach-row-body"><div class="coach-row-name">${s.habit.name}</div><div class="coach-row-meta"><span class="coach-row-rate">${s.checked}/${s.total} days</span>${streakChip}<span class="coach-row-msg">${strengthMsg(s.rate)}</span></div></div>`;
+      strengthsEl.appendChild(row);
+    });
+  }
+
+  // Watchlist: ≤40% rate, max 3
+  const watchEl=document.getElementById('coach-watchlist');watchEl.innerHTML='';
+  if(totalLogged===0){
+    watchEl.innerHTML='<div class="coach-empty">No data yet — check off your first habit and we\'ll surface insights here.</div>';
+  }else{
+    const watch=[...sorted].reverse().filter(h=>h.rate<=0.4).slice(0,3);
+    if(watch.length===0){
+      watchEl.innerHTML='<div class="coach-empty">Nothing slipping right now — keep it up 🐉</div>';
+    }else{
+      watch.forEach(s=>{
+        const row=document.createElement('div');
+        row.className='coach-row weak';
+        row.innerHTML=`<span class="coach-row-emoji">${s.habit.emoji}</span><div class="coach-row-body"><div class="coach-row-name">${s.habit.name}</div><div class="coach-row-meta"><span class="coach-row-rate">${s.checked}/${s.total} days</span><span class="coach-row-msg">${watchlistMsg(s.rate)}</span></div></div>`;
+        watchEl.appendChild(row);
+      });
+    }
+  }
+
+  // Badges — earned
+  const earnedEl=document.getElementById('coach-badges-earned');earnedEl.innerHTML='';
+  const earned=BADGE_DEFS.filter(b=>b.check(stats));
+  if(earned.length===0){
+    earnedEl.innerHTML='<div class="coach-empty">No badges yet — your first one is around the corner 🐉</div>';
+  }else{
+    earned.forEach(b=>{
+      const card=document.createElement('div');
+      card.className='badge-card-coach';
+      card.innerHTML=`<div class="b-icon">${b.icon}</div><div class="b-name">${b.name}</div><div class="b-desc">${b.desc}</div>`;
+      earnedEl.appendChild(card);
+    });
+  }
+
+  // Almost-there: top 3 unearned by progress %, but only those with progress > 0
+  const progEl=document.getElementById('coach-badges-progress');progEl.innerHTML='';
+  const unearned=BADGE_DEFS.filter(b=>!b.check(stats)).map(b=>{
+    const [num,den]=badgeProgress(b,stats);
+    return {b,num,den,pct:den>0?num/den:0};
+  }).filter(x=>x.pct>0).sort((a,b)=>b.pct-a.pct).slice(0,3);
+  if(unearned.length===0){
+    progEl.innerHTML='<div class="coach-empty">All caught up — log a day to start the next one 🚀</div>';
+  }else{
+    unearned.forEach(x=>{
+      const pct=Math.round(x.pct*100);
+      const row=document.createElement('div');
+      row.className='badge-prog';
+      row.innerHTML=`<div class="badge-prog-top"><span class="badge-prog-icon">${x.b.icon}</span><span class="badge-prog-name">${x.b.name}</span><span class="badge-prog-frac">${x.num}/${x.den}</span></div><div class="ws-bar"><div class="ws-bar-fill" style="width:${pct}%"></div></div><div class="coach-row-meta" style="margin-top:0.35rem">${x.b.desc}</div>`;
+      progEl.appendChild(row);
+    });
+  }
+}
+
+/* ═══ SUBMIT QUOTE ═══ */
+function toggleQuoteSuggest(){document.getElementById('quote-suggest-form').classList.toggle('open');}
+async function submitSuggestedQuote(){
+  const text=document.getElementById('suggest-text').value.trim();
+  const author=document.getElementById('suggest-author').value.trim();
+  if(!text){showToast('Add the quote text');return;}
+  const u=currentUser();
+  try{
+    const res=await fetch('/api/notify-slack',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:'quote_suggestion',data:{text,author,userEmail:(u&&u.email)||'anonymous',timestamp:new Date().toISOString()}})});
+    if(!res.ok)throw new Error('bad status '+res.status);
+    document.getElementById('suggest-text').value='';
+    document.getElementById('suggest-author').value='';
+    document.getElementById('quote-suggest-form').classList.remove('open');
+    showToast('Quote sent to Coach 🚀');
+  }catch(e){showToast("Couldn't send — try again");}
+}
+
+/* ═══ FEEDBACK WIDGET ═══ */
+let fbRating=0;
+function openFeedback(){document.getElementById('fb-widget').classList.add('open');}
+function closeFeedback(){document.getElementById('fb-widget').classList.remove('open');}
+function setFbRating(n){
+  fbRating=n;
+  document.querySelectorAll('.fb-star').forEach(s=>{
+    const r=parseInt(s.dataset.rating,10);
+    s.classList.toggle('active',r<=n);
+  });
+  document.getElementById('fb-submit').disabled=fbRating<1;
+}
+async function submitFeedback(){
+  if(fbRating<1)return;
+  const message=document.getElementById('fb-message').value.trim();
+  const u=currentUser();
+  const btn=document.getElementById('fb-submit');btn.disabled=true;btn.textContent='Sending…';
+  try{
+    const res=await fetch('/api/notify-slack',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:'feedback',data:{rating:fbRating,message,userEmail:(u&&u.email)||'anonymous',timestamp:new Date().toISOString()}})});
+    if(!res.ok)throw new Error('bad status '+res.status);
+    document.getElementById('fb-message').value='';
+    fbRating=0;document.querySelectorAll('.fb-star').forEach(s=>s.classList.remove('active'));
+    closeFeedback();
+    showToast('Thanks for the feedback 🐉');
+  }catch(e){showToast("Couldn't send — try again");}
+  finally{btn.disabled=false;btn.textContent='Send';}
 }
 
 /* ═══ CONFETTI ═══ */
