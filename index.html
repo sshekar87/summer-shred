@@ -1401,14 +1401,8 @@ body::before { display: none; } /* noise overlay removed for light theme */
       <!-- Shred It button → reveals today's quote inline -->
       <button class="shred-btn shred-btn-bare" id="fortune-cta" onclick="shredAndReveal()">Shred It 🐉</button>
       <div class="fortune-quote-bare" id="fortune-quote">
-        <button class="quote-edit-btn" id="quote-edit-btn" onclick="toggleQuoteEdit()" style="display:none">✏️ Edit</button>
         <div class="quote-text" id="quote-text">The only bad workout is the one that didn't happen.</div>
         <div class="quote-author" id="quote-author">Coach</div>
-        <div class="quote-edit-form" id="quote-edit-form">
-          <textarea class="q-input" id="q-text-input" rows="3" placeholder="Enter today's quote..."></textarea>
-          <input class="q-input" id="q-author-input" placeholder="Who said it?"/>
-          <button class="btn-save-quote" onclick="saveQuote()">Save Quote</button>
-        </div>
         <div class="quote-suggest-wrap">
           <button class="qa-btn quote-suggest-toggle" onclick="toggleQuoteSuggest()"><span class="qa-icon">✨</span><span class="qa-sub">Suggest a quote</span></button>
           <div class="quote-suggest-form" id="quote-suggest-form">
@@ -1758,19 +1752,7 @@ function renderQuote(){
   const q=getQuote(currentDay);
   document.getElementById('quote-text').textContent=q.text;
   document.getElementById('quote-author').textContent=q.author;
-  const eb=document.getElementById('quote-edit-btn');if(eb)eb.style.display=state.isAdmin?'block':'none';
   const ab=document.getElementById('admin-btn');if(ab)ab.classList.toggle('show',!!state.isAdmin);
-  const sv=state.quotes&&state.quotes[currentDay];
-  document.getElementById('q-text-input').value=sv?sv.text:'';
-  document.getElementById('q-author-input').value=sv?sv.author:'';
-}
-function toggleQuoteEdit(){document.getElementById('quote-edit-form').classList.toggle('open');}
-function saveQuote(){
-  const text=document.getElementById('q-text-input').value.trim(),author=document.getElementById('q-author-input').value.trim();
-  if(!text)return;if(!state.quotes)state.quotes={};
-  state.quotes[currentDay]={text,author:author||'Coach'};
-  upsertQuote(currentDay,text,author);
-  renderQuote();document.getElementById('quote-edit-form').classList.remove('open');showToast('Quote saved!');
 }
 
 /* ═══ ADMIN MODAL ═══ */
@@ -2107,22 +2089,12 @@ async function saveWeekFromModal(){
   const weekMax=MAX_DAILY*7;
   if(v!=null&&(isNaN(v)||v<0||v>weekMax)){showToast('Enter 0–'+weekMax);return;}
   if(v==null){return clearWeekFromModal();}
-  let hasDailyData=false;
-  for(let d=0;d<7;d++){if(Object.keys(u.logs[dayOffset(weekStartDate(selectedWeek),d)]||{}).length){hasDailyData=true;break;}}
-  if(hasDailyData){
-    const ok=await showConfirm({
-      title:'Overwrite weekly total?',
-      message:"This will overwrite your weekly total. Your individual day data is preserved but not counted until you clear the weekly override.",
-      confirmText:'Overwrite',cancelText:'Cancel',danger:true,icon:'⚠️'
-    });
-    if(!ok)return;
-  }
   const {error}=await sb.from('week_overrides').upsert({user_id:u.id,week_num:selectedWeek,total_pts:v},{onConflict:'user_id,week_num'});
   if(error){showToast('Save failed: '+error.message);return;}
   if(!u.weekOverrides)u.weekOverrides={};
   u.weekOverrides[selectedWeek]=v;
   closeWeekTotalModal();
-  renderWeeklyView();renderAll();showToast('Week total saved ✓');
+  renderWeeklyView();renderAll();showToast('Week total saved');
 }
 async function clearWeekFromModal(){
   const u=currentUser();if(!u)return;
