@@ -779,7 +779,7 @@ body::before { display: none; } /* noise overlay removed for light theme */
 .wt-suffix { font-size: 0.92rem; font-weight: 700; color: var(--text-dim); }
 .wt-status { font-size: 0.82rem; color: var(--sun); font-weight: 700; margin-bottom: 0.3rem; min-height: 1.2em; }
 .ws-week-line { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 0.15rem; }
-.ws-edit-top-btn { padding: 0.35rem 0.7rem; flex-direction: row; gap: 0.35rem; min-width: 0; flex: 0 0 auto; }
+.ws-edit-top-btn { padding: 0.35rem 0.7rem; flex-direction: row; gap: 0.35rem; min-width: 0; flex: 0 0 auto; margin-left: auto; }
 .ws-edit-top-btn .qa-icon { font-size: 0.9rem; margin-bottom: 0; }
 .ws-edit-top-btn .qa-sub { font-size: 0.75rem; font-weight: 600; }
 .ws-status-row { padding-top: 0.6rem; border-top: 1px dashed var(--border); }
@@ -1465,14 +1465,13 @@ body::before { display: none; } /* noise overlay removed for light theme */
 
     <!-- ══ LEADERBOARD ══ -->
     <div class="view" id="view-leaderboard">
-      <!-- Summer countdown -->
+      <!-- Summer progress -->
       <div class="summer-bar fade-up">
         <div class="summer-top">
           <div class="summer-left">
             <div class="summer-icon">☀️</div>
             <div class="summer-headline">First day of summer: <em>June 21</em></div>
           </div>
-          <div class="summer-cd" id="summer-cd"></div>
         </div>
         <div class="summer-progress-wrap">
           <div class="summer-prog-label" id="summer-prog-label">Loading...</div>
@@ -1521,7 +1520,7 @@ body::before { display: none; } /* noise overlay removed for light theme */
   <nav class="bottom-nav">
     <button class="bottom-nav-btn active" data-view="log" onclick="switchView('log',this);syncBottomNav(this)"><span class="icon">📝</span>Today</button>
     <button class="bottom-nav-btn" data-view="weekly" onclick="switchView('weekly',this);syncBottomNav(this)"><span class="icon">📅</span>Weekly</button>
-    <button class="bottom-nav-btn" data-view="coach" onclick="switchView('coach',this);syncBottomNav(this)"><span class="icon">🐉</span>Coach</button>
+    <button class="bottom-nav-btn" data-view="coach" onclick="switchView('coach',this);syncBottomNav(this)"><span class="icon">🏋️</span>Coach</button>
     <button class="bottom-nav-btn" data-view="leaderboard" onclick="switchView('leaderboard',this);syncBottomNav(this)"><span class="icon">🏆</span>Board</button>
     <button class="bottom-nav-btn" data-view="benchmarks" onclick="switchView('benchmarks',this);syncBottomNav(this)"><span class="icon">📊</span>Track</button>
   </nav>
@@ -1656,7 +1655,11 @@ let lbTab='week';
 let selectedWeek=currentWeekNum();
 
 /* ═══ DATE HELPERS ═══ */
-function todayKey(){return new Date().toISOString().split('T')[0];}
+function todayKey(){
+  // Local date (not UTC) so the day rolls over at midnight in the user's timezone, not at midnight UTC
+  const d=new Date();
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
 function dayOffset(key,n){const d=new Date(key+'T12:00:00');d.setDate(d.getDate()+n);return d.toISOString().split('T')[0];}
 function formatDate(key){return new Date(key+'T12:00:00').toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});}
 function formatDateLong(key){return new Date(key+'T12:00:00').toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});}
@@ -1988,12 +1991,12 @@ function renderAdminSettings(){
     <label style="margin-top:1rem">Weekly Focus</label>
     ${focusRows}
     <div class="form-actions">
-      <button class="btn-save" onclick="saveAdminConfig()">Save settings</button>
+      <button class="btn-save" id="adm-save-btn" onclick="saveAdminConfig(this)">Save settings</button>
     </div>
   </div>`;
 }
 
-async function saveAdminConfig(){
+async function saveAdminConfig(btn){
   const start=document.getElementById('adm-start').value;
   const summer=document.getElementById('adm-summer').value;
   if(!start||!summer){showToast('Pick both dates');return;}
@@ -2007,8 +2010,16 @@ async function saveAdminConfig(){
   PROGRAM_START=new Date(start+'T00:00:00');
   SUMMER_START=new Date(summer+'T00:00:00');
   WEEKLY_FOCUS=focus;
-  if(typeof saveProgramConfigToSupabase==='function')await saveProgramConfigToSupabase();
-  renderAll();showToast('Settings saved!');
+  if(btn){btn.disabled=true;btn.textContent='Saving…';}
+  try{
+    if(typeof saveProgramConfigToSupabase==='function')await saveProgramConfigToSupabase();
+    renderAll();
+    if(btn){btn.textContent='✓ Saved';setTimeout(()=>{btn.disabled=false;btn.textContent='Save settings';},1600);}
+    showToast('Settings saved');
+  }catch(e){
+    if(btn){btn.disabled=false;btn.textContent='Save settings';}
+    showToast('Save failed');
+  }
 }
 
 /* ═══ AUTH (Supabase magic link) ═══ */
