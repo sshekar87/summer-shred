@@ -809,15 +809,16 @@ body::before { display: none; } /* noise overlay removed for light theme */
 .weekly-view-header {
   display:flex; align-items:center; gap:1rem; margin-bottom:1.25rem; flex-wrap:wrap;
 }
-.week-selector { display:grid; grid-template-columns:repeat(4,1fr); gap:0.5rem; margin-bottom:0.9rem; }
+.week-selector { display:grid; grid-template-columns:repeat(4,1fr); gap:0.4rem; margin-bottom:0.9rem; }
+@media (min-width:600px){ .week-selector { grid-template-columns:repeat(8,1fr); gap:0.3rem; } }
 .week-sel-btn {
   background:var(--bg2); border:1px solid var(--border); border-radius:8px;
-  color:var(--text-dim); padding:0.55rem 0.5rem; cursor:pointer; transition:all 0.15s;
+  color:var(--text-dim); padding:0.5rem 0.3rem; cursor:pointer; transition:all 0.15s;
   text-align:center; white-space:nowrap; font-family:inherit;
-  display:flex; flex-direction:column; align-items:center; gap:0.1rem;
+  display:flex; flex-direction:column; align-items:center; gap:0.05rem;
 }
-.week-sel-btn .wsb-num { font-size:0.6rem; font-weight:700; letter-spacing:1.2px; text-transform:uppercase; color:var(--text-dim); }
-.week-sel-btn .wsb-date { font-size:0.95rem; font-weight:800; color:var(--text); line-height:1; }
+.week-sel-btn .wsb-num { font-size:0.55rem; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--text-dim); }
+.week-sel-btn .wsb-date { font-size:0.85rem; font-weight:800; color:var(--text); line-height:1; }
 .week-sel-btn:hover { border-color:var(--red); }
 .week-sel-btn.current-week:not(.active) { border-color:rgba(222,51,65,0.55); }
 .week-sel-btn.current-week:not(.active) .wsb-num { color:var(--red); }
@@ -1991,12 +1992,11 @@ async function handleMagicLink(){
   document.getElementById('magic-sent').style.display='block';
 }
 async function logout(){
-  const ok=await showConfirm({title:'Log out?',message:'You can sign back in any time with a fresh magic link.',confirmText:'Log out',icon:'👋',danger:true});
-  if(!ok)return;
   await sb.auth.signOut();
   state=initState();
   document.getElementById('auth-screen').style.display='flex';
   document.getElementById('app').style.display='none';
+  showToast('Signed out 👋');
 }
 
 /* ═══ DATA LAYER ═══ */
