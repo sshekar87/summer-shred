@@ -1885,11 +1885,16 @@ let adminAddQuoteOpen=false;
 async function renderAdminQuotes(){
   const c=document.getElementById('admin-tab-quotes');if(!c)return;
   c.innerHTML='<div class="coach-empty">Loading…</div>';
-  const {data,error}=await sb.from('user_quotes')
+  // Race the Supabase call against a 10s timeout so the tab never hangs forever
+  const fetchPromise=sb.from('user_quotes')
     .select('id,text,author,submitted_by,approved,created_at')
     .order('approved',{ascending:true})
     .order('created_at',{ascending:false});
-  if(error){c.innerHTML='<div class="coach-empty">Failed to load: '+error.message+'</div>';return;}
+  const timeout=new Promise((_,rej)=>setTimeout(()=>rej(new Error('Timed out after 10s — try again')),10000));
+  let data,error;
+  try{const res=await Promise.race([fetchPromise,timeout]);data=res.data;error=res.error;}
+  catch(e){error={message:e.message};}
+  if(error){c.innerHTML='<div class="coach-empty">Failed to load: '+error.message+' &nbsp; <button class="admin-action-btn" onclick="renderAdminQuotes()">Retry</button></div>';return;}
   const all=data||[];
   const pending=all.filter(q=>!q.approved);
   const approved=all.filter(q=>q.approved);
@@ -2147,12 +2152,21 @@ function bumpAttempts(id){
   const e=q.find(x=>x.id===id);
   if(e){e.attempts++;saveQueue(q);}
 }
+const WRITE_MAX_ATTEMPTS=8;
 async function trySend(entry){
   const {error}=await sb.from('habit_logs').upsert(entry.payload,{onConflict:'user_id,log_date'});
   if(error){
     bumpAttempts(entry.id);
+    const fresh=loadQueue().find(x=>x.id===entry.id);
+    // Drop entries that have failed too many times — they were never going to succeed
+    // (RLS error, schema mismatch, etc.) and they jam the connection pool with infinite retries
+    if(fresh&&fresh.attempts>=WRITE_MAX_ATTEMPTS){
+      console.warn('Dropping write-queue entry after',fresh.attempts,'attempts:',fresh,'last error:',error);
+      removeFromQueue(entry.id);
+      return false;
+    }
     const delay=WRITE_BACKOFF_MS[Math.min(entry.attempts,WRITE_BACKOFF_MS.length-1)];
-    setTimeout(()=>{const fresh=loadQueue().find(x=>x.id===entry.id);if(fresh)trySend(fresh);},delay);
+    setTimeout(()=>{const f=loadQueue().find(x=>x.id===entry.id);if(f)trySend(f);},delay);
     renderSyncIndicator();
     return false;
   }
@@ -2160,8 +2174,11 @@ async function trySend(entry){
   return true;
 }
 async function flushQueue(){
-  const q=loadQueue();
-  for(const entry of q){await trySend(entry);}
+  // Drop any obviously dead entries (already exceeded max attempts or older than 7 days) before retrying
+  const cutoff=Date.now()-7*86400000;
+  const cleaned=loadQueue().filter(e=>(e.attempts||0)<WRITE_MAX_ATTEMPTS&&(e.queuedAt||0)>cutoff);
+  if(cleaned.length!==loadQueue().length){saveQueue(cleaned);renderSyncIndicator();}
+  for(const entry of cleaned){await trySend(entry);}
 }
 function renderSyncIndicator(){
   const ind=document.getElementById('sync-indicator');if(!ind)return;
