@@ -2974,17 +2974,17 @@ async function submitSuggestedQuote(){
   const author=document.getElementById('suggest-author').value.trim();
   if(!text){showToast('Add the quote text');return;}
   const u=currentUser();
+  // 1) Save to Supabase pool (auto-approved if submitted by an admin). Blank author -> "Anonymous".
+  const ins=await sb.from('user_quotes').insert({text,author:author||'Anonymous',submitted_by:u?u.id:null,approved:!!(state.isAdmin)});
+  if(ins.error){console.error('user_quotes insert failed:',ins.error);showToast('Save failed: '+ins.error.message);return;}
+  // 2) Best-effort Slack ping (don't fail the save if Slack is down)
   try{
-    // Save to Supabase pool (auto-approved if submitted by an admin). Blank author -> "Anonymous".
-    await sb.from('user_quotes').insert({text,author:author||'Anonymous',submitted_by:u?u.id:null,approved:!!(state.isAdmin)});
-    // Ping Slack so admins can review/approve
-    const res=await fetch('/api/notify-slack',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:'quote_suggestion',data:{text,author,userEmail:(u&&u.email)||'anonymous',timestamp:new Date().toISOString()}})});
-    if(!res.ok)throw new Error('bad status '+res.status);
-    document.getElementById('suggest-text').value='';
-    document.getElementById('suggest-author').value='';
-    document.getElementById('quote-suggest-form').classList.remove('open');
-    showToast(state.isAdmin?'Quote saved + sent 🚀':'Quote sent to Live B.I.G 365 🚀');
-  }catch(e){showToast("Couldn't send — try again");}
+    await fetch('/api/notify-slack',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:'quote_suggestion',data:{text,author,userEmail:(u&&u.email)||'anonymous',timestamp:new Date().toISOString()}})});
+  }catch(e){console.warn('Slack notify failed (quote still saved):',e);}
+  document.getElementById('suggest-text').value='';
+  document.getElementById('suggest-author').value='';
+  document.getElementById('quote-suggest-form').classList.remove('open');
+  showToast(state.isAdmin?'Quote saved + sent':'Quote sent to Live B.I.G 365');
 }
 
 /* ═══ FEEDBACK WIDGET ═══ */
