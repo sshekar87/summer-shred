@@ -284,7 +284,9 @@ body::before { display: none; } /* noise overlay removed for light theme */
 }
 .score-ring-num { position: relative; font-size: 1.1rem; font-weight: 800; color: var(--text); text-align: center; line-height: 1; }
 .score-ring-tot { font-size: 0.6rem; color: var(--text-dim); display: block; margin-top: 0.18rem; font-weight: 600; }
-.score-ring.full { background: conic-gradient(var(--green) 100%, var(--bg4) 0); }
+.score-ring.tier-mid  { background: conic-gradient(var(--sun-warm) calc(var(--pct,0) * 1%), var(--bg4) 0); }
+.score-ring.tier-high { background: conic-gradient(var(--green)    calc(var(--pct,0) * 1%), var(--bg4) 0); }
+.score-ring.full      { background: conic-gradient(var(--green) 100%, var(--bg4) 0); }
 
 /* ═══════════════════════════════════════════
    FOCUS HEAD (Wk N: Focus + small date)
@@ -369,7 +371,7 @@ body::before { display: none; } /* noise overlay removed for light theme */
 }
 .qa-btn:hover { background: var(--bg4); border-color: var(--red-dim); }
 .qa-btn:active { transform: scale(0.97); }
-.qa-icon { font-size: 1.4rem; line-height: 1; margin-bottom: 0.2rem; }
+.qa-icon { font-size: 1.4rem; line-height: 1; margin-bottom: 0.4rem; }
 .qa-main { font-size: 0.82rem; font-weight: 800; line-height: 1.1; }
 .qa-sub  { font-size: 0.7rem; font-weight: 500; line-height: 1.2; text-align: center; color: var(--text-dim); }
 .qa-btn.qa-selected-copy .qa-sub,
@@ -401,12 +403,12 @@ body::before { display: none; } /* noise overlay removed for light theme */
   display: flex; flex-direction: column; gap: 0.7rem;
 }
 .ws-top-row {
-  display: grid; grid-template-columns: 1fr auto; gap: 1rem; align-items: center;
+  display: flex; flex-direction: column; gap: 0.55rem;
 }
 .ws-week { font-size: 1rem; font-weight: 800; color: var(--text); margin-bottom: 0.15rem; }
 .ws-dates { font-size: 0.78rem; color: var(--text-dim); font-weight: 600; }
-.ws-right { min-width: 160px; }
-.ws-pts { font-size: 0.95rem; font-weight: 700; color: var(--text); margin-bottom: 0.35rem; text-align: right; }
+.ws-right { width: 100%; }
+.ws-pts { font-size: 0.95rem; font-weight: 700; color: var(--text); margin-bottom: 0.35rem; text-align: left; }
 .ws-pts strong { color: var(--red); font-size: 1.15rem; }
 .ws-bar { height: 6px; background: var(--bg4); border-radius: 4px; overflow: hidden; }
 .ws-bar-fill { height: 100%; background: linear-gradient(90deg,var(--red),var(--sun)); border-radius: 4px; transition: width 0.4s; }
@@ -443,11 +445,6 @@ body::before { display: none; } /* noise overlay removed for light theme */
 .ws-action-row .ws-save-btn { background: var(--red); color: #FFFFFF; border-color: var(--red); }
 .ws-action-row .ws-save-btn:hover { background: var(--red-bright); border-color: var(--red-bright); }
 .ws-action-row .ws-clear-btn { color: var(--red); border-color: rgba(222,51,65,0.3); }
-@media (max-width: 600px) {
-  .ws-top-row { grid-template-columns: 1fr; }
-  .ws-right { align-items: flex-start; text-align: left; }
-  .ws-pts { text-align: left; }
-}
 
 /* Per-day quick actions inside expanded weekly day */
 .day-quick-actions { margin-bottom: 0.5rem; }
@@ -1914,7 +1911,7 @@ async function renderAdminQuotes(){
   </div>`;
   c.innerHTML=`
     <div class="admin-quote-header">
-      <div class="admin-quote-help">Approve quotes to add them to today's rotation. Today's wisdom is auto-picked from approved + default quotes (deterministic by date).</div>
+      <div class="admin-quote-help">Approve quotes to add them to today's rotation.</div>
       <button class="admin-action-btn approve" onclick="toggleAddQuote()">${adminAddQuoteOpen?'Close':'+ Add quote'}</button>
     </div>
     ${adminAddQuoteOpen?`<div class="admin-quote-form-wrap">
@@ -2270,9 +2267,14 @@ function elapsedProgramDays(){
 }
 function paintRing(id,earned,max){
   const ring=document.getElementById(id);if(!ring)return;
-  const pct=max>0?Math.min(100,Math.round(earned/max*100)):0;
+  const pct=max>0?Math.min(100,Math.ceil(earned/max*100)):0;
   ring.style.setProperty('--pct',pct);
-  ring.classList.toggle('full',max>0&&earned>=max);
+  ring.classList.remove('tier-mid','tier-high','full');
+  if(max>0){
+    if(earned>=max) ring.classList.add('full');
+    else if(pct>=67) ring.classList.add('tier-high');
+    else if(pct>=34) ring.classList.add('tier-mid');
+  }
   const numEl=ring.querySelector('.score-ring-num span:first-child');
   const totEl=ring.querySelector('.score-ring-tot');
   if(numEl)numEl.textContent=earned;
