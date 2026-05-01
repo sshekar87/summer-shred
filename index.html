@@ -617,8 +617,10 @@ body::before { display: none; } /* noise overlay removed for light theme */
 .admin-settings-form { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 1.2rem 1.4rem; }
 .admin-settings-form label { display: block; font-size: 0.7rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-dim); margin: 0.85rem 0 0.3rem; }
 .admin-settings-form input[type="date"], .admin-settings-form input[type="text"] {
-  width: 100%; background: var(--bg3); border: 1px solid var(--border); border-radius: 8px;
+  width: 100%; min-width: 0; max-width: 100%; box-sizing: border-box;
+  background: var(--bg3); border: 1px solid var(--border); border-radius: 8px;
   padding: 0.65rem 0.8rem; color: var(--text); font-family: inherit; font-size: 0.95rem; outline: none;
+  -webkit-appearance: none; appearance: none;
 }
 .admin-settings-form input:focus { border-color: var(--red); }
 .admin-settings-form .modal-row { display: grid; grid-template-columns: 60px 1fr; gap: 0.5rem; align-items: center; margin-bottom: 0.4rem; }
@@ -1332,7 +1334,7 @@ body::before { display: none; } /* noise overlay removed for light theme */
         <button class="nav-btn" data-view="benchmarks" onclick="switchView('benchmarks',this)">Track</button>
       </nav>
       <div id="sync-indicator" class="sync-pill" hidden>🔄 Syncing <span id="sync-count">0</span></div>
-      <button class="admin-btn" id="admin-btn" onclick="switchView('admin',this)">⚙️ Admin</button>
+      <button class="admin-btn" id="admin-btn" onclick="toggleAdminView(this)">⚙️ Admin</button>
       <div class="header-user" onclick="logout()" title="Click to sign out">
         <div class="user-info-text">
           <div class="user-name" id="hdr-name">—</div>
@@ -1984,10 +1986,9 @@ function renderAdminSettings(){
     return `<div class="modal-row"><div class="wk-num">WK ${w}</div><input type="text" id="adm-wf-${w}" value="${(WEEKLY_FOCUS[w]||'').replace(/"/g,'&quot;')}" placeholder="Focus theme"/></div>`;
   }).join('');
   c.innerHTML=`<div class="admin-settings-form">
-    <label>Program Start (must be a Sunday)</label>
-    <input type="date" id="adm-start" value="${iso(PROGRAM_START)}"/>
-    <label>Summer Start</label>
-    <input type="date" id="adm-summer" value="${iso(SUMMER_START)}"/>
+    <label>Program Dates</label>
+    <div class="modal-row"><div class="wk-num">Start</div><input type="date" id="adm-start" value="${iso(PROGRAM_START)}"/></div>
+    <div class="modal-row"><div class="wk-num">Summer</div><input type="date" id="adm-summer" value="${iso(SUMMER_START)}"/></div>
     <label style="margin-top:1rem">Weekly Focus</label>
     ${focusRows}
     <div class="form-actions">
@@ -2014,8 +2015,15 @@ async function saveAdminConfig(btn){
   try{
     if(typeof saveProgramConfigToSupabase==='function')await saveProgramConfigToSupabase();
     renderAll();
-    if(btn){btn.textContent='✓ Saved';setTimeout(()=>{btn.disabled=false;btn.textContent='Save settings';},1600);}
+    if(btn){btn.textContent='✓ Saved';}
     showToast('Settings saved');
+    // Drop the user back into Today after a brief confirmation
+    setTimeout(()=>{
+      if(btn){btn.disabled=false;btn.textContent='Save settings';}
+      const todayNavBtn=document.querySelector('.nav-btn[data-view="log"], .bottom-nav-btn[data-view="log"]');
+      switchView('log',todayNavBtn);
+      if(todayNavBtn&&todayNavBtn.classList.contains('bottom-nav-btn'))syncBottomNav(todayNavBtn);
+    },900);
   }catch(e){
     if(btn){btn.disabled=false;btn.textContent='Save settings';}
     showToast('Save failed');
@@ -2201,6 +2209,17 @@ async function enterAppForUser(authUser){
 }
 
 /* ═══ NAV ═══ */
+function toggleAdminView(btn){
+  const onAdmin=document.getElementById('view-admin').classList.contains('active');
+  if(onAdmin){
+    // Leave admin → go back to Today
+    const todayNavBtn=document.querySelector('.nav-btn[data-view="log"], .bottom-nav-btn[data-view="log"]');
+    switchView('log',todayNavBtn);
+    if(todayNavBtn&&todayNavBtn.classList.contains('bottom-nav-btn'))syncBottomNav(todayNavBtn);
+  }else{
+    switchView('admin',btn);
+  }
+}
 function switchView(name,btn){
   if(name==='admin'&&!state.isAdmin){showToast('Admins only');return;}
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
