@@ -970,6 +970,14 @@ body::before { display: none; } /* noise overlay removed for light theme */
 .bm-col-val { text-align: center; padding: 0.45rem 0.35rem; font-size: 0.95rem; font-weight: 800; color: var(--text-muted); font-variant-numeric: tabular-nums; }
 .bm-col-val.has-val { color: var(--text); }
 .bm-col-val .bm-delta { font-size: 0.78rem; padding: 0.1rem 0.4rem; }
+/* Combined athletes table — main row + detail rows */
+.bm-athlete-main { cursor: pointer; transition: background 0.15s; }
+.bm-athlete-main:hover { background: rgba(222,51,65,0.04); }
+.bm-row-chevron { display: inline-block; margin-right: 0.4rem; color: var(--text-dim); font-size: 0.78rem; transition: transform 0.15s; }
+.bm-row-chevron.open { transform: rotate(90deg); color: var(--red); }
+.bm-athlete-detail { background: rgba(0,0,0,0.025); }
+.bm-detail-label { font-size: 0.62rem; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-dim); padding-left: 1.6rem; }
+.bm-athlete-detail.bm-detail-last td { border-bottom: 1px solid var(--border); }
 /* Collapsible athlete cards */
 .bm-athletes { display: flex; flex-direction: column; gap: 0.45rem; }
 .bm-athlete { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
@@ -1212,8 +1220,6 @@ body::before { display: none; } /* noise overlay removed for light theme */
   /* Coach: Crushing It + Worth a Look side-by-side */
   .coach-2up { grid-template-columns: 1fr 1fr; gap: 1.4rem; }
   .coach-2up .section-header.mt1 { margin-top: 0; }
-  /* Track: Progress by Athlete cards 2-up */
-  .bm-athletes { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; }
 }
 </style>
 </head>
@@ -2720,55 +2726,52 @@ function renderBenchmarks(){
   });
   mySection.appendChild(grid);container.appendChild(mySection);
 
-  // Starting Numbers — single-row-per-athlete snapshot table (at-a-glance view)
-  const startSec=document.createElement('div');startSec.innerHTML=`<div class="bm-section-header mt1">🏆 Starting Numbers</div>`;
-  const startWrap=document.createElement('div');startWrap.className='bm-table-wrap card';startWrap.style.padding='0.5rem 0.75rem';
+  // Athletes — single combined table. Default: Start row only per athlete.
+  // Click a row to reveal End + Δ underneath. "Expand all" / "Collapse all" toggles every row.
+  const allSec=document.createElement('div');
+  const allExpanded=state.users.length>0&&state.users.every(u=>expandedAthletes.has(u.id));
+  allSec.innerHTML=`<div class="bm-section-header mt1" style="display:flex;align-items:center;justify-content:space-between;gap:0.6rem">
+    <span>🏆 Athletes</span>
+    <button class="admin-action-btn" onclick="toggleAllBmAthletes()" style="text-transform:none;letter-spacing:0">${allExpanded?'Collapse all':'Expand all'}</button>
+  </div>`;
+  const wrap=document.createElement('div');wrap.className='bm-table-wrap card';wrap.style.padding='0.5rem 0.75rem';
   let st=`<table class="bm-table"><thead><tr><th class="bm-col-name">Athlete</th>${BENCHMARKS_DEF.map(b=>`<th class="bm-col-vert"><div class="bm-col-vert-inner">${b.name}</div></th>`).join('')}</tr></thead><tbody>`;
-  state.users.forEach(usr=>{
-    const ubm=usr.benchmarks||{};const isMe=usr.id===state.currentUser;
-    const shortName=(usr.name||'').split(' ')[0]||usr.name||'';
-    st+=`<tr class="${isMe?'bm-row-me':''}"><td class="bm-col-name-cell">${shortName}${isMe?' <span class="bm-you-tag">(you)</span>':''}</td>${BENCHMARKS_DEF.map(b=>{const v=bmDisplayValue(b,ubm['start_'+b.id]);return `<td class="bm-col-val ${v?'has-val':''}">${v||'—'}</td>`;}).join('')}</tr>`;
-  });
-  st+='</tbody></table>';startWrap.innerHTML=st;startSec.appendChild(startWrap);container.appendChild(startSec);
-
-  // Progress by Athlete — collapsible per-user cards with Start / End / Δ rows
-  const allSec=document.createElement('div');allSec.innerHTML=`<div class="bm-section-header mt1">📈 Progress by Athlete</div>`;
-  const list=document.createElement('div');list.className='bm-athletes';
   state.users.forEach(usr=>{
     const ubm=usr.benchmarks||{};
     const isMe=usr.id===state.currentUser;
     const shortName=(usr.name||'').split(' ')[0]||usr.name||'';
-    const card=document.createElement('div');
-    card.className='bm-athlete'+(isMe?' is-me':'');
-    card.dataset.uid=usr.id;
-    const headHTML=`<button class="bm-athlete-head" onclick="toggleBmAthlete('${usr.id}')">
-      <span class="bm-athlete-name">${shortName}${isMe?' <span class="bm-you-tag">(you)</span>':''}</span>
-      <span class="bm-athlete-chevron">▾</span>
-    </button>`;
-    const colHeaders=BENCHMARKS_DEF.map(b=>`<th class="bm-col-vert"><div class="bm-col-vert-inner">${b.name}</div></th>`).join('');
-    const startRow=BENCHMARKS_DEF.map(b=>{const v=bmDisplayValue(b,ubm['start_'+b.id]);return `<td class="bm-col-val ${v?'has-val':''}">${v||'—'}</td>`;}).join('');
-    const endRow  =BENCHMARKS_DEF.map(b=>{const v=bmDisplayValue(b,ubm['end_'+b.id]);  return `<td class="bm-col-val ${v?'has-val':''}">${v||'—'}</td>`;}).join('');
-    const deltaRow=BENCHMARKS_DEF.map(b=>{
-      const s=ubm['start_'+b.id]||'',e=ubm['end_'+b.id]||'';
-      if(!s||!e)return `<td class="bm-col-val">—</td>`;
-      return `<td class="bm-col-val">${bmFmtDelta(b,s,e)}</td>`;
-    }).join('');
-    const bodyHTML=`<div class="bm-athlete-body"><div class="bm-table-wrap"><table class="bm-athlete-table">
-      <thead><tr><th></th>${colHeaders}</tr></thead>
-      <tbody>
-        <tr><th class="bm-row-label">Start</th>${startRow}</tr>
-        <tr><th class="bm-row-label">End</th>${endRow}</tr>
-        <tr><th class="bm-row-label">Δ</th>${deltaRow}</tr>
-      </tbody>
-    </table></div></div>`;
-    card.innerHTML=headHTML+bodyHTML;
-    list.appendChild(card);
+    const expanded=expandedAthletes.has(usr.id);
+    // Main row (Start values) — clickable
+    st+=`<tr class="bm-athlete-main${isMe?' bm-row-me':''}" onclick="toggleAthleteRow('${usr.id}')">
+      <td class="bm-col-name-cell"><span class="bm-row-chevron${expanded?' open':''}">▸</span>${shortName}${isMe?' <span class="bm-you-tag">(you)</span>':''}</td>
+      ${BENCHMARKS_DEF.map(b=>{const v=bmDisplayValue(b,ubm['start_'+b.id]);return `<td class="bm-col-val ${v?'has-val':''}">${v||'—'}</td>`;}).join('')}
+    </tr>`;
+    if(expanded){
+      // END row
+      st+=`<tr class="bm-athlete-detail${isMe?' bm-row-me':''}">
+        <td class="bm-col-name-cell bm-detail-label">End</td>
+        ${BENCHMARKS_DEF.map(b=>{const v=bmDisplayValue(b,ubm['end_'+b.id]);return `<td class="bm-col-val ${v?'has-val':''}">${v||'—'}</td>`;}).join('')}
+      </tr>`;
+      // Δ row
+      st+=`<tr class="bm-athlete-detail bm-detail-last${isMe?' bm-row-me':''}">
+        <td class="bm-col-name-cell bm-detail-label">Δ</td>
+        ${BENCHMARKS_DEF.map(b=>{const s=ubm['start_'+b.id]||'',e=ubm['end_'+b.id]||'';if(!s||!e)return `<td class="bm-col-val">—</td>`;return `<td class="bm-col-val">${bmFmtDelta(b,s,e)}</td>`;}).join('')}
+      </tr>`;
+    }
   });
-  allSec.appendChild(list);container.appendChild(allSec);
+  st+='</tbody></table>';wrap.innerHTML=st;allSec.appendChild(wrap);container.appendChild(allSec);
 }
-function toggleBmAthlete(uid){
-  const card=document.querySelector(`.bm-athlete[data-uid="${uid}"]`);
-  if(card)card.classList.toggle('expanded');
+const expandedAthletes=new Set();
+function toggleAthleteRow(uid){
+  if(expandedAthletes.has(uid))expandedAthletes.delete(uid);
+  else expandedAthletes.add(uid);
+  renderBenchmarks();
+}
+function toggleAllBmAthletes(){
+  const allExpanded=state.users.length>0&&state.users.every(u=>expandedAthletes.has(u.id));
+  if(allExpanded)expandedAthletes.clear();
+  else state.users.forEach(u=>expandedAthletes.add(u.id));
+  renderBenchmarks();
 }
 function saveBm(key,val){
   const u=currentUser();if(!u.benchmarks)u.benchmarks={};
