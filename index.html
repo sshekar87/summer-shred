@@ -150,23 +150,26 @@ body::before { display: none; } /* noise overlay removed for light theme */
   background: rgba(255,255,255,0.92); border-bottom: 1px solid var(--border);
   backdrop-filter: blur(12px); position: sticky; top: 0; z-index: 100; padding: 0 1.5rem;
 }
-.header-inner { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 58px; }
-.header-logo { font-size: 1.3rem; font-weight: 900; letter-spacing: 2px; color: var(--text); text-transform: uppercase; }
+.header-inner { max-width: 880px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; height: 58px; }
+.header-logo { font-size: 1.15rem; font-weight: 900; letter-spacing: 1.5px; color: var(--text); text-transform: uppercase; white-space: nowrap; }
 .header-logo span { color: var(--red); }
 .header-nav { display: flex; gap: 0.1rem; }
 .nav-btn {
   background: none; border: none; color: var(--text-dim);
-  font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: var(--font-label);
-  letter-spacing: 1px; text-transform: uppercase; padding: 0.5rem 0.85rem;
-  border-radius: 6px; cursor: pointer; transition: all 0.15s;
+  font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: 0.74rem;
+  letter-spacing: 0.5px; text-transform: uppercase; padding: 0.45rem 0.55rem;
+  border-radius: 6px; cursor: pointer; transition: all 0.15s; white-space: nowrap;
 }
 .nav-btn:hover { color: var(--text); background: var(--bg3); }
 .nav-btn.active { color: var(--red); background: rgba(222,51,65,0.1); }
-.header-user { display: flex; align-items: center; gap: 0.7rem; cursor: pointer; }
-.user-avatar { width: 33px; height: 33px; border-radius: 50%; background: var(--red); display: flex; align-items: center; justify-content: center; font-size: 0.85rem; font-weight: 800; color: var(--white); border: 2px solid var(--red-dim); flex-shrink: 0; }
-.user-name { font-weight: 700; font-size: 0.88rem; }
-.user-pts { color: var(--red); font-weight: 600; font-size: var(--font-label); }
-.main { max-width: 1200px; margin: 0 auto; padding: 1.5rem; }
+.header-user { display: flex; align-items: center; gap: 0.55rem; cursor: pointer; padding: 0.2rem 0.35rem; border-radius: 8px; transition: background 0.15s; }
+.header-user:hover { background: var(--bg3); }
+.user-info-text { display: flex; flex-direction: column; align-items: flex-end; line-height: 1.1; min-width: 0; }
+.user-avatar { width: 30px; height: 30px; border-radius: 50%; background: var(--red); display: flex; align-items: center; justify-content: center; font-size: 0.78rem; font-weight: 800; color: var(--white); border: 2px solid var(--red-dim); flex-shrink: 0; }
+.user-name { font-weight: 700; font-size: 0.85rem; text-align: right; max-width: 110px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.user-pts { color: var(--text-dim); font-weight: 600; font-size: 0.66rem; text-align: right; letter-spacing: 0.5px; }
+.user-pts::after { content: ' · sign out'; opacity: 0.6; }
+.main { max-width: 880px; margin: 0 auto; padding: 1.5rem; }
 .view { display: none; }
 .view.active { display: block; }
 
@@ -488,16 +491,16 @@ body::before { display: none; } /* noise overlay removed for light theme */
 ═══════════════════════════════════════════ */
 .admin-btn {
   display: none; background: rgba(33,150,243,0.12); border: 1px solid rgba(33,150,243,0.4);
-  color: #64B5F6; padding: 0.4rem 0.7rem; border-radius: 8px; font-size: 0.75rem;
-  font-weight: 700; cursor: pointer; margin-right: 0.5rem;
+  color: #1976D2; padding: 0.35rem 0.6rem; border-radius: 8px; font-size: 0.72rem;
+  font-weight: 700; cursor: pointer; white-space: nowrap;
 }
 .admin-btn:hover { background: rgba(33,150,243,0.2); }
 .admin-btn.show { display: inline-block; }
 .sync-pill {
   display: inline-flex; align-items: center; gap: 0.3rem;
   background: rgba(222,51,65,0.10); border: 1px solid rgba(222,51,65,0.35);
-  color: var(--red); padding: 0.3rem 0.6rem; border-radius: 999px;
-  font-size: 0.74rem; font-weight: 700; margin-right: 0.5rem; line-height: 1;
+  color: var(--red); padding: 0.25rem 0.55rem; border-radius: 999px;
+  font-size: 0.7rem; font-weight: 700; line-height: 1; white-space: nowrap;
 }
 .sync-pill[hidden] { display: none; }
 
@@ -1280,12 +1283,12 @@ body::before { display: none; } /* noise overlay removed for light theme */
       </nav>
       <div id="sync-indicator" class="sync-pill" hidden>🔄 Syncing <span id="sync-count">0</span></div>
       <button class="admin-btn" id="admin-btn" onclick="switchView('admin',this)">⚙️ Admin</button>
-      <div class="header-user" onclick="logout()">
-        <div class="user-avatar" id="hdr-av">?</div>
-        <div>
+      <div class="header-user" onclick="logout()" title="Click to sign out">
+        <div class="user-info-text">
           <div class="user-name" id="hdr-name">—</div>
           <div class="user-pts" id="hdr-pts">0 pts</div>
         </div>
+        <div class="user-avatar" id="hdr-av">?</div>
       </div>
     </div>
   </header>
