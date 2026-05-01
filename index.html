@@ -822,7 +822,7 @@ body::before { display: none; } /* noise overlay removed for light theme */
 .week-sel-btn:hover { border-color:var(--red); }
 .week-sel-btn.current-week:not(.active) { border-color:rgba(222,51,65,0.55); }
 .week-sel-btn.current-week:not(.active) .wsb-num { color:var(--red); }
-.week-sel-btn.active { background:rgba(222,51,65,0.14); border-color:var(--red); border-width:2px; padding:calc(0.55rem - 1px) calc(0.5rem - 1px); }
+.week-sel-btn.active { background:rgba(222,51,65,0.16); border-color:var(--red); }
 .week-sel-btn.active .wsb-num { color:var(--red); }
 
 .weekly-grid { display:flex; flex-direction:column; gap:0.6rem; margin-bottom:1.5rem; }
@@ -1504,7 +1504,6 @@ body::before { display: none; } /* noise overlay removed for light theme */
   <aside class="fb-panel" id="fb-panel" role="dialog" aria-label="Send feedback">
     <button class="fb-close" onclick="closeFeedback()" aria-label="Close">×</button>
     <div class="fb-title">Send feedback</div>
-    <div class="fb-sub">What's working well? What would you change?</div>
     <div class="fb-stars" id="fb-stars" role="radiogroup" aria-label="Rating">
       <button class="fb-star" data-rating="1" onclick="setFbRating(1)" aria-label="1 star">★</button>
       <button class="fb-star" data-rating="2" onclick="setFbRating(2)" aria-label="2 stars">★</button>
