@@ -1074,7 +1074,10 @@ body::before { display: none; } /* noise overlay removed for light theme */
 .badge-card-coach .b-desc { font-size: 0.72rem; color: var(--text-dim); line-height: 1.25; }
 
 /* Almost-there progress badges */
-.badges-progress { display: flex; flex-direction: column; gap: 0.5rem; }
+.badges-progress { display: grid; grid-template-columns: 1fr; gap: 0.5rem; }
+@media (min-width: 720px) {
+  .badges-progress { grid-template-columns: 1fr 1fr; gap: 0.6rem; }
+}
 .badge-prog {
   background: var(--bg2); border: 1px solid var(--border); border-radius: 10px;
   padding: 0.7rem 0.9rem;
