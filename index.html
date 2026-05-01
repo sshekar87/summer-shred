@@ -1181,10 +1181,32 @@ body::before { display: none; } /* noise overlay removed for light theme */
   .summer-bar{padding:1rem 1.1rem}
   .cd-num{font-size:1.8rem}
   .hero-stats{gap:1rem}
-  .lb-row{grid-template-columns:32px 1fr auto auto}
-  .lb-streak{display:none}
   .program-info-bar{gap:0.5rem}
   .pi-divider{display:none}
+}
+@media (max-width:480px){
+  .lb-row{grid-template-columns:32px 1fr auto auto}
+  .lb-streak{display:none}
+}
+
+/* ═══════════════════════════════════════════
+   DESKTOP RESPONSIVENESS
+═══════════════════════════════════════════ */
+.view.view-narrow { max-width: 880px; margin-left: auto; margin-right: auto; }
+
+.coach-2up { display: grid; grid-template-columns: 1fr; gap: 0; }
+
+@media (min-width: 720px) {
+  /* Today: habits list goes 2-up */
+  .habits-list { display: grid; grid-template-columns: repeat(2,1fr); gap: 0.5rem; }
+}
+
+@media (min-width: 900px) {
+  /* Coach: Crushing It + Worth a Look side-by-side */
+  .coach-2up { grid-template-columns: 1fr 1fr; gap: 1.4rem; }
+  .coach-2up .section-header.mt1 { margin-top: 0; }
+  /* Track: Progress by Athlete cards 2-up */
+  .bm-athletes { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; }
 }
 </style>
 </head>
@@ -1271,7 +1293,7 @@ body::before { display: none; } /* noise overlay removed for light theme */
   <main class="main">
 
     <!-- ══ TODAY VIEW ══ -->
-    <div class="view active" id="view-log">
+    <div class="view active view-narrow" id="view-log">
 
       <!-- Title section: Weekly Focus + selected-day date + earned badges -->
       <div class="focus-head fade-up">
@@ -1346,7 +1368,7 @@ body::before { display: none; } /* noise overlay removed for light theme */
     </div>
 
     <!-- ══ WEEKLY VIEW ══ -->
-    <div class="view" id="view-weekly">
+    <div class="view view-narrow" id="view-weekly">
       <div class="section-header mb1">
         <div>
           <div class="section-title" style="text-transform:none">Week at a glance</div>
@@ -1368,15 +1390,20 @@ body::before { display: none; } /* noise overlay removed for light theme */
         <div class="quote-author" id="coach-quote-author">—</div>
       </div>
 
-      <div class="section-header mb1">
-        <div><div class="section-title">🔥 You're Crushing It</div><div class="section-sub">Habits you've owned the last 7 days</div></div>
+      <div class="coach-2up">
+        <div>
+          <div class="section-header mb1">
+            <div><div class="section-title">🔥 You're Crushing It</div><div class="section-sub">Habits you've owned the last 7 days</div></div>
+          </div>
+          <div class="coach-list" id="coach-strengths"></div>
+        </div>
+        <div>
+          <div class="section-header mb1 mt1">
+            <div><div class="section-title">💚 Worth a Look</div><div class="section-sub">Gentle nudges — small wins compound</div></div>
+          </div>
+          <div class="coach-list" id="coach-watchlist"></div>
+        </div>
       </div>
-      <div class="coach-list" id="coach-strengths"></div>
-
-      <div class="section-header mb1 mt1">
-        <div><div class="section-title">💚 Worth a Look</div><div class="section-sub">Gentle nudges — small wins compound</div></div>
-      </div>
-      <div class="coach-list" id="coach-watchlist"></div>
 
       <div class="section-header mb1 mt1">
         <div><div class="section-title">🏆 Earned Badges</div><div class="section-sub">Flex 'em</div></div>
