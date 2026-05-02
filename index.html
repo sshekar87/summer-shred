@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
 <title>Live B.I.G 365 — 8-Week Summer Shred Challenge</title>
 <meta name="description" content="An 8-week summer shred challenge from your gym. Log habits daily, track benchmarks, climb the leaderboard, earn the summer."/>
 
@@ -1043,7 +1043,7 @@ body::before { display: none; } /* noise overlay removed for light theme */
 /* ═══════════════════════════════════════════
    MOBILE BOTTOM NAV
 ═══════════════════════════════════════════ */
-.bottom-nav { display:none; position:fixed; bottom:0; left:0; right:0; background:rgba(255,255,255,0.96); border-top:1px solid var(--border); backdrop-filter:blur(10px); padding:0.38rem 0; z-index:100; grid-template-columns:repeat(5,1fr); }
+.bottom-nav { display:none; position:fixed; bottom:0; left:0; right:0; background:rgba(255,255,255,0.96); border-top:1px solid var(--border); backdrop-filter:blur(10px); padding:0.38rem 0 max(0.38rem, env(safe-area-inset-bottom)); z-index:100; grid-template-columns:repeat(5,1fr); }
 .bottom-nav-btn { display:flex; flex-direction:column; align-items:center; gap:0.18rem; background:none; border:none; color:var(--text-dim); cursor:pointer; padding:0.38rem 0; transition:color 0.15s; font-family:'DM Sans',sans-serif; font-size:0.58rem; font-weight:700; letter-spacing:0.5px; text-transform:uppercase; }
 .bottom-nav-btn .icon { font-size:1.15rem; }
 .bottom-nav-btn.active { color:var(--red); }
@@ -1052,7 +1052,7 @@ body::before { display: none; } /* noise overlay removed for light theme */
    TOAST / FLASH
 ═══════════════════════════════════════════ */
 .saved-flash {
-  position:fixed; bottom:2rem; left:50%; transform:translateX(-50%);
+  position:fixed; bottom:max(2rem, calc(env(safe-area-inset-bottom) + 1rem)); left:50%; transform:translateX(-50%);
   background:#FFFFFF; color:var(--text);
   padding:0.65rem 1.2rem; border-radius:8px;
   border:1px solid var(--border);
@@ -1156,7 +1156,7 @@ body::before { display: none; } /* noise overlay removed for light theme */
   transform: rotate(180deg);
 }
 .fb-toggle:hover { background: var(--red-bright); padding-right: 0.65rem; box-shadow: -4px 6px 18px rgba(222,51,65,0.4); }
-@media (max-width: 768px) { .fb-toggle { bottom: 5rem; } } /* clear bottom-nav on mobile */
+@media (max-width: 768px) { .fb-toggle { bottom: max(5rem, calc(env(safe-area-inset-bottom) + 4.5rem)); } } /* clear bottom-nav + home indicator on mobile */
 
 /* Backdrop scrim — only present when drawer is open */
 .fb-backdrop {
