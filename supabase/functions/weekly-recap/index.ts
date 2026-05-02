@@ -39,12 +39,18 @@ Deno.serve(async () => {
     .map(p => ({ ...p, weekPts: stats[p.id]?.weekPts ?? 0 }))
     .sort((a, b) => b.weekPts - a.weekPts);
 
+  // Test-mode: when TEST_EMAIL is set, only send to that one address (skip everyone else).
+  // Set + unset via Supabase dashboard → Edge Functions → Secrets.
+  const testEmail = Deno.env.get('TEST_EMAIL')?.trim().toLowerCase() || null;
+  if (testEmail) console.log('TEST_EMAIL active — restricting send to', testEmail);
+
   let sent = 0;
   let skipped = 0;
 
   for (const profile of profiles) {
     const email = emails[profile.id];
     if (!email) { skipped++; continue; }
+    if (testEmail && email.toLowerCase() !== testEmail) { skipped++; continue; }
 
     const s = stats[profile.id];
     const rank = ranked.findIndex(r => r.id === profile.id) + 1;

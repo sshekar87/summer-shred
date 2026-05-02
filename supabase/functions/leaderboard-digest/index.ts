@@ -73,12 +73,18 @@ Deno.serve(async () => {
 
   const focus = cfg.weeklyFocus[String(wk)] || '';
 
+  // Test-mode: when TEST_EMAIL is set, only send to that one address (skip everyone else).
+  // Set + unset via Supabase dashboard → Edge Functions → Secrets.
+  const testEmail = Deno.env.get('TEST_EMAIL')?.trim().toLowerCase() || null;
+  if (testEmail) console.log('TEST_EMAIL active — restricting send to', testEmail);
+
   let sent = 0;
   let skipped = 0;
 
   for (const recipient of board) {
     const email = emails[recipient.id];
     if (!email) { skipped++; continue; }
+    if (testEmail && email.toLowerCase() !== testEmail) { skipped++; continue; }
     const firstName = recipient.name;
 
     // Build leaderboard table (highlight recipient)
