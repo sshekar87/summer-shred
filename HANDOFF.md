@@ -307,3 +307,20 @@ See the launchShred() and animateShredCanvas() functions in the HTML for the cur
 > - Auth: Stytch magic links (already connected as MCP)
 > - Deploy target: Railway or Vercel (both connected as MCPs)
 > - Do NOT change the visual design — only migrate it to React components"
+
+---
+
+## 30-Day Sessions (manual one-time Supabase config)
+
+By default Supabase JWTs expire after 1 hour, which kicks gym members back to the login screen often. Keep them signed in for 30 days of inactivity:
+
+**Supabase Dashboard → Authentication → Configuration → Sessions:**
+
+1. **JWT expiry:** `2592000` (30 days, in seconds)
+2. **Refresh token rotation:** ON
+3. **Reuse interval:** `10` (seconds) — prevents rapid double-refreshes from invalidating sessions
+4. Click **Save**
+
+**Already wired in code:** the inline script in `index.html` calls `sb.auth.onAuthStateChange(...)` in `init()`, which auto-refreshes the access token on every page load. No code change needed — just the dashboard config above.
+
+**Result:** members only see the login screen if they haven't opened the app in 30 days. Token rotates silently in the background on every visit.
