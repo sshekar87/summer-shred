@@ -5,7 +5,7 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import {
   HABITS, MAX_DAILY,
-  loadProgramConfig, priorWeekNum, weekStartDate, weekEndDate,
+  loadProgramConfig, priorWeekNum, weekStartDate, weekEndDate, dayOffset,
   computeWeekStats, resolveEmails, sendEmail, brandHtmlWrap, rankEmoji,
 } from '../_shared/helpers.ts';
 
@@ -34,6 +34,24 @@ Deno.serve(async () => {
   const stats = await computeWeekStats(supabase, userIds, weekStart, weekEnd, wk);
   const emails = await resolveEmails(supabase, userIds);
 
+  // Pull per-day logs once so we can render which specific days each habit was hit.
+  // Map keyed by user_id + log_date for O(1) lookup in the email loop.
+  const { data: weekLogs } = await supabase
+    .from('habit_logs')
+    .select('user_id, log_date, habits')
+    .gte('log_date', weekStart)
+    .lte('log_date', weekEnd);
+  const dayLogIdx: Record<string, Record<string, Record<string, boolean>>> = {};
+  for (const l of (weekLogs as any[]) || []) {
+    if (!dayLogIdx[l.user_id]) dayLogIdx[l.user_id] = {};
+    dayLogIdx[l.user_id][l.log_date] = l.habits || {};
+  }
+
+  // Pre-compute the 7 day-keys of the week, in order Sun...Sat with single-letter labels
+  const dayKeys: string[] = [];
+  for (let d = 0; d < 7; d++) dayKeys.push(dayOffset(weekStart, d));
+  const dayLabels = ['S','M','T','W','T','F','S'];
+
   // Compute leaderboard for ranks (sort by week pts desc)
   const ranked = profiles
     .map(p => ({ ...p, weekPts: stats[p.id]?.weekPts ?? 0 }))
@@ -57,18 +75,24 @@ Deno.serve(async () => {
     const emoji = rankEmoji(rank);
     const firstName = (profile.name || email.split('@')[0]).split(' ')[0];
 
-    // Habit breakdown rows: each habit's count/days logged with a 10-char block bar
+    // Habit breakdown rows: each habit gets 7 cells, one per day Sun-Sat. Green when
+    // that specific day's habit was logged, gray when missed. Counts column on the right.
+    const userDayLogs = dayLogIdx[profile.id] || {};
     const habitRows = HABITS.map(h => {
+      const cellsHtml = dayKeys.map((dk, i) => {
+        const hit = !!userDayLogs[dk]?.[h.id];
+        const bg = hit ? '#2E9C5C' : '#E5E5E5';
+        const fg = hit ? '#FFFFFF' : '#B0B0B0';
+        return `<td style="background:${bg};color:${fg};font-size:9px;font-weight:800;text-align:center;padding:5px 0;border-radius:3px;width:14%;letter-spacing:0.5px;">${dayLabels[i]}</td>`;
+      }).join('<td style="width:3px;"></td>');
       const count = s.habitCounts[h.id] ?? 0;
-      const denom = s.daysLogged || 7; // if 0 days logged, show out-of-7 anyway
-      const pct = denom > 0 ? Math.round((count / denom) * 100) : 0;
-      const filled = Math.round(pct / 10);
-      const bar = '█'.repeat(filled) + '░'.repeat(10 - filled);
       return `
         <tr>
-          <td style="padding:6px 0;color:#111111;font-size:13px;font-weight:600;">${h.emoji} ${h.name}</td>
-          <td style="padding:6px 12px;color:#B0B0B0;font-family:monospace;font-size:11px;letter-spacing:1px;">${bar}</td>
-          <td style="padding:6px 0;color:#DE3341;font-size:13px;font-weight:800;text-align:right;white-space:nowrap;">${count}/${denom}</td>
+          <td style="padding:6px 10px 6px 0;color:#111111;font-size:13px;font-weight:600;width:42%;white-space:nowrap;">${h.emoji} ${h.name}</td>
+          <td style="padding:6px 0;width:46%;">
+            <table style="width:100%;border-collapse:separate;border-spacing:0;"><tr>${cellsHtml}</tr></table>
+          </td>
+          <td style="padding:6px 0 6px 10px;color:#DE3341;font-size:13px;font-weight:800;text-align:right;white-space:nowrap;width:12%;">${count}/7</td>
         </tr>`;
     }).join('');
 
