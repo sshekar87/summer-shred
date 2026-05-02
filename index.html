@@ -1260,6 +1260,84 @@ body::before { display: none; } /* noise overlay removed for light theme */
   .coach-2up { grid-template-columns: 1fr 1fr; gap: 1.4rem; }
   .coach-2up .section-header.mt1 { margin-top: 0; }
 }
+
+/* ═══════════════════════════════════════════
+   ONBOARDING OVERLAY (shown once per browser)
+═══════════════════════════════════════════ */
+#onboarding-overlay {
+  position: fixed; inset: 0; z-index: 9999;
+  background: var(--bg);
+  display: flex; flex-direction: column;
+  padding: max(1.2rem, env(safe-area-inset-top)) 0 max(1rem, env(safe-area-inset-bottom));
+  overflow: hidden;
+}
+#onboarding-overlay[hidden] { display: none; }
+.ob-skip {
+  position: absolute; top: max(1rem, env(safe-area-inset-top)); right: 1rem;
+  background: none; border: none; color: var(--text-dim); font-family: inherit;
+  font-size: 0.85rem; font-weight: 700; letter-spacing: 0.5px; cursor: pointer;
+  padding: 0.4rem 0.6rem; border-radius: 6px; z-index: 2;
+}
+.ob-skip:hover { color: var(--text); background: var(--bg3); }
+.ob-track {
+  flex: 1; display: flex; width: 300%;
+  transform: translateX(0%); transition: transform 0.3s ease;
+}
+.ob-track[data-screen="1"] { transform: translateX(-33.333%); }
+.ob-track[data-screen="2"] { transform: translateX(-66.666%); }
+.ob-screen {
+  flex: 0 0 33.333%; box-sizing: border-box;
+  padding: 2rem 1.5rem 1rem;
+  display: flex; flex-direction: column; align-items: center;
+  text-align: center; overflow-y: auto;
+}
+.ob-sun { font-size: 4.5rem; line-height: 1; margin-bottom: 1.2rem; animation: sunPulse 4s ease-in-out infinite; }
+.ob-h1 {
+  font-size: clamp(2.2rem, 9vw, 3.4rem); font-weight: 900; letter-spacing: -0.02em;
+  color: var(--text); line-height: 1; margin-bottom: 0.4rem;
+}
+.ob-h1 span { color: var(--red); font-style: italic; }
+.ob-h2 { font-size: 1.6rem; font-weight: 800; color: var(--text); margin-bottom: 0.4rem; }
+.ob-sub { font-size: 1rem; font-weight: 600; color: var(--text-dim); margin-bottom: 1.4rem; max-width: 380px; }
+.ob-body { font-size: 0.95rem; color: var(--text); max-width: 380px; line-height: 1.5; }
+.ob-habits {
+  list-style: none; padding: 0; margin: 0 0 1rem;
+  display: grid; grid-template-columns: 1fr; gap: 0.4rem; width: 100%; max-width: 380px;
+}
+.ob-habits li {
+  display: flex; align-items: center; gap: 0.6rem;
+  background: var(--bg2); border: 1px solid var(--border); border-radius: 10px;
+  padding: 0.55rem 0.8rem; font-size: 0.92rem; font-weight: 700; color: var(--text);
+}
+.ob-habits li.big3 { border-color: var(--red); background: rgba(222,51,65,0.06); }
+.ob-habits .oh-emoji { font-size: 1.15rem; line-height: 1; }
+.ob-habits .oh-name { flex: 1; text-align: left; }
+.ob-habits .oh-pts {
+  font-size: 0.75rem; font-weight: 800; color: var(--text-dim);
+  background: var(--bg3); padding: 0.18rem 0.5rem; border-radius: 999px;
+  border: 1px solid var(--border);
+}
+.ob-habits li.big3 .oh-pts { background: var(--red); color: #FFFFFF; border-color: var(--red); }
+.ob-platform {
+  background: var(--bg2); border: 1px solid var(--border); border-radius: 12px;
+  padding: 1rem 1.2rem; max-width: 380px; width: 100%; text-align: left;
+  font-size: 0.92rem; line-height: 1.55; color: var(--text);
+}
+.ob-platform .ob-step { display: flex; gap: 0.6rem; align-items: flex-start; margin-bottom: 0.45rem; }
+.ob-platform .ob-step:last-child { margin-bottom: 0; }
+.ob-platform .ob-step-icon { font-size: 1.1rem; flex-shrink: 0; }
+.ob-dots {
+  display: flex; gap: 0.4rem; justify-content: center; margin: 0.5rem 0 0.8rem;
+}
+.ob-dots span {
+  width: 8px; height: 8px; border-radius: 50%; background: var(--bg4);
+  transition: background 0.2s, width 0.2s;
+}
+.ob-dots span.active { background: var(--red); width: 22px; border-radius: 4px; }
+.ob-next {
+  width: calc(100% - 3rem); max-width: 360px; margin: 0 auto;
+  font-size: 0.95rem; padding: 0.85rem 1.2rem;
+}
 </style>
 </head>
 <body>
@@ -1578,6 +1656,33 @@ body::before { display: none; } /* noise overlay removed for light theme */
       <button class="btn-save" id="confirm-ok">Confirm</button>
     </div>
   </div>
+</div>
+
+<!-- ════════ ONBOARDING (3-screen welcome, shown once per browser) ════════ -->
+<div id="onboarding-overlay" hidden role="dialog" aria-modal="true" aria-label="Welcome to Live B.I.G 365">
+  <button class="ob-skip" type="button" onclick="onbDismiss()">Skip</button>
+  <div class="ob-track" id="ob-track">
+    <div class="ob-screen">
+      <div class="ob-sun">☀️</div>
+      <div class="ob-h1">LIVE <span>B.I.G</span> 365</div>
+      <div class="ob-sub">8 weeks. 10 daily habits. One leaderboard.</div>
+      <div class="ob-body">Earn up to <strong>26 points a day</strong>. The person at the top of the leaderboard at the end wins.</div>
+    </div>
+    <div class="ob-screen">
+      <div class="ob-h2">How points work</div>
+      <div class="ob-sub">Tap each habit when you do it.</div>
+      <ul class="ob-habits" id="ob-habits-list"></ul>
+      <div class="ob-body">Max <strong>26 pts/day</strong> · <strong>182 pts/week</strong> · <strong>1,456 over 8 weeks</strong>.</div>
+    </div>
+    <div class="ob-screen">
+      <div class="ob-h2">Get the full app</div>
+      <div class="ob-sub">Add Live B.I.G 365 to your home screen so it opens like a real app.</div>
+      <div class="ob-platform" id="ob-platform-instructions"></div>
+      <div class="ob-body" style="margin-top:0.6rem;font-size:0.85rem;color:var(--text-dim)">You'll get push-quick access without typing the URL every time.</div>
+    </div>
+  </div>
+  <div class="ob-dots" id="ob-dots"><span class="active"></span><span></span><span></span></div>
+  <button class="ob-next shred-btn" type="button" onclick="onbNext()" id="ob-next-btn">Next →</button>
 </div>
 
 <script>
@@ -2220,6 +2325,92 @@ async function enterAppForUser(authUser){
   document.getElementById('auth-screen').style.display='none';
   document.getElementById('app').style.display='block';
   renderAll();
+  safeInitOnboarding(); // shows the 3-screen welcome the first time per browser; defensive wrapper inside
+}
+
+/* ═══ ONBOARDING — 3-screen welcome shown once per browser ═══
+   Defensive wrap: anything that throws is caught + logged + suppressed so a bug here can never
+   take down the dashboard. Replaces the "React error boundary" the brief asked for. */
+const ONBOARDING_KEY='shred_onboarding_done';
+let onbScreen=0;
+function safeInitOnboarding(){
+  try{
+    let done=null;
+    try{done=localStorage.getItem(ONBOARDING_KEY);}catch(e){/* private browsing → silently skip */return;}
+    if(done)return;
+    initOnboarding();
+  }catch(err){
+    console.error('Onboarding init failed (suppressed):',err);
+    const o=document.getElementById('onboarding-overlay');if(o)o.hidden=true;
+  }
+}
+function initOnboarding(){
+  const overlay=document.getElementById('onboarding-overlay');if(!overlay)return;
+  // Populate Screen 2 habits list
+  const list=document.getElementById('ob-habits-list');
+  if(list){
+    const big3=new Set(['alcohol','bread','sugar']);
+    list.innerHTML=HABITS.map(h=>{
+      const isBig=big3.has(h.id);
+      return `<li class="${isBig?'big3':''}"><span class="oh-emoji">${h.emoji}</span><span class="oh-name">${h.name}</span><span class="oh-pts">+${h.pts}pt${h.pts>1?'s':''}</span></li>`;
+    }).join('');
+  }
+  // Populate Screen 3 platform-specific instructions
+  const ua=navigator.userAgent||'';
+  const isIOS=/iPad|iPhone|iPod/.test(ua);
+  const isAndroid=/Android/.test(ua);
+  const platformEl=document.getElementById('ob-platform-instructions');
+  if(platformEl){
+    if(isIOS){
+      platformEl.innerHTML=`
+        <div class="ob-step"><span class="ob-step-icon">①</span><span>Tap the <strong>Share</strong> icon at the bottom of Safari (the box with an up-arrow).</span></div>
+        <div class="ob-step"><span class="ob-step-icon">②</span><span>Scroll and tap <strong>Add to Home Screen</strong>.</span></div>
+        <div class="ob-step"><span class="ob-step-icon">③</span><span>Tap <strong>Add</strong>. The dragon icon will land on your home screen.</span></div>`;
+    }else if(isAndroid){
+      platformEl.innerHTML=`
+        <div class="ob-step"><span class="ob-step-icon">①</span><span>Tap the <strong>⋮ menu</strong> in the top-right of Chrome.</span></div>
+        <div class="ob-step"><span class="ob-step-icon">②</span><span>Tap <strong>Add to Home screen</strong> (or <strong>Install app</strong>).</span></div>
+        <div class="ob-step"><span class="ob-step-icon">③</span><span>Confirm. The icon will land on your home screen.</span></div>`;
+    }else{
+      platformEl.innerHTML=`
+        <div class="ob-step"><span class="ob-step-icon">📱</span><span><strong>iPhone:</strong> Safari → Share → Add to Home Screen.</span></div>
+        <div class="ob-step"><span class="ob-step-icon">📱</span><span><strong>Android:</strong> Chrome → ⋮ → Add to Home screen.</span></div>`;
+    }
+  }
+  // Touch swipe
+  let startX=null;
+  overlay.addEventListener('touchstart',e=>{try{startX=e.touches[0].clientX;}catch(e){}},{passive:true});
+  overlay.addEventListener('touchend',e=>{
+    try{
+      if(startX==null)return;
+      const dx=e.changedTouches[0].clientX-startX;startX=null;
+      if(Math.abs(dx)<50)return;
+      if(dx<0)onbNext();else onbPrev();
+    }catch(err){console.error('onb swipe failed (suppressed):',err);}
+  },{passive:true});
+  onbScreen=0;
+  setOnbScreen(0);
+  overlay.hidden=false;
+}
+function setOnbScreen(n){
+  try{
+    onbScreen=Math.max(0,Math.min(2,n));
+    const track=document.getElementById('ob-track');if(track)track.dataset.screen=String(onbScreen);
+    document.querySelectorAll('#ob-dots span').forEach((d,i)=>d.classList.toggle('active',i===onbScreen));
+    const btn=document.getElementById('ob-next-btn');
+    if(btn)btn.textContent=onbScreen===2?"LET'S GO 🔥":'Next →';
+  }catch(err){console.error('onb setScreen failed (suppressed):',err);}
+}
+function onbNext(){
+  try{
+    if(onbScreen>=2){onbDismiss();return;}
+    setOnbScreen(onbScreen+1);
+  }catch(err){console.error('onb next failed (suppressed):',err);onbDismiss();}
+}
+function onbPrev(){try{setOnbScreen(onbScreen-1);}catch(err){console.error('onb prev failed (suppressed):',err);}}
+function onbDismiss(){
+  try{localStorage.setItem(ONBOARDING_KEY,'true');}catch(e){/* private browsing — accept that they'll see it next time */}
+  const o=document.getElementById('onboarding-overlay');if(o)o.hidden=true;
 }
 
 /* ═══ NAV ═══ */
