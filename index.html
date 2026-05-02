@@ -2391,6 +2391,7 @@ function renderLog(){
   });
 }
 function toggleHabit(habitId){
+  navigator.vibrate?.(10); // micro-tap feedback on Android (iOS Safari silently no-ops)
   const u=currentUser();if(!u.logs[currentDay])u.logs[currentDay]={};
   u.logs[currentDay][habitId]=!u.logs[currentDay][habitId];
   upsertHabitLog(currentDay,u.logs[currentDay]);
@@ -2488,6 +2489,7 @@ function renderFortune(){
   quote.classList.toggle('revealed',revealed);
 }
 function shredAndReveal(){
+  navigator.vibrate?.([10,50,20]); // tap-pause-tap "confirmation" rhythm on Android
   shreddedDays.add(currentDay);saveShredded();
   const u=currentUser();const log=u&&u.logs[currentDay]?u.logs[currentDay]:{};
   const isPerfect=HABITS.reduce((a,h)=>a+(log[h.id]?h.pts:0),0)>=MAX_DAILY;
@@ -2638,6 +2640,7 @@ function toggleDayRow(header){
 }
 
 function toggleHabitForDay(key,habitId){
+  navigator.vibrate?.(10); // micro-tap feedback on Android
   const u=currentUser();if(!u.logs[key])u.logs[key]={};
   u.logs[key][habitId]=!u.logs[key][habitId];
   upsertHabitLog(key,u.logs[key]);
