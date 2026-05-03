@@ -157,6 +157,7 @@ body::before { display: none; } /* noise overlay removed for light theme */
   padding: 1rem; border: none; border-radius: 8px; cursor: pointer; transition: all 0.2s;
 }
 .btn-primary:hover { background: var(--red-bright); transform: translateY(-1px); box-shadow: 0 8px 28px var(--red-glow); }
+.btn-primary:active { transform: scale(0.985) translateY(0); box-shadow: 0 2px 8px var(--red-glow); }
 .magic-sent { background: rgba(61,170,108,0.1); border: 1px solid var(--green); border-radius: 8px; padding: 1rem; text-align: center; color: var(--green); font-size: 0.88rem; margin-top: 1rem; display: none; }
 .auth-code { font-family: 'DM Mono', 'Courier New', monospace; font-size: 1.6rem; letter-spacing: 0.4em; text-align: center; }
 .auth-step-foot { margin-top: 1rem; text-align: center; font-size: 0.85rem; color: var(--text-dim); }
@@ -187,6 +188,7 @@ body::before { display: none; } /* noise overlay removed for light theme */
   border-radius: 6px; cursor: pointer; transition: all 0.15s; white-space: nowrap;
 }
 .nav-btn:hover { color: var(--text); background: var(--bg3); }
+.nav-btn:active { transform: scale(0.95); }
 .nav-btn.active { color: var(--red); background: rgba(222,51,65,0.1); }
 .header-user { display: flex; align-items: center; gap: 0.55rem; cursor: pointer; padding: 0.2rem 0.35rem; border-radius: 8px; transition: background 0.15s; }
 .header-user:hover { background: var(--bg3); }
@@ -501,9 +503,13 @@ body::before { display: none; } /* noise overlay removed for light theme */
 }
 .fortune-quote-bare .quote-edit-btn { position: absolute; top: 0.6rem; right: 0.7rem; }
 .quote-suggest-wrap { margin-top: 0.9rem; padding-top: 0.7rem; border-top: 1px dashed var(--border); }
-.quote-suggest-toggle { padding: 0.4rem 0.75rem; flex-direction: row; gap: 0.35rem; min-width: 0; flex: 0 0 auto; }
+.quote-suggest-toggle {
+  padding: 0.4rem 0.85rem; flex-direction: row; gap: 0.35rem; min-width: 0; flex: 0 0 auto;
+  background: rgba(222,51,65,0.08); border-color: rgba(222,51,65,0.25); color: var(--red);
+}
+.quote-suggest-toggle:hover { background: rgba(222,51,65,0.13); border-color: var(--red-dim); color: var(--red); }
 .quote-suggest-toggle .qa-icon { font-size: 1rem; margin-bottom: 0; }
-.quote-suggest-toggle .qa-sub { font-size: 0.78rem; font-weight: 600; }
+.quote-suggest-toggle .qa-sub { font-size: 0.78rem; font-weight: 700; color: var(--red); }
 @keyframes fortuneReveal {
   0% { opacity: 0; transform: scale(0.94) translateY(6px); }
   100% { opacity: 1; transform: scale(1) translateY(0); }
@@ -568,6 +574,7 @@ body::before { display: none; } /* noise overlay removed for light theme */
   color: var(--text-dim); cursor: pointer; transition: all 0.15s;
 }
 .admin-action-btn:hover { border-color: var(--red); color: var(--red); }
+.admin-action-btn:active { transform: scale(0.96); }
 .admin-action-btn.danger { color: var(--red); border-color: rgba(222,51,65,0.35); }
 @media (max-width:600px){
   .admin-user-row { grid-template-columns: 1fr; gap: 0.45rem; }
@@ -707,6 +714,20 @@ body::before { display: none; } /* noise overlay removed for light theme */
   cursor:pointer;
 }
 .week-pill:hover { border-color: var(--red); }
+.week-pill:active { transform: scale(0.97); }
+@media (max-width: 768px) {
+  .week-track {
+    display: flex;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: 0.4rem;
+    margin-left: -1.5rem; margin-right: -1.5rem;
+    padding-left: 1.5rem; padding-right: 1.5rem;
+  }
+  .week-track::-webkit-scrollbar { display: none; }
+  .week-pill { flex: 0 0 auto; min-width: 4.6rem; }
+}
 .week-pill.done { background:rgba(222,51,65,0.08); border-color:rgba(222,51,65,0.28); }
 .week-pill.current { background:var(--red); border-color:var(--red); }
 .week-pill.current .wk-label, .week-pill.current .wk-pts, .week-pill.current .wk-dates { color:var(--white); }
@@ -1041,7 +1062,8 @@ body::before { display: none; } /* noise overlay removed for light theme */
    MOBILE BOTTOM NAV
 ═══════════════════════════════════════════ */
 .bottom-nav { display:none; position:fixed; bottom:0; left:0; right:0; background:rgba(255,255,255,0.96); border-top:1px solid var(--border); backdrop-filter:blur(10px); padding:0.38rem 0 max(0.38rem, env(safe-area-inset-bottom)); z-index:100; grid-template-columns:repeat(5,1fr); }
-.bottom-nav-btn { display:flex; flex-direction:column; align-items:center; gap:0.18rem; background:none; border:none; color:var(--text-dim); cursor:pointer; padding:0.38rem 0; transition:color 0.15s; font-family:'DM Sans',sans-serif; font-size:0.58rem; font-weight:700; letter-spacing:0.5px; text-transform:uppercase; }
+.bottom-nav-btn { display:flex; flex-direction:column; align-items:center; gap:0.18rem; background:none; border:none; color:var(--text-dim); cursor:pointer; padding:0.38rem 0; transition:color 0.15s, transform 0.1s; font-family:'DM Sans',sans-serif; font-size:0.58rem; font-weight:700; letter-spacing:0.5px; text-transform:uppercase; }
+.bottom-nav-btn:active { transform: scale(0.93); }
 .bottom-nav-btn .icon { font-size:1.15rem; }
 .bottom-nav-btn.active { color:var(--red); }
 
@@ -1153,7 +1175,7 @@ body::before { display: none; } /* noise overlay removed for light theme */
   transform: rotate(180deg);
 }
 .fb-toggle:hover { background: var(--red-bright); padding-right: 0.65rem; box-shadow: -4px 6px 18px rgba(222,51,65,0.4); }
-@media (max-width: 768px) { .fb-toggle { bottom: max(5rem, calc(env(safe-area-inset-bottom) + 4.5rem)); } } /* clear bottom-nav + home indicator on mobile */
+@media (max-width: 768px) { .fb-toggle { bottom: 35%; padding: 1.05rem 0.55rem; } } /* lifted clear of bottom nav into eye-line */
 
 /* Backdrop scrim — only present when drawer is open */
 .fb-backdrop {
@@ -1465,8 +1487,8 @@ body::before { display: none; } /* noise overlay removed for light theme */
       <!-- Shred It button → reveals today's quote inline -->
       <button class="shred-btn shred-btn-bare" id="fortune-cta" onclick="shredAndReveal()">Shred It 🐉</button>
       <div class="fortune-quote-bare" id="fortune-quote">
-        <div class="quote-text" id="quote-text">The only bad workout is the one that didn't happen.</div>
-        <div class="quote-author" id="quote-author">Coach</div>
+        <div class="quote-text" id="quote-text">…</div>
+        <div class="quote-author" id="quote-author"></div>
         <div class="quote-suggest-wrap">
           <button class="qa-btn quote-suggest-toggle" onclick="toggleQuoteSuggest()"><span class="qa-icon">✨</span><span class="qa-sub">Suggest a quote</span></button>
           <div class="quote-suggest-form" id="quote-suggest-form">
@@ -1529,19 +1551,6 @@ body::before { display: none; } /* noise overlay removed for light theme */
 
     <!-- ══ LEADERBOARD ══ -->
     <div class="view" id="view-leaderboard">
-      <!-- Summer progress -->
-      <div class="summer-bar fade-up">
-        <div class="summer-top">
-          <div class="summer-left">
-            <div class="summer-icon">☀️</div>
-            <div class="summer-headline">First day of summer: <em>June 21</em></div>
-          </div>
-        </div>
-        <div class="summer-progress-wrap">
-          <div class="summer-prog-label" id="summer-prog-label">Loading...</div>
-          <div class="summer-prog-bar"><div class="summer-prog-fill" id="summer-prog-fill" style="width:0%"></div></div>
-        </div>
-      </div>
       <div class="section-header mb15">
         <div><div class="section-title">Leaderboard</div><div class="section-sub">Who's running the board?</div></div>
       </div>
@@ -1722,15 +1731,9 @@ const BADGE_DEFS = [
   {id:'all8weeks',     icon:'🎖️',name:'Summer Shredder',desc:'Complete all 8 weeks',                check:(u)=>u.weeksCompleted>=8},
 ];
 
-const DEFAULT_QUOTES = [
-  {text:"The only bad workout is the one that didn't happen.",author:"Coach"},
-  {text:"You don't get the body you want by sitting on the couch.",author:"Coach"},
-  {text:"It never gets easier. You just get stronger.",author:"Greg Glassman"},
-  {text:"Earn your summer. Every. Single. Day.",author:"The Board"},
-  {text:"Sweat now, shine later. Summer is coming.",author:"Coach"},
-  {text:"Consistency beats intensity. Just show up.",author:"Coach"},
-  {text:"You're one workout away from a great day.",author:"The Board"},
-];
+// Quote pool now comes entirely from admin-approved user_quotes (state.approvedQuotes).
+// Used when nothing's been approved yet so the UI doesn't render an empty quote card.
+const FALLBACK_QUOTE = {text:"Be the first to suggest a quote — tap below ✨", author:"Live B.I.G 365"};
 
 /* ═══ SUPABASE ═══ */
 const SUPABASE_URL='https://nstgevgekqtmeixdukvi.supabase.co';
@@ -1841,7 +1844,13 @@ function renderSummerCountdown(){
 }
 
 /* ═══ QUOTE ═══ */
-function getQuote(key){if(state.quotes&&state.quotes[key])return state.quotes[key];return DEFAULT_QUOTES[new Date(key+'T12:00:00').getDay()];}
+// Admin can pin a specific quote for a date in state.quotes[key]; otherwise we rotate
+// through admin-approved user_quotes (state.approvedQuotes). FALLBACK_QUOTE shows when
+// nothing has been approved yet.
+function getQuote(key){
+  if(state.quotes&&state.quotes[key])return state.quotes[key];
+  return pickRotatingQuote(key);
+}
 function renderQuote(){
   const q=getQuote(currentDay);
   document.getElementById('quote-text').textContent=q.text;
@@ -1976,17 +1985,35 @@ let adminAddQuoteOpen=false;
 
 async function renderAdminQuotes(){
   const c=document.getElementById('admin-tab-quotes');if(!c)return;
-  c.innerHTML='<div class="coach-empty">Loading…</div>';
-  // Race the Supabase call against a 10s timeout so the tab never hangs forever
-  const fetchPromise=sb.from('user_quotes')
-    .select('id,text,author,submitted_by,approved,created_at')
-    .order('approved',{ascending:true})
-    .order('created_at',{ascending:false});
-  const timeout=new Promise((_,rej)=>setTimeout(()=>rej(new Error('Timed out after 10s — try again')),10000));
-  let data,error;
-  try{const res=await Promise.race([fetchPromise,timeout]);data=res.data;error=res.error;}
-  catch(e){error={message:e.message};}
-  if(error){c.innerHTML='<div class="coach-empty">Failed to load: '+error.message+' &nbsp; <button class="admin-action-btn" onclick="renderAdminQuotes()">Retry</button></div>';return;}
+  c.innerHTML='<div class="coach-empty">Loading quotes…</div>';
+  let data=null, error=null;
+  // Whole function wrapped in try/catch so the loading state always clears even if
+  // an unexpected exception is thrown anywhere downstream
+  try {
+    console.log('[adminQuotes] fetching user_quotes…');
+    const fetchPromise=sb.from('user_quotes')
+      .select('id,text,author,submitted_by,approved,created_at')
+      .order('approved',{ascending:true})
+      .order('created_at',{ascending:false});
+    // 6s timeout: snappier feedback on mobile when Supabase is slow / network is flaky
+    const timeout=new Promise((_,rej)=>setTimeout(()=>rej(new Error('Request took too long. Tap Retry.')),6000));
+    try{
+      const res=await Promise.race([fetchPromise,timeout]);
+      data=res.data; error=res.error;
+      console.log('[adminQuotes] fetch resolved', {rows: data?.length ?? 0, error});
+    } catch(e) {
+      console.warn('[adminQuotes] fetch rejected:', e);
+      error={message: e.message || 'Request failed'};
+    }
+    if(error){
+      c.innerHTML='<div class="coach-empty">Failed to load: '+error.message+' &nbsp; <button class="admin-action-btn" onclick="renderAdminQuotes()">Retry</button></div>';
+      return;
+    }
+  } catch (outer) {
+    console.error('[adminQuotes] unexpected exception:', outer);
+    c.innerHTML='<div class="coach-empty">Something went wrong loading quotes. <button class="admin-action-btn" onclick="renderAdminQuotes()">Retry</button></div>';
+    return;
+  }
   const all=data||[];
   const pending=all.filter(q=>!q.approved);
   const approved=all.filter(q=>q.approved);
@@ -2589,6 +2616,9 @@ function renderWeekTrack(u){
     div.onclick=()=>{selectedWeek=w;switchView('weekly',document.querySelector('[data-view="weekly"]'));syncBottomNav(document.querySelector('.bottom-nav-btn[data-view="weekly"]'));};
     c.appendChild(div);
   }
+  // On mobile the row scrolls horizontally — make sure the current week is visible without the user needing to scroll
+  const cur=c.querySelector('.week-pill.current');
+  if(cur&&typeof cur.scrollIntoView==='function')cur.scrollIntoView({inline:'center',block:'nearest'});
 }
 
 /* ═══ TODAY LOG ═══ */
@@ -3109,9 +3139,10 @@ function badgeProgress(b,stats){
 }
 function pickRotatingQuote(dayKey){
   // Stable hash on dayKey so the same day shows the same quote across reloads.
-  // Pool = DEFAULT_QUOTES + admin/user-submitted approved quotes from Supabase.
+  // Pool = admin-approved user_quotes only (no hard-coded defaults).
+  const pool=state.approvedQuotes||[];
+  if(pool.length===0)return FALLBACK_QUOTE;
   let h=0;for(let i=0;i<dayKey.length;i++)h=(h*31+dayKey.charCodeAt(i))|0;
-  const pool=DEFAULT_QUOTES.concat(state.approvedQuotes||[]);
   return pool[Math.abs(h)%pool.length];
 }
 function strengthMsg(rate){
@@ -3207,7 +3238,16 @@ function renderCoachView(){
 }
 
 /* ═══ SUBMIT QUOTE ═══ */
-function toggleQuoteSuggest(){document.getElementById('quote-suggest-form').classList.toggle('open');}
+function toggleQuoteSuggest(){
+  const form=document.getElementById('quote-suggest-form');
+  const wasOpen=form.classList.contains('open');
+  form.classList.toggle('open');
+  if(!wasOpen){
+    // Just opened — scroll the form into view so the input is visible on mobile, then focus it
+    setTimeout(()=>form.scrollIntoView({behavior:'smooth',block:'center'}),60);
+    setTimeout(()=>{const t=document.getElementById('suggest-text');if(t)t.focus();},380);
+  }
+}
 async function submitSuggestedQuote(){
   const text=document.getElementById('suggest-text').value.trim();
   const author=document.getElementById('suggest-author').value.trim();
