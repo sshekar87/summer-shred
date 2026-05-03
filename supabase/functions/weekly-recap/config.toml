@@ -1,0 +1,7 @@
+# Weekly recap — Sunday 8 AM EDT (12:00 UTC)
+# Subtract 1 hour during EST winter (Nov-Mar): change to "0 13 * * 0"
+# Recaps the Sun-Sat week that just ended (yesterday).
+
+[functions.weekly-recap]
+verify_jwt = false
+schedule = "0 12 * * 0"

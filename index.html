@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
 <title>Live B.I.G 365 — 8-Week Summer Shred Challenge</title>
 <meta name="description" content="An 8-week summer shred challenge from your gym. Log habits daily, track benchmarks, climb the leaderboard, earn the summer."/>
 
@@ -92,14 +92,6 @@ body::before { display: none; } /* noise overlay removed for light theme */
     radial-gradient(ellipse 50% 35% at 90% 105%, rgba(255,140,66,0.05) 0%, transparent 50%),
     var(--bg);
 }
-.auth-sun-svg {
-  width: 96px; height: 96px; margin-bottom: 1rem;
-  filter: drop-shadow(0 4px 22px rgba(255,140,66,0.35)) drop-shadow(0 0 30px rgba(222,51,65,0.15));
-  animation: sunSpin 24s linear infinite, sunPulse 4s ease-in-out infinite;
-  transform-origin: center;
-}
-.auth-sun-svg .auth-sun-rays { transform-origin: 60px 60px; }
-@keyframes sunSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 @keyframes sunPulse {
   0%,100% { filter: drop-shadow(0 4px 22px rgba(255,140,66,0.3)) drop-shadow(0 0 30px rgba(222,51,65,0.15)); }
   50%     { filter: drop-shadow(0 4px 30px rgba(255,140,66,0.55)) drop-shadow(0 0 50px rgba(222,51,65,0.25)); }
@@ -108,7 +100,7 @@ body::before { display: none; } /* noise overlay removed for light theme */
   font-size: clamp(2.6rem,9vw,4.4rem); font-weight: 800; letter-spacing: -0.02em;
   color: var(--text); line-height: 1; text-align: center; font-family: 'DM Sans', sans-serif;
 }
-.auth-logo span { color: var(--red); font-style: italic; font-weight: 900; }
+.auth-logo span { color: var(--red); font-weight: 900; }
 .auth-sub {
   font-size: 0.95rem; font-weight: 600; letter-spacing: 1px; color: var(--text-dim);
   margin-top: 0.6rem; text-align: center;
@@ -119,10 +111,10 @@ body::before { display: none; } /* noise overlay removed for light theme */
   margin: 1.25rem 0 0.5rem; text-align: center; max-width: 360px;
 }
 .auth-tagline {
-  font-size: 0.7rem; font-weight: 700; letter-spacing: 3px; text-transform: uppercase;
-  color: var(--red); margin: 1rem 0 0.7rem;
+  font-size: 0.85rem; font-weight: 600; letter-spacing: 0.3px;
+  color: var(--red); margin: 0 0 0.9rem; text-align: center;
 }
-.auth-countdown { display: flex; gap: 0.65rem; margin: 0 0 1.6rem; }
+.auth-countdown { display: flex; gap: 0.65rem; margin: 0 0 1.6rem; justify-content: center; }
 .auth-cd-block {
   position: relative; text-align: center; min-width: 64px;
   background: linear-gradient(180deg,#2c2c2c 0%,#2c2c2c 50%,#181818 50%,#181818 100%);
@@ -147,6 +139,7 @@ body::before { display: none; } /* noise overlay removed for light theme */
 .auth-card {
   background: var(--bg2); border: 1px solid var(--border); border-top: 2px solid var(--red);
   border-radius: 12px; padding: 2rem; width: 100%; max-width: 420px;
+  margin-top: 1.75rem;
 }
 .auth-card h2 { font-size: var(--font-h2); font-weight: 700; margin-bottom: 0.5rem; }
 .auth-card p { color: var(--text-dim); font-size: 0.9rem; margin-bottom: 1.5rem; line-height: 1.6; }
@@ -159,12 +152,17 @@ body::before { display: none; } /* noise overlay removed for light theme */
 .auth-input:focus { border-color: var(--red); }
 .btn-primary {
   width: 100%; background: var(--red); color: var(--white);
-  font-family: 'DM Sans', sans-serif; font-weight: 800;
-  font-size: 0.95rem; letter-spacing: 2px; text-transform: uppercase;
+  font-family: 'DM Sans', sans-serif; font-weight: 700;
+  font-size: 1rem; letter-spacing: 0.3px;
   padding: 1rem; border: none; border-radius: 8px; cursor: pointer; transition: all 0.2s;
 }
 .btn-primary:hover { background: var(--red-bright); transform: translateY(-1px); box-shadow: 0 8px 28px var(--red-glow); }
+.btn-primary:active { transform: scale(0.985) translateY(0); box-shadow: 0 2px 8px var(--red-glow); }
 .magic-sent { background: rgba(61,170,108,0.1); border: 1px solid var(--green); border-radius: 8px; padding: 1rem; text-align: center; color: var(--green); font-size: 0.88rem; margin-top: 1rem; display: none; }
+.auth-code { font-family: 'DM Mono', 'Courier New', monospace; font-size: 1.6rem; letter-spacing: 0.4em; text-align: center; }
+.auth-step-foot { margin-top: 1rem; text-align: center; font-size: 0.85rem; color: var(--text-dim); }
+.auth-link { background: none; border: none; color: var(--red); cursor: pointer; font: inherit; padding: 0; text-decoration: underline; }
+.auth-link:hover { color: var(--red-bright); }
 .demo-links { margin-top: 1.75rem; text-align: center; }
 .demo-links p { color: var(--text-dim); font-size: 0.72rem; font-weight: 600; margin-bottom: 0.75rem; letter-spacing: 2px; text-transform: uppercase; }
 .demo-avatars { display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: center; }
@@ -190,6 +188,7 @@ body::before { display: none; } /* noise overlay removed for light theme */
   border-radius: 6px; cursor: pointer; transition: all 0.15s; white-space: nowrap;
 }
 .nav-btn:hover { color: var(--text); background: var(--bg3); }
+.nav-btn:active { transform: scale(0.95); }
 .nav-btn.active { color: var(--red); background: rgba(222,51,65,0.1); }
 .header-user { display: flex; align-items: center; gap: 0.55rem; cursor: pointer; padding: 0.2rem 0.35rem; border-radius: 8px; transition: background 0.15s; }
 .header-user:hover { background: var(--bg3); }
@@ -405,7 +404,7 @@ body::before { display: none; } /* noise overlay removed for light theme */
 .ws-top-row {
   display: flex; flex-direction: column; gap: 0.55rem;
 }
-.ws-week { font-size: 1rem; font-weight: 800; color: var(--text); margin-bottom: 0.15rem; }
+.ws-week { font-size: 1rem; font-weight: 800; color: var(--text); margin-bottom: 0.15rem; min-width: 0; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .ws-dates { font-size: 0.78rem; color: var(--text-dim); font-weight: 600; }
 .ws-right { width: 100%; }
 .ws-pts { font-size: 0.95rem; font-weight: 700; color: var(--text); margin-bottom: 0.35rem; text-align: left; }
@@ -504,9 +503,13 @@ body::before { display: none; } /* noise overlay removed for light theme */
 }
 .fortune-quote-bare .quote-edit-btn { position: absolute; top: 0.6rem; right: 0.7rem; }
 .quote-suggest-wrap { margin-top: 0.9rem; padding-top: 0.7rem; border-top: 1px dashed var(--border); }
-.quote-suggest-toggle { padding: 0.4rem 0.75rem; flex-direction: row; gap: 0.35rem; min-width: 0; flex: 0 0 auto; }
+.quote-suggest-toggle {
+  padding: 0.4rem 0.85rem; flex-direction: row; gap: 0.35rem; min-width: 0; flex: 0 0 auto;
+  background: rgba(222,51,65,0.08); border-color: rgba(222,51,65,0.25); color: var(--red);
+}
+.quote-suggest-toggle:hover { background: rgba(222,51,65,0.13); border-color: var(--red-dim); color: var(--red); }
 .quote-suggest-toggle .qa-icon { font-size: 1rem; margin-bottom: 0; }
-.quote-suggest-toggle .qa-sub { font-size: 0.78rem; font-weight: 600; }
+.quote-suggest-toggle .qa-sub { font-size: 0.78rem; font-weight: 700; color: var(--red); }
 @keyframes fortuneReveal {
   0% { opacity: 0; transform: scale(0.94) translateY(6px); }
   100% { opacity: 1; transform: scale(1) translateY(0); }
@@ -571,6 +574,7 @@ body::before { display: none; } /* noise overlay removed for light theme */
   color: var(--text-dim); cursor: pointer; transition: all 0.15s;
 }
 .admin-action-btn:hover { border-color: var(--red); color: var(--red); }
+.admin-action-btn:active { transform: scale(0.96); }
 .admin-action-btn.danger { color: var(--red); border-color: rgba(222,51,65,0.35); }
 @media (max-width:600px){
   .admin-user-row { grid-template-columns: 1fr; gap: 0.45rem; }
@@ -710,6 +714,20 @@ body::before { display: none; } /* noise overlay removed for light theme */
   cursor:pointer;
 }
 .week-pill:hover { border-color: var(--red); }
+.week-pill:active { transform: scale(0.97); }
+@media (max-width: 768px) {
+  .week-track {
+    display: flex;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: 0.4rem;
+    margin-left: -1.5rem; margin-right: -1.5rem;
+    padding-left: 1.5rem; padding-right: 1.5rem;
+  }
+  .week-track::-webkit-scrollbar { display: none; }
+  .week-pill { flex: 0 0 auto; min-width: 4.6rem; }
+}
 .week-pill.done { background:rgba(222,51,65,0.08); border-color:rgba(222,51,65,0.28); }
 .week-pill.current { background:var(--red); border-color:var(--red); }
 .week-pill.current .wk-label, .week-pill.current .wk-pts, .week-pill.current .wk-dates { color:var(--white); }
@@ -777,10 +795,9 @@ body::before { display: none; } /* noise overlay removed for light theme */
 .wt-input-row input:focus { border-color: var(--red); }
 .wt-suffix { font-size: 0.92rem; font-weight: 700; color: var(--text-dim); }
 .wt-status { font-size: 0.82rem; color: var(--sun); font-weight: 700; margin-bottom: 0.3rem; min-height: 1.2em; }
-.ws-week-line { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 0.15rem; }
-.ws-edit-top-btn { padding: 0.35rem 0.7rem; flex-direction: row; gap: 0.35rem; min-width: 0; flex: 0 0 auto; margin-left: auto; }
-.ws-edit-top-btn .qa-icon { font-size: 0.9rem; margin-bottom: 0; }
-.ws-edit-top-btn .qa-sub { font-size: 0.75rem; font-weight: 600; }
+.ws-week-line { display: flex; align-items: center; gap: 0.5rem; flex-wrap: nowrap; margin-bottom: 0.15rem; min-width: 0; }
+.ws-edit-top-btn { padding: 0.35rem 0.75rem; flex-direction: row; gap: 0; min-width: 0; flex: 0 0 auto; margin-left: auto; }
+.ws-edit-top-btn .qa-sub { font-size: 0.75rem; font-weight: 700; white-space: nowrap; }
 .ws-status-row { padding-top: 0.6rem; border-top: 1px dashed var(--border); }
 .modal-shred .confirm-icon { font-size: 2.8rem; animation: shredBounce 0.5s ease-out both; }
 .modal-shred h2 { color: var(--red); }
@@ -837,8 +854,18 @@ body::before { display: none; } /* noise overlay removed for light theme */
 .weekly-view-header {
   display:flex; align-items:center; gap:1rem; margin-bottom:1.25rem; flex-wrap:wrap;
 }
-.week-selector { display:grid; grid-template-columns:repeat(4,1fr); gap:0.4rem; margin-bottom:0.9rem; }
-@media (min-width:600px){ .week-selector { grid-template-columns:repeat(8,1fr); gap:0.3rem; } }
+.week-selector {
+  display: flex; gap: 0.4rem; margin-bottom: 0.9rem;
+  overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+  margin-left: -1.5rem; margin-right: -1.5rem;
+  padding: 0 1.5rem 0.4rem;
+}
+.week-selector::-webkit-scrollbar { display: none; }
+.week-selector .week-sel-btn { flex: 0 0 auto; min-width: 4.6rem; }
+@media (min-width:600px){
+  .week-selector { display:grid; grid-template-columns:repeat(8,1fr); gap:0.3rem; overflow:visible; margin:0 0 0.9rem; padding:0; }
+  .week-selector .week-sel-btn { min-width: 0; }
+}
 .week-sel-btn {
   background:var(--bg2); border:1px solid var(--border); border-radius:8px;
   color:var(--text-dim); padding:0.5rem 0.3rem; cursor:pointer; transition:all 0.15s;
@@ -852,6 +879,15 @@ body::before { display: none; } /* noise overlay removed for light theme */
 .week-sel-btn.current-week:not(.active) .wsb-num { color:var(--red); }
 .week-sel-btn.active { background:rgba(222,51,65,0.16); border-color:var(--red); }
 .week-sel-btn.active .wsb-num { color:var(--red); }
+.week-sel-btn:disabled, .week-sel-btn.disabled { opacity: 0.38; cursor: not-allowed; background: var(--bg2); }
+.week-sel-btn:disabled:hover, .week-sel-btn.disabled:hover { border-color: var(--border); }
+.weekly-locked-msg {
+  background: var(--bg2); border: 1px dashed var(--border);
+  border-radius: 12px; padding: 1.4rem 1.2rem;
+  text-align: center; color: var(--text-dim); line-height: 1.55;
+  font-size: 0.92rem;
+}
+.weekly-locked-msg strong { color: var(--text); }
 
 .weekly-grid { display:flex; flex-direction:column; gap:0.6rem; margin-bottom:1.5rem; }
 
@@ -907,6 +943,82 @@ body::before { display: none; } /* noise overlay removed for light theme */
 }
 .btn-shred-sm:hover { background:var(--red-bright); }
 
+/* Weekly habit×day grid — habits down, days across, tap any cell to toggle */
+.weekly-table {
+  display: grid;
+  /* Habit col gets ~16px more so "Hydrate" / "Veggies" / "Alcohol" fit without truncating;
+     day cells trimmed slightly to compensate (still comfortably tappable at 28px). */
+  grid-template-columns: minmax(88px, 1.6fr) repeat(7, minmax(28px, 1fr)) minmax(34px, 0.55fr);
+  grid-auto-rows: 44px; /* uniform row height regardless of cell content */
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+}
+/* Overlay 🚫 on top of food emoji for the No-X habits — works anywhere a habit emoji renders */
+.habit-emoji-no { position: relative; display: inline-block; line-height: 1; }
+.habit-emoji-no .heno-base { display: inline-block; line-height: 1; }
+.habit-emoji-no .heno-mark {
+  position: absolute; top: -0.15em; right: -0.35em;
+  font-size: 0.72em; line-height: 1;
+  filter: drop-shadow(0 0 1.5px rgba(255,255,255,0.95));
+}
+.wt-corner { background: var(--bg3); }
+.wt-day-head, .wt-tot-head {
+  background: var(--bg3); padding: 0.5rem 0.2rem;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.05rem;
+}
+.wt-day-head .wt-dh-letter { font-size: 0.78rem; font-weight: 800; color: var(--text); }
+.wt-day-head .wt-dh-num { font-size: 0.62rem; font-weight: 600; color: var(--text-dim); }
+.wt-day-head.today .wt-dh-letter, .wt-day-head.today .wt-dh-num { color: var(--red); }
+.wt-day-head.today { box-shadow: inset 0 -3px 0 var(--red); }
+.wt-tot-head { font-size: 0.72rem; font-weight: 800; color: var(--red); text-transform: uppercase; letter-spacing: 1px; }
+.wt-habit-cell {
+  background: var(--bg2); padding: 0.5rem 0.45rem;
+  display: flex; align-items: center; gap: 0.32rem;
+  font-size: 0.74rem; font-weight: 700; color: var(--text);
+}
+.wt-habit-cell.big3 { border-left: 3px solid var(--red); background: rgba(222,51,65,0.05); padding-left: calc(0.45rem - 3px); }
+.wt-habit-cell .wt-emoji { font-size: 1rem; line-height: 1; flex-shrink: 0; }
+.wt-habit-cell .wt-name { flex: 1; text-align: left; line-height: 1.15; }
+.wt-habit-cell .wt-pts { display: none; font-size: 0.6rem; color: var(--text-dim); font-weight: 700; padding: 0.05rem 0.4rem; background: var(--bg3); border-radius: 999px; flex-shrink: 0; }
+@media (min-width: 480px) { .wt-habit-cell .wt-pts { display: inline-block; } }
+.wt-cell {
+  background: var(--bg2);
+  cursor: pointer; min-height: 38px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem; font-weight: 800; color: transparent;
+  user-select: none; transition: background 0.12s, transform 0.08s;
+}
+.wt-cell.hit { background: var(--green); color: #FFFFFF; }
+.wt-cell.future { cursor: not-allowed; opacity: 0.35; background: var(--bg3); }
+.wt-cell:not(.future):not(.hit):hover { background: rgba(46,156,92,0.15); }
+.wt-cell:not(.future):active { transform: scale(0.92); }
+.wt-cell.today-col:not(.hit) { box-shadow: inset 0 -2px 0 var(--red); }
+.wt-row-total {
+  background: var(--bg2); display: flex; align-items: center; justify-content: center;
+  font-size: 0.78rem; font-weight: 800; color: var(--red); padding: 0.4rem 0.2rem;
+  white-space: nowrap;
+}
+.wt-row-total small { font-size: 0.58rem; color: var(--text-dim); font-weight: 600; margin-left: 0.05rem; }
+.wt-foot-label {
+  background: var(--bg3); padding: 0.55rem 0.45rem;
+  display: flex; align-items: center; justify-content: flex-end;
+  font-size: 0.62rem; font-weight: 800; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px;
+}
+.wt-day-total {
+  background: var(--bg3); padding: 0.55rem 0.2rem;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.85rem; font-weight: 800; color: var(--red);
+}
+.wt-week-total {
+  background: rgba(222,51,65,0.18); padding: 0.55rem 0.2rem;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.95rem; font-weight: 900; color: var(--red);
+}
+
 /* ═══════════════════════════════════════════
    LEADERBOARD
 ═══════════════════════════════════════════ */
@@ -949,6 +1061,55 @@ body::before { display: none; } /* noise overlay removed for light theme */
    BENCHMARKS
 ═══════════════════════════════════════════ */
 .benchmarks-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(205px,1fr)); gap:0.95rem; margin-bottom:1.5rem; }
+
+/* My Track row-grid: Exercise | Start | Finish | Δ */
+.bm-rows {
+  display: grid;
+  grid-template-columns: minmax(98px, 1.4fr) 1fr 1fr minmax(60px, 0.8fr);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+}
+.bm-rows-head {
+  background: var(--bg3); padding: 0.55rem 0.45rem;
+  font-size: 0.62rem; font-weight: 800; color: var(--text-dim);
+  text-transform: uppercase; letter-spacing: 1px;
+  display: flex; align-items: center; justify-content: center;
+}
+.bm-rows-head:first-child { justify-content: flex-start; padding-left: 0.7rem; }
+.bm-row-name {
+  background: var(--bg2); padding: 0.6rem 0.65rem;
+  display: flex; align-items: center; gap: 0.4rem;
+  font-size: 0.85rem; font-weight: 700; color: var(--text);
+}
+.bm-row-name .bm-icon { font-size: 1.05rem; flex-shrink: 0; }
+.bm-row-name .bm-row-unit { font-size: 0.6rem; font-weight: 600; color: var(--text-dim); margin-left: auto; }
+.bm-row-input {
+  background: var(--bg2); padding: 0.4rem 0.3rem;
+  display: flex; align-items: center; justify-content: center;
+}
+.bm-row-input .bm-input,
+.bm-row-input .bm-time-input input {
+  width: 100%; background: var(--bg3); border: 1px solid var(--border);
+  border-radius: 6px; color: var(--text); padding: 0.42rem 0.35rem;
+  font-family: 'DM Sans', sans-serif; font-size: 0.88rem;
+  text-align: center; outline: none; transition: border-color 0.15s;
+  min-width: 0;
+}
+.bm-row-input .bm-input:focus,
+.bm-row-input .bm-time-input input:focus { border-color: var(--red); }
+.bm-row-input .bm-time-input { display: flex; align-items: center; gap: 0.15rem; width: 100%; }
+.bm-row-input .bm-time-input input { padding: 0.42rem 0.2rem; }
+.bm-row-input .bm-time-input .bm-colon { color: var(--text-dim); font-weight: 800; padding: 0 0.05rem; }
+.bm-row-delta {
+  background: var(--bg2); padding: 0.45rem 0.25rem;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.8rem; font-weight: 800;
+}
+.bm-row-delta .bm-delta { background: none; border: none; padding: 0; font-weight: 800; }
 .bm-card { background:var(--bg2); border:1px solid var(--border); border-radius:12px; padding:1rem 1.1rem; transition:border-color 0.2s; }
 .bm-card:hover { border-color:rgba(222,51,65,0.3); }
 .bm-card-head { display:flex; align-items:center; gap:0.55rem; margin-bottom:0.7rem; }
@@ -1043,8 +1204,9 @@ body::before { display: none; } /* noise overlay removed for light theme */
 /* ═══════════════════════════════════════════
    MOBILE BOTTOM NAV
 ═══════════════════════════════════════════ */
-.bottom-nav { display:none; position:fixed; bottom:0; left:0; right:0; background:rgba(255,255,255,0.96); border-top:1px solid var(--border); backdrop-filter:blur(10px); padding:0.38rem 0; z-index:100; grid-template-columns:repeat(5,1fr); }
-.bottom-nav-btn { display:flex; flex-direction:column; align-items:center; gap:0.18rem; background:none; border:none; color:var(--text-dim); cursor:pointer; padding:0.38rem 0; transition:color 0.15s; font-family:'DM Sans',sans-serif; font-size:0.58rem; font-weight:700; letter-spacing:0.5px; text-transform:uppercase; }
+.bottom-nav { display:none; position:fixed; bottom:0; left:0; right:0; background:rgba(255,255,255,0.96); border-top:1px solid var(--border); backdrop-filter:blur(10px); padding:0.38rem 0 max(0.38rem, env(safe-area-inset-bottom)); z-index:100; grid-template-columns:repeat(5,1fr); }
+.bottom-nav-btn { display:flex; flex-direction:column; align-items:center; gap:0.18rem; background:none; border:none; color:var(--text-dim); cursor:pointer; padding:0.38rem 0; transition:color 0.15s, transform 0.1s; font-family:'DM Sans',sans-serif; font-size:0.58rem; font-weight:700; letter-spacing:0.5px; text-transform:uppercase; }
+.bottom-nav-btn:active { transform: scale(0.93); }
 .bottom-nav-btn .icon { font-size:1.15rem; }
 .bottom-nav-btn.active { color:var(--red); }
 
@@ -1052,7 +1214,7 @@ body::before { display: none; } /* noise overlay removed for light theme */
    TOAST / FLASH
 ═══════════════════════════════════════════ */
 .saved-flash {
-  position:fixed; bottom:2rem; left:50%; transform:translateX(-50%);
+  position:fixed; bottom:max(2rem, calc(env(safe-area-inset-bottom) + 1rem)); left:50%; transform:translateX(-50%);
   background:#FFFFFF; color:var(--text);
   padding:0.65rem 1.2rem; border-radius:8px;
   border:1px solid var(--border);
@@ -1140,23 +1302,23 @@ body::before { display: none; } /* noise overlay removed for light theme */
 .fb-widget { position: fixed; inset: 0; pointer-events: none; z-index: 9000; }
 .fb-widget > * { pointer-events: auto; }
 
-/* Vertical edge tab — glued to the right side, lower-third (out of content's way) */
+/* Vertical edge tab — anchored right, lifted into eye-line on mobile */
 .fb-toggle {
-  position: fixed; right: 0; bottom: 25%;
+  position: fixed; right: 0; bottom: 35%;
   background: var(--red); color: #FFFFFF; border: none;
   border-radius: 8px 0 0 8px;
-  padding: 0.95rem 0.45rem;
-  cursor: pointer; box-shadow: -3px 4px 14px rgba(222,51,65,0.28);
-  transition: background 0.15s, padding 0.2s, box-shadow 0.2s;
+  padding: 0.95rem 0.5rem;
+  cursor: pointer; box-shadow: -3px 4px 14px rgba(222,51,65,0.32);
+  transition: background 0.15s, padding 0.2s, box-shadow 0.2s, transform 0.1s;
 }
 .fb-toggle-text {
   display: inline-block; writing-mode: vertical-rl;
   font-family: 'DM Sans', sans-serif; font-weight: 800;
-  font-size: 0.82rem; letter-spacing: 1.2px;
+  font-size: 0.85rem; letter-spacing: 1.4px;
   transform: rotate(180deg);
 }
-.fb-toggle:hover { background: var(--red-bright); padding-right: 0.65rem; box-shadow: -4px 6px 18px rgba(222,51,65,0.4); }
-@media (max-width: 768px) { .fb-toggle { bottom: 5rem; } } /* clear bottom-nav on mobile */
+.fb-toggle:hover { background: var(--red-bright); padding-right: 0.7rem; box-shadow: -4px 6px 18px rgba(222,51,65,0.42); }
+.fb-toggle:active { transform: scale(0.96); }
 
 /* Backdrop scrim — only present when drawer is open */
 .fb-backdrop {
@@ -1260,6 +1422,132 @@ body::before { display: none; } /* noise overlay removed for light theme */
   .coach-2up { grid-template-columns: 1fr 1fr; gap: 1.4rem; }
   .coach-2up .section-header.mt1 { margin-top: 0; }
 }
+
+/* ═══════════════════════════════════════════
+   ONBOARDING OVERLAY (shown once per browser)
+═══════════════════════════════════════════ */
+#onboarding-overlay {
+  position: fixed; inset: 0; z-index: 9999;
+  background: var(--bg);
+  display: flex; flex-direction: column;
+  /* Bottom padding clears Safari's mobile address bar (~3.5rem) so the Next button sits in the visible viewport */
+  padding: max(1.2rem, env(safe-area-inset-top)) 0 max(4.5rem, calc(env(safe-area-inset-bottom) + 4rem));
+  overflow: hidden;
+}
+#onboarding-overlay[hidden] { display: none; }
+.ob-skip {
+  position: absolute; top: max(1rem, env(safe-area-inset-top)); right: 1rem;
+  background: none; border: none; color: var(--text-dim); font-family: inherit;
+  font-size: 0.85rem; font-weight: 700; letter-spacing: 0.5px; cursor: pointer;
+  padding: 0.4rem 0.6rem; border-radius: 6px; z-index: 2;
+}
+.ob-skip:hover { color: var(--text); background: var(--bg3); }
+.ob-track {
+  flex: 1; display: flex; width: 300%;
+  transform: translateX(0%); transition: transform 0.3s ease;
+}
+.ob-track[data-screen="1"] { transform: translateX(-33.333%); }
+.ob-track[data-screen="2"] { transform: translateX(-66.666%); }
+.ob-screen {
+  flex: 0 0 33.333%; box-sizing: border-box;
+  padding: 2rem 1.5rem 1rem;
+  display: flex; flex-direction: column; align-items: center;
+  text-align: center; overflow-y: auto;
+}
+.ob-sun { font-size: 4.5rem; line-height: 1; margin-bottom: 1.2rem; animation: sunPulse 4s ease-in-out infinite; }
+.ob-h1 {
+  font-size: clamp(2.2rem, 9vw, 3.4rem); font-weight: 900; letter-spacing: -0.02em;
+  color: var(--text); line-height: 1; margin-bottom: 0.4rem;
+}
+.ob-h1 span { color: var(--red); }
+.ob-h2 { font-size: 1.6rem; font-weight: 800; color: var(--text); margin-bottom: 0.4rem; }
+.ob-sub { font-size: 1rem; font-weight: 600; color: var(--text-dim); margin-bottom: 1.4rem; max-width: 380px; }
+.ob-body { font-size: 0.95rem; color: var(--text); max-width: 380px; line-height: 1.5; }
+.ob-habits {
+  list-style: none; padding: 0; margin: 0 0 1rem;
+  display: grid; grid-template-columns: 1fr; gap: 0.4rem; width: 100%; max-width: 380px;
+}
+.ob-habits li {
+  display: flex; align-items: center; gap: 0.6rem;
+  background: var(--bg2); border: 1px solid var(--border); border-radius: 10px;
+  padding: 0.55rem 0.8rem; font-size: 0.92rem; font-weight: 700; color: var(--text);
+}
+.ob-habits li.big3 { border-color: var(--red); background: rgba(222,51,65,0.06); }
+.ob-habits .oh-emoji { font-size: 1.15rem; line-height: 1; }
+.ob-habits .oh-name { flex: 1; text-align: left; }
+.ob-habits .oh-pts {
+  font-size: 0.75rem; font-weight: 800; color: var(--text-dim);
+  background: var(--bg3); padding: 0.18rem 0.5rem; border-radius: 999px;
+  border: 1px solid var(--border);
+}
+.ob-habits li.big3 .oh-pts { background: var(--red); color: #FFFFFF; border-color: var(--red); }
+.ob-platform {
+  background: var(--bg2); border: 1px solid var(--border); border-radius: 12px;
+  padding: 1rem 1.2rem; max-width: 380px; width: 100%; text-align: left;
+  font-size: 0.92rem; line-height: 1.55; color: var(--text);
+}
+.ob-platform .ob-step { display: flex; gap: 0.6rem; align-items: flex-start; margin-bottom: 0.45rem; }
+.ob-platform .ob-step:last-child { margin-bottom: 0; }
+.ob-platform .ob-step-icon { font-size: 1.1rem; flex-shrink: 0; }
+/* Screen 2 — non-interactive illustration of the backfill workflow.
+   Mirrors the live weekly view: pills + habits×days grid + Edit Total chip. */
+.ob-mock {
+  background: var(--bg2); border: 1px solid var(--border); border-radius: 14px;
+  padding: 0.85rem; max-width: 380px; width: 100%; text-align: left;
+  margin-bottom: 0.9rem;
+}
+.ob-mock-pills { display: flex; gap: 0.35rem; margin-bottom: 0.7rem; }
+.ob-mock-pill {
+  flex: 1; background: var(--bg3); border: 1px solid var(--border); border-radius: 7px;
+  padding: 0.38rem 0.25rem; text-align: center;
+  display: flex; flex-direction: column; gap: 0.05rem;
+}
+.ob-mock-pill .ob-mp-num { font-size: 0.52rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--text-dim); }
+.ob-mock-pill .ob-mp-pts { font-size: 0.85rem; font-weight: 800; color: var(--text); }
+.ob-mock-pill.done { border-color: rgba(222,51,65,0.35); background: rgba(222,51,65,0.06); }
+.ob-mock-pill.done .ob-mp-num { color: var(--red); }
+.ob-mock-pill.active { background: rgba(222,51,65,0.16); border-color: var(--red); }
+.ob-mock-pill.active .ob-mp-num { color: var(--red); }
+.ob-mock-pill.locked { opacity: 0.4; }
+
+/* Mini habits×days grid that mirrors .weekly-table at illustration scale */
+.ob-mock-grid {
+  display: grid;
+  grid-template-columns: minmax(74px, 1.4fr) repeat(7, 1fr);
+  gap: 1px; background: var(--border);
+  border: 1px solid var(--border); border-radius: 8px;
+  overflow: hidden; margin-bottom: 0.7rem;
+}
+.ob-mg-corner, .ob-mg-head-cell, .ob-mg-name, .ob-mg-cell {
+  background: var(--bg3); display: flex; align-items: center; justify-content: center;
+  min-height: 26px; font-size: 0.62rem; font-weight: 700; color: var(--text-dim);
+}
+.ob-mg-name {
+  background: var(--bg2); padding: 0 0.4rem; justify-content: flex-start; gap: 0.3rem;
+  font-size: 0.7rem; font-weight: 700; color: var(--text); white-space: nowrap;
+}
+.ob-mg-name.big3 { background: rgba(222,51,65,0.05); border-left: 2px solid var(--red); padding-left: calc(0.4rem - 2px); }
+.ob-mg-head-cell { font-size: 0.62rem; font-weight: 800; color: var(--text); }
+.ob-mg-cell { background: var(--bg2); }
+.ob-mg-cell.hit { background: var(--green); color: #FFFFFF; font-weight: 800; }
+
+.ob-mock-edit {
+  display: inline-block; font-size: 0.78rem; font-weight: 700; color: var(--red);
+  background: rgba(222,51,65,0.08); border: 1px dashed rgba(222,51,65,0.35);
+  border-radius: 8px; padding: 0.4rem 0.85rem;
+}
+.ob-dots {
+  display: flex; gap: 0.4rem; justify-content: center; margin: 0.5rem 0 0.8rem;
+}
+.ob-dots span {
+  width: 8px; height: 8px; border-radius: 50%; background: var(--bg4);
+  transition: background 0.2s, width 0.2s;
+}
+.ob-dots span.active { background: var(--red); width: 22px; border-radius: 4px; }
+.ob-next {
+  width: calc(100% - 3rem); max-width: 360px; margin: 0 auto;
+  font-size: 0.95rem; padding: 0.85rem 1.2rem;
+}
 </style>
 </head>
 <body>
@@ -1267,7 +1555,7 @@ body::before { display: none; } /* noise overlay removed for light theme */
 <!-- Shred success modal (pop-out style, auto-dismisses) -->
 <div class="modal-overlay" id="shred-modal" role="dialog" aria-modal="true">
   <div class="modal modal-confirm modal-shred">
-    <div class="confirm-icon" id="shred-modal-icon">🐉</div>
+    <div class="confirm-icon" id="shred-modal-icon">💪</div>
     <h2 id="shred-modal-title">Shredded!</h2>
     <p class="confirm-message" id="shred-modal-message">Day logged. Keep grinding.</p>
   </div>
@@ -1275,44 +1563,34 @@ body::before { display: none; } /* noise overlay removed for light theme */
 
 <!-- ════════ AUTH ════════ -->
 <div id="auth-screen">
-  <svg class="auth-sun-svg" viewBox="0 0 120 120" aria-hidden="true">
-    <defs>
-      <radialGradient id="sun-grad" cx="50%" cy="50%" r="50%">
-        <stop offset="0%" stop-color="#FFD66B"/>
-        <stop offset="55%" stop-color="#FF8C42"/>
-        <stop offset="100%" stop-color="#DE3341"/>
-      </radialGradient>
-    </defs>
-    <g class="auth-sun-rays" fill="#FF8C42">
-      <rect x="57" y="4"   width="6" height="14" rx="3"/>
-      <rect x="57" y="102" width="6" height="14" rx="3"/>
-      <rect x="4"   y="57" width="14" height="6" rx="3"/>
-      <rect x="102" y="57" width="14" height="6" rx="3"/>
-      <rect x="57" y="4"   width="6" height="14" rx="3" transform="rotate(45 60 60)"/>
-      <rect x="57" y="102" width="6" height="14" rx="3" transform="rotate(45 60 60)"/>
-      <rect x="57" y="4"   width="6" height="14" rx="3" transform="rotate(-45 60 60)"/>
-      <rect x="57" y="102" width="6" height="14" rx="3" transform="rotate(-45 60 60)"/>
-    </g>
-    <circle cx="60" cy="60" r="26" fill="url(#sun-grad)"/>
-  </svg>
-
-  <div class="auth-logo">Summer <span>Shred</span></div>
-  <div class="auth-sub" id="auth-prog-range">—</div>
-
-  <div class="auth-quote">"Be kind, and look mean."</div>
-
-  <div class="auth-tagline">☀️ Get ready. Summer is coming.</div>
+  <div class="auth-tagline">☀️ Get ready, summer is coming.</div>
   <div class="auth-countdown" id="auth-cd"></div>
 
+  <div class="auth-logo"><span>MEANEY</span> SUMMER SHRED</div>
+  <div class="auth-sub" id="auth-prog-range">—</div>
+
   <div class="auth-card">
-    <h2>No password necessary.</h2>
-    <p>Enter your email, and you'll get a login link from Live B.I.G 365.</p>
-    <input class="auth-input" id="auth-email" type="email" placeholder="you@example.com"/>
-    <button class="btn-primary" onclick="handleMagicLink()">SEND MAGIC LINK →</button>
-    <div class="magic-sent" id="magic-sent">✅ Link sent! Check your inbox.</div>
+    <div id="auth-step-email">
+      <h2>No password needed.</h2>
+      <p>Enter your email and we'll send you a sign-in code from Live B.I.G 365.</p>
+      <input class="auth-input" id="auth-email" type="email" placeholder="you@example.com" autocomplete="email"/>
+      <button class="btn-primary" onclick="requestCode()">Send code →</button>
+    </div>
+
+    <div id="auth-step-code" hidden>
+      <h2>Check your email.</h2>
+      <p>We sent a sign-in code to <strong id="auth-sent-to"></strong>. Enter it below — codes expire in 1 hour.</p>
+      <input class="auth-input auth-code" id="auth-code" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="8" placeholder="12345678" autocomplete="one-time-code"/>
+      <button class="btn-primary" onclick="verifyCode()">Sign in</button>
+      <div class="auth-step-foot">
+        <button class="auth-link" onclick="resendCode()">Resend code</button>
+        <span> · </span>
+        <button class="auth-link" onclick="resetAuth()">Use a different email</button>
+      </div>
+    </div>
   </div>
 
-  <div class="demo-links">
+  <div class="demo-links" hidden>
     <p>Quick demo access</p>
     <div class="demo-avatars" id="demo-pills"></div>
   </div>
@@ -1398,10 +1676,10 @@ body::before { display: none; } /* noise overlay removed for light theme */
       </div>
 
       <!-- Shred It button → reveals today's quote inline -->
-      <button class="shred-btn shred-btn-bare" id="fortune-cta" onclick="shredAndReveal()">Shred It 🐉</button>
+      <button class="shred-btn shred-btn-bare" id="fortune-cta" onclick="shredAndReveal()">Shred It</button>
       <div class="fortune-quote-bare" id="fortune-quote">
-        <div class="quote-text" id="quote-text">The only bad workout is the one that didn't happen.</div>
-        <div class="quote-author" id="quote-author">Coach</div>
+        <div class="quote-text" id="quote-text">…</div>
+        <div class="quote-author" id="quote-author"></div>
         <div class="quote-suggest-wrap">
           <button class="qa-btn quote-suggest-toggle" onclick="toggleQuoteSuggest()"><span class="qa-icon">✨</span><span class="qa-sub">Suggest a quote</span></button>
           <div class="quote-suggest-form" id="quote-suggest-form">
@@ -1464,19 +1742,6 @@ body::before { display: none; } /* noise overlay removed for light theme */
 
     <!-- ══ LEADERBOARD ══ -->
     <div class="view" id="view-leaderboard">
-      <!-- Summer progress -->
-      <div class="summer-bar fade-up">
-        <div class="summer-top">
-          <div class="summer-left">
-            <div class="summer-icon">☀️</div>
-            <div class="summer-headline">First day of summer: <em>June 21</em></div>
-          </div>
-        </div>
-        <div class="summer-progress-wrap">
-          <div class="summer-prog-label" id="summer-prog-label">Loading...</div>
-          <div class="summer-prog-bar"><div class="summer-prog-fill" id="summer-prog-fill" style="width:0%"></div></div>
-        </div>
-      </div>
       <div class="section-header mb15">
         <div><div class="section-title">Leaderboard</div><div class="section-sub">Who's running the board?</div></div>
       </div>
@@ -1517,9 +1782,9 @@ body::before { display: none; } /* noise overlay removed for light theme */
   </main>
 
   <nav class="bottom-nav">
-    <button class="bottom-nav-btn active" data-view="log" onclick="switchView('log',this);syncBottomNav(this)"><span class="icon">📝</span>Today</button>
+    <button class="bottom-nav-btn active" data-view="log" onclick="switchView('log',this);syncBottomNav(this)"><span class="icon">🏋️</span>Today</button>
     <button class="bottom-nav-btn" data-view="weekly" onclick="switchView('weekly',this);syncBottomNav(this)"><span class="icon">📅</span>Weekly</button>
-    <button class="bottom-nav-btn" data-view="coach" onclick="switchView('coach',this);syncBottomNav(this)"><span class="icon">🏋️</span>Coach</button>
+    <button class="bottom-nav-btn" data-view="coach" onclick="switchView('coach',this);syncBottomNav(this)"><span class="icon">🎯</span>Coach</button>
     <button class="bottom-nav-btn" data-view="leaderboard" onclick="switchView('leaderboard',this);syncBottomNav(this)"><span class="icon">🏆</span>Board</button>
     <button class="bottom-nav-btn" data-view="benchmarks" onclick="switchView('benchmarks',this);syncBottomNav(this)"><span class="icon">📊</span>Track</button>
   </nav>
@@ -1580,6 +1845,66 @@ body::before { display: none; } /* noise overlay removed for light theme */
   </div>
 </div>
 
+<!-- ════════ ONBOARDING (3-screen welcome, shown once per browser) ════════ -->
+<div id="onboarding-overlay" hidden role="dialog" aria-modal="true" aria-label="Welcome to Live B.I.G 365">
+  <button class="ob-skip" type="button" onclick="onbDismiss()">Skip</button>
+  <div class="ob-track" id="ob-track">
+
+    <!-- Screen 1: welcome + habit list -->
+    <div class="ob-screen">
+      <div class="ob-h1">LIVE <span>B.I.G</span> 365</div>
+      <div class="ob-sub">8 weeks. 10 daily habits. One leaderboard.</div>
+      <ul class="ob-habits" id="ob-habits-list"></ul>
+      <div class="ob-body" style="font-size:0.85rem;color:var(--text-dim)">Max <strong>26 pts/day</strong> · <strong>182 pts/week</strong> · <strong>1,456 over 8 weeks</strong>.</div>
+    </div>
+
+    <!-- Screen 2: backfill flow mock -->
+    <div class="ob-screen">
+      <div class="ob-h2">Catch up on missed weeks.</div>
+      <div class="ob-sub">Select any past week and mark daily habits, or edit the weekly total directly!</div>
+      <div class="ob-mock">
+        <div class="ob-mock-pills">
+          <div class="ob-mock-pill done"><span class="ob-mp-num">Wk 1</span><span class="ob-mp-pts">52</span></div>
+          <div class="ob-mock-pill active"><span class="ob-mp-num">Wk 2</span><span class="ob-mp-pts">94</span></div>
+          <div class="ob-mock-pill locked"><span class="ob-mp-num">Wk 3</span><span class="ob-mp-pts">—</span></div>
+          <div class="ob-mock-pill locked"><span class="ob-mp-num">Wk 4</span><span class="ob-mp-pts">—</span></div>
+        </div>
+        <div class="ob-mock-grid">
+          <div class="ob-mg-corner"></div>
+          <div class="ob-mg-head-cell">S</div>
+          <div class="ob-mg-head-cell">M</div>
+          <div class="ob-mg-head-cell">T</div>
+          <div class="ob-mg-head-cell">W</div>
+          <div class="ob-mg-head-cell">T</div>
+          <div class="ob-mg-head-cell">F</div>
+          <div class="ob-mg-head-cell">S</div>
+
+          <div class="ob-mg-name"><span>🏋️</span><span>Train</span></div>
+          <div class="ob-mg-cell hit">✓</div><div class="ob-mg-cell hit">✓</div><div class="ob-mg-cell"></div><div class="ob-mg-cell hit">✓</div><div class="ob-mg-cell hit">✓</div><div class="ob-mg-cell"></div><div class="ob-mg-cell"></div>
+
+          <div class="ob-mg-name"><span>💧</span><span>Hydrate</span></div>
+          <div class="ob-mg-cell hit">✓</div><div class="ob-mg-cell hit">✓</div><div class="ob-mg-cell hit">✓</div><div class="ob-mg-cell hit">✓</div><div class="ob-mg-cell"></div><div class="ob-mg-cell"></div><div class="ob-mg-cell"></div>
+
+          <div class="ob-mg-name big3"><span class="habit-emoji-no"><span class="heno-base">🍺</span><span class="heno-mark">🚫</span></span><span>Alcohol</span></div>
+          <div class="ob-mg-cell hit">✓</div><div class="ob-mg-cell hit">✓</div><div class="ob-mg-cell hit">✓</div><div class="ob-mg-cell hit">✓</div><div class="ob-mg-cell hit">✓</div><div class="ob-mg-cell"></div><div class="ob-mg-cell"></div>
+        </div>
+        <div class="ob-mock-edit">Edit Total</div>
+      </div>
+      <div class="ob-body" style="font-size:0.82rem;color:var(--text-dim)">Points lock on <strong>Wednesdays</strong> — Tina counts them then.</div>
+    </div>
+
+    <!-- Screen 3: add to home screen -->
+    <div class="ob-screen">
+      <div class="ob-h2">Get the real app feel.</div>
+      <div class="ob-sub">Add Live B.I.G 365 to your home screen so it opens without typing the URL.</div>
+      <div class="ob-platform" id="ob-platform-instructions"></div>
+    </div>
+
+  </div>
+  <div class="ob-dots" id="ob-dots"><span class="active"></span><span></span><span></span></div>
+  <button class="ob-next shred-btn" type="button" onclick="onbNext()" id="ob-next-btn">Next →</button>
+</div>
+
 <script>
 /* ═══════════════════════════════════════════
    PROGRAM CONFIG — Week runs Sun → Sat. Points due by Wed.
@@ -1594,26 +1919,33 @@ function programEndDate(){const d=new Date(PROGRAM_START);d.setDate(d.getDate()+
 function weekDeadlineKey(wk){return dayOffset(weekEndDate(wk),4);} // Sat + 4 = Wed
 
 const HABITS = [
-  { id:'train',    emoji:'🏋️', name:'TRAIN',               pts:1, tip:'Hit the gym, class, home, or open gym' },
-  { id:'mobility', emoji:'🧘', name:'FLEXY & SEXY',         pts:1, tip:'15 min of stretching & mobility' },
-  { id:'sleep',    emoji:'😴', name:'SLEEP',               pts:1, tip:'6–8 hours of sleep' },
-  { id:'fasting',  emoji:'⏱️', name:'FASTING',             pts:1, tip:'10–14 hour overnight fast' },
-  { id:'veggies',  emoji:'🥦', name:'VEGGIES & FRUIT',     pts:1, tip:'6 servings veg + 2 fruit' },
-  { id:'water',    emoji:'💧', name:'HYDRATION',           pts:1, tip:'64oz water minimum' },
-  { id:'alcohol',  emoji:'🚫', name:'NO ALCOHOL',          pts:5, tip:'Skipped the booze today' },
-  { id:'bread',    emoji:'🍞', name:'NO BREAD',            pts:5, tip:'No flour-based foods' },
-  { id:'sugar',    emoji:'🍬', name:'NO ADDED SUGAR',      pts:5, tip:'No processed sugar or syrups' },
-  { id:'extra',    emoji:'⭐', name:'EXTRA CREDIT',        pts:5, tip:"Crushed this week's focus" },
+  { id:'train',    emoji:'🏋️', name:'Train',     pts:1, tip:'Hit the gym, class, home, or open gym' },
+  { id:'mobility', emoji:'🧘', name:'Stretch',   pts:1, tip:'15 min of stretching & mobility' },
+  { id:'sleep',    emoji:'😴', name:'Sleep',     pts:1, tip:'6–8 hours of sleep' },
+  { id:'fasting',  emoji:'⏱️', name:'Fast',      pts:1, tip:'10–14 hour overnight fast' },
+  { id:'veggies',  emoji:'🥦', name:'Veggies',   pts:1, tip:'6 servings veg + 2 fruit' },
+  { id:'water',    emoji:'💧', name:'Hydrate',   pts:1, tip:'64oz water minimum' },
+  { id:'alcohol',  emoji:'🍺', name:'Alcohol',   pts:5, tip:'Skipped the booze today',     negate:true },
+  { id:'bread',    emoji:'🍞', name:'Bread',     pts:5, tip:'No flour-based foods',        negate:true },
+  { id:'sugar',    emoji:'🍬', name:'Sugar',     pts:5, tip:'No processed sugar or syrups',negate:true },
+  { id:'extra',    emoji:'⭐', name:'Extra',     pts:5, tip:"Crushed this week's focus" },
 ];
 const MAX_DAILY = HABITS.reduce((a,h)=>a+h.pts,0);
+// Render a habit's emoji — overlays 🚫 on top for "No X" habits (alcohol/bread/sugar) so the
+// glyph reads as "no <thing>" instead of just <thing>. Use everywhere we'd otherwise inline h.emoji.
+function habitEmojiHTML(h){
+  return h.negate
+    ? `<span class="habit-emoji-no"><span class="heno-base">${h.emoji}</span><span class="heno-mark">🚫</span></span>`
+    : h.emoji;
+}
 
 const BENCHMARKS_DEF = [
-  {id:'bench',    icon:'🏋️',name:'Bench Press', unit:'lbs', lowerIsBetter:false},
-  {id:'deadlift', icon:'⚡', name:'Deadlift',    unit:'lbs', lowerIsBetter:false},
-  {id:'squat',    icon:'🦵', name:'Back Squat',  unit:'lbs', lowerIsBetter:false},
+  {id:'bench',    icon:'💺', name:'Bench Press', unit:'lbs', lowerIsBetter:false},
+  {id:'deadlift', icon:'💪', name:'Deadlift',    unit:'lbs', lowerIsBetter:false},
+  {id:'squat',    icon:'🏋️', name:'Back Squat',  unit:'lbs', lowerIsBetter:false},
   {id:'row2k',    icon:'🚣', name:'2K Row',       unit:'time',lowerIsBetter:true },
   {id:'burpees',  icon:'💥', name:'50 Burpees',  unit:'time',lowerIsBetter:true },
-  {id:'pullups',  icon:'💪', name:'Max Pull-Ups',unit:'reps',lowerIsBetter:false},
+  {id:'pullups',  icon:'🤸', name:'Max Pull-Ups',unit:'reps',lowerIsBetter:false},
   {id:'bodycomp', icon:'⚖️', name:'Body Weight', unit:'lbs', lowerIsBetter:true },
 ];
 
@@ -1630,15 +1962,9 @@ const BADGE_DEFS = [
   {id:'all8weeks',     icon:'🎖️',name:'Summer Shredder',desc:'Complete all 8 weeks',                check:(u)=>u.weeksCompleted>=8},
 ];
 
-const DEFAULT_QUOTES = [
-  {text:"The only bad workout is the one that didn't happen.",author:"Coach"},
-  {text:"You don't get the body you want by sitting on the couch.",author:"Coach"},
-  {text:"It never gets easier. You just get stronger.",author:"Greg Glassman"},
-  {text:"Earn your summer. Every. Single. Day.",author:"The Board"},
-  {text:"Sweat now, shine later. Summer is coming.",author:"Coach"},
-  {text:"Consistency beats intensity. Just show up.",author:"Coach"},
-  {text:"You're one workout away from a great day.",author:"The Board"},
-];
+// Quote pool now comes entirely from admin-approved user_quotes (state.approvedQuotes).
+// Used when nothing's been approved yet so the UI doesn't render an empty quote card.
+const FALLBACK_QUOTE = {text:"Be the first to suggest a quote — tap below ✨", author:"Live B.I.G 365"};
 
 /* ═══ SUPABASE ═══ */
 const SUPABASE_URL='https://nstgevgekqtmeixdukvi.supabase.co';
@@ -1749,7 +2075,13 @@ function renderSummerCountdown(){
 }
 
 /* ═══ QUOTE ═══ */
-function getQuote(key){if(state.quotes&&state.quotes[key])return state.quotes[key];return DEFAULT_QUOTES[new Date(key+'T12:00:00').getDay()];}
+// Admin can pin a specific quote for a date in state.quotes[key]; otherwise we rotate
+// through admin-approved user_quotes (state.approvedQuotes). FALLBACK_QUOTE shows when
+// nothing has been approved yet.
+function getQuote(key){
+  if(state.quotes&&state.quotes[key])return state.quotes[key];
+  return pickRotatingQuote(key);
+}
 function renderQuote(){
   const q=getQuote(currentDay);
   document.getElementById('quote-text').textContent=q.text;
@@ -1884,17 +2216,35 @@ let adminAddQuoteOpen=false;
 
 async function renderAdminQuotes(){
   const c=document.getElementById('admin-tab-quotes');if(!c)return;
-  c.innerHTML='<div class="coach-empty">Loading…</div>';
-  // Race the Supabase call against a 10s timeout so the tab never hangs forever
-  const fetchPromise=sb.from('user_quotes')
-    .select('id,text,author,submitted_by,approved,created_at')
-    .order('approved',{ascending:true})
-    .order('created_at',{ascending:false});
-  const timeout=new Promise((_,rej)=>setTimeout(()=>rej(new Error('Timed out after 10s — try again')),10000));
-  let data,error;
-  try{const res=await Promise.race([fetchPromise,timeout]);data=res.data;error=res.error;}
-  catch(e){error={message:e.message};}
-  if(error){c.innerHTML='<div class="coach-empty">Failed to load: '+error.message+' &nbsp; <button class="admin-action-btn" onclick="renderAdminQuotes()">Retry</button></div>';return;}
+  c.innerHTML='<div class="coach-empty">Loading quotes…</div>';
+  let data=null, error=null;
+  // Whole function wrapped in try/catch so the loading state always clears even if
+  // an unexpected exception is thrown anywhere downstream
+  try {
+    console.log('[adminQuotes] fetching user_quotes…');
+    const fetchPromise=sb.from('user_quotes')
+      .select('id,text,author,submitted_by,approved,created_at')
+      .order('approved',{ascending:true})
+      .order('created_at',{ascending:false});
+    // 6s timeout: snappier feedback on mobile when Supabase is slow / network is flaky
+    const timeout=new Promise((_,rej)=>setTimeout(()=>rej(new Error('Request took too long. Tap Retry.')),6000));
+    try{
+      const res=await Promise.race([fetchPromise,timeout]);
+      data=res.data; error=res.error;
+      console.log('[adminQuotes] fetch resolved', {rows: data?.length ?? 0, error});
+    } catch(e) {
+      console.warn('[adminQuotes] fetch rejected:', e);
+      error={message: e.message || 'Request failed'};
+    }
+    if(error){
+      c.innerHTML='<div class="coach-empty">Failed to load: '+error.message+' &nbsp; <button class="admin-action-btn" onclick="renderAdminQuotes()">Retry</button></div>';
+      return;
+    }
+  } catch (outer) {
+    console.error('[adminQuotes] unexpected exception:', outer);
+    c.innerHTML='<div class="coach-empty">Something went wrong loading quotes. <button class="admin-action-btn" onclick="renderAdminQuotes()">Retry</button></div>';
+    return;
+  }
   const all=data||[];
   const pending=all.filter(q=>!q.approved);
   const approved=all.filter(q=>q.approved);
@@ -2032,19 +2382,60 @@ async function saveAdminConfig(btn){
   }
 }
 
-/* ═══ AUTH (Supabase magic link) ═══ */
-async function handleMagicLink(){
+/* ═══ AUTH (Supabase email OTP — 6-digit code, with magic link as desktop fallback) ═══ */
+let pendingEmail='';
+
+async function requestCode(){
   const email=document.getElementById('auth-email').value.trim();
   if(!email||!email.includes('@')){showToast('Enter a valid email');return;}
-  const btn=document.querySelector('#auth-screen .btn-primary');if(btn){btn.disabled=true;btn.textContent='Sending…';}
+  const btn=document.querySelector('#auth-step-email .btn-primary');
+  if(btn){btn.disabled=true;btn.textContent='Sending…';}
+  // emailRedirectTo kept so the magic link in the same email lands on the right host for desktop users
   const {error}=await sb.auth.signInWithOtp({email,options:{emailRedirectTo:window.location.origin+window.location.pathname}});
-  if(btn){btn.disabled=false;btn.textContent='SEND MAGIC LINK →';}
+  if(btn){btn.disabled=false;btn.textContent='Send code →';}
   if(error){showToast(error.message);return;}
-  document.getElementById('magic-sent').style.display='block';
+  pendingEmail=email;
+  document.getElementById('auth-sent-to').textContent=email;
+  document.getElementById('auth-step-email').hidden=true;
+  document.getElementById('auth-step-code').hidden=false;
+  setTimeout(()=>document.getElementById('auth-code').focus(),50);
+}
+
+async function verifyCode(){
+  const token=document.getElementById('auth-code').value.trim();
+  if(!/^\d{6,8}$/.test(token)){showToast('Enter the code from your email');return;}
+  if(!pendingEmail){resetAuth();return;}
+  const btn=document.querySelector('#auth-step-code .btn-primary');
+  if(btn){btn.disabled=true;btn.textContent='Signing in…';}
+  const {error}=await sb.auth.verifyOtp({email:pendingEmail,token,type:'email'});
+  if(btn){btn.disabled=false;btn.textContent='Sign in';}
+  if(error){
+    showToast(error.message||'Invalid code');
+    document.getElementById('auth-code').value='';
+    return;
+  }
+  // onAuthStateChange will fire and call enterAppForUser
+}
+
+async function resendCode(){
+  if(!pendingEmail){resetAuth();return;}
+  const {error}=await sb.auth.signInWithOtp({email:pendingEmail,options:{emailRedirectTo:window.location.origin+window.location.pathname}});
+  showToast(error?error.message:'New code sent');
+}
+
+function resetAuth(){
+  pendingEmail='';
+  document.getElementById('auth-code').value='';
+  document.getElementById('auth-step-code').hidden=true;
+  document.getElementById('auth-step-email').hidden=false;
 }
 async function logout(){
-  await sb.auth.signOut();
+  // Local clear is what matters for UX — fire signOut in the background so a slow
+  // network call never freezes the UI. supabase-js still clears localStorage tokens
+  // when the request resolves, and onAuthStateChange will fire then too (harmless).
+  sb.auth.signOut().catch(e=>console.warn('signOut network call failed:',e));
   state=initState();
+  resetAuth();
   document.getElementById('auth-screen').style.display='flex';
   document.getElementById('app').style.display='none';
   showToast('Signed out 👋');
@@ -2220,6 +2611,92 @@ async function enterAppForUser(authUser){
   document.getElementById('auth-screen').style.display='none';
   document.getElementById('app').style.display='block';
   renderAll();
+  safeInitOnboarding(); // shows the 3-screen welcome the first time per browser; defensive wrapper inside
+}
+
+/* ═══ ONBOARDING — 3-screen welcome shown once per browser ═══
+   Defensive wrap: anything that throws is caught + logged + suppressed so a bug here can never
+   take down the dashboard. Replaces the "React error boundary" the brief asked for. */
+const ONBOARDING_KEY='shred_onboarding_done';
+let onbScreen=0;
+function safeInitOnboarding(){
+  try{
+    let done=null;
+    try{done=localStorage.getItem(ONBOARDING_KEY);}catch(e){/* private browsing → silently skip */return;}
+    if(done)return;
+    initOnboarding();
+  }catch(err){
+    console.error('Onboarding init failed (suppressed):',err);
+    const o=document.getElementById('onboarding-overlay');if(o)o.hidden=true;
+  }
+}
+function initOnboarding(){
+  const overlay=document.getElementById('onboarding-overlay');if(!overlay)return;
+  // Populate Screen 2 habits list
+  const list=document.getElementById('ob-habits-list');
+  if(list){
+    const big3=new Set(['alcohol','bread','sugar']);
+    list.innerHTML=HABITS.map(h=>{
+      const isBig=big3.has(h.id);
+      return `<li class="${isBig?'big3':''}"><span class="oh-emoji">${habitEmojiHTML(h)}</span><span class="oh-name">${h.name}</span><span class="oh-pts">+${h.pts}pt${h.pts>1?'s':''}</span></li>`;
+    }).join('');
+  }
+  // Populate Screen 3 platform-specific instructions
+  const ua=navigator.userAgent||'';
+  const isIOS=/iPad|iPhone|iPod/.test(ua);
+  const isAndroid=/Android/.test(ua);
+  const platformEl=document.getElementById('ob-platform-instructions');
+  if(platformEl){
+    if(isIOS){
+      platformEl.innerHTML=`
+        <div class="ob-step"><span class="ob-step-icon">①</span><span>Tap the <strong>Share</strong> icon at the bottom of Safari (the box with an up-arrow).</span></div>
+        <div class="ob-step"><span class="ob-step-icon">②</span><span>Scroll and tap <strong>Add to Home Screen</strong>.</span></div>
+        <div class="ob-step"><span class="ob-step-icon">③</span><span>Tap <strong>Add</strong>. The icon will land on your home screen.</span></div>`;
+    }else if(isAndroid){
+      platformEl.innerHTML=`
+        <div class="ob-step"><span class="ob-step-icon">①</span><span>Tap the <strong>⋮ menu</strong> in the top-right of Chrome.</span></div>
+        <div class="ob-step"><span class="ob-step-icon">②</span><span>Tap <strong>Add to Home screen</strong> (or <strong>Install app</strong>).</span></div>
+        <div class="ob-step"><span class="ob-step-icon">③</span><span>Confirm. The icon will land on your home screen.</span></div>`;
+    }else{
+      platformEl.innerHTML=`
+        <div class="ob-step"><span class="ob-step-icon">📱</span><span><strong>iPhone:</strong> Safari → Share → Add to Home Screen.</span></div>
+        <div class="ob-step"><span class="ob-step-icon">📱</span><span><strong>Android:</strong> Chrome → ⋮ → Add to Home screen.</span></div>`;
+    }
+  }
+  // Touch swipe
+  let startX=null;
+  overlay.addEventListener('touchstart',e=>{try{startX=e.touches[0].clientX;}catch(e){}},{passive:true});
+  overlay.addEventListener('touchend',e=>{
+    try{
+      if(startX==null)return;
+      const dx=e.changedTouches[0].clientX-startX;startX=null;
+      if(Math.abs(dx)<50)return;
+      if(dx<0)onbNext();else onbPrev();
+    }catch(err){console.error('onb swipe failed (suppressed):',err);}
+  },{passive:true});
+  onbScreen=0;
+  setOnbScreen(0);
+  overlay.hidden=false;
+}
+function setOnbScreen(n){
+  try{
+    onbScreen=Math.max(0,Math.min(2,n));
+    const track=document.getElementById('ob-track');if(track)track.dataset.screen=String(onbScreen);
+    document.querySelectorAll('#ob-dots span').forEach((d,i)=>d.classList.toggle('active',i===onbScreen));
+    const btn=document.getElementById('ob-next-btn');
+    if(btn)btn.textContent=onbScreen===2?"Let's go 🔥":'Next →';
+  }catch(err){console.error('onb setScreen failed (suppressed):',err);}
+}
+function onbNext(){
+  try{
+    if(onbScreen>=2){onbDismiss();return;}
+    setOnbScreen(onbScreen+1);
+  }catch(err){console.error('onb next failed (suppressed):',err);onbDismiss();}
+}
+function onbPrev(){try{setOnbScreen(onbScreen-1);}catch(err){console.error('onb prev failed (suppressed):',err);}}
+function onbDismiss(){
+  try{localStorage.setItem(ONBOARDING_KEY,'true');}catch(e){/* private browsing — accept that they'll see it next time */}
+  const o=document.getElementById('onboarding-overlay');if(o)o.hidden=true;
 }
 
 /* ═══ NAV ═══ */
@@ -2370,6 +2847,9 @@ function renderWeekTrack(u){
     div.onclick=()=>{selectedWeek=w;switchView('weekly',document.querySelector('[data-view="weekly"]'));syncBottomNav(document.querySelector('.bottom-nav-btn[data-view="weekly"]'));};
     c.appendChild(div);
   }
+  // On mobile the row scrolls horizontally — make sure the current week is visible without the user needing to scroll
+  const cur=c.querySelector('.week-pill.current');
+  if(cur&&typeof cur.scrollIntoView==='function')cur.scrollIntoView({inline:'center',block:'nearest'});
 }
 
 /* ═══ TODAY LOG ═══ */
@@ -2385,12 +2865,13 @@ function renderLog(){
     const checked=!!log[h.id];
     const row=document.createElement('div');
     row.className='habit-row'+(checked?' checked':'');
-    row.innerHTML=`<span class="habit-row-emoji">${h.emoji}</span><div class="habit-row-body"><div class="habit-row-name">${h.name}</div><div class="habit-row-tip">${h.tip}</div></div><span class="habit-row-pts">+${h.pts}</span>`;
+    row.innerHTML=`<span class="habit-row-emoji">${habitEmojiHTML(h)}</span><div class="habit-row-body"><div class="habit-row-name">${h.name}</div><div class="habit-row-tip">${h.tip}</div></div><span class="habit-row-pts">+${h.pts}</span>`;
     row.onclick=()=>toggleHabit(h.id);
     grid.appendChild(row);
   });
 }
 function toggleHabit(habitId){
+  navigator.vibrate?.(10); // micro-tap feedback on Android (iOS Safari silently no-ops)
   const u=currentUser();if(!u.logs[currentDay])u.logs[currentDay]={};
   u.logs[currentDay][habitId]=!u.logs[currentDay][habitId];
   upsertHabitLog(currentDay,u.logs[currentDay]);
@@ -2488,6 +2969,7 @@ function renderFortune(){
   quote.classList.toggle('revealed',revealed);
 }
 function shredAndReveal(){
+  navigator.vibrate?.([10,50,20]); // tap-pause-tap "confirmation" rhythm on Android
   shreddedDays.add(currentDay);saveShredded();
   const u=currentUser();const log=u&&u.logs[currentDay]?u.logs[currentDay]:{};
   const isPerfect=HABITS.reduce((a,h)=>a+(log[h.id]?h.pts:0),0)>=MAX_DAILY;
@@ -2498,7 +2980,7 @@ function shredAndReveal(){
 /* ═══ SHRED CELEBRATION (small pop-out modal + confetti) ═══ */
 function launchShred(isPerfect){
   const modal=document.getElementById('shred-modal');
-  document.getElementById('shred-modal-icon').textContent=isPerfect?'🔥':'🐉';
+  document.getElementById('shred-modal-icon').textContent=isPerfect?'🔥':'💪';
   document.getElementById('shred-modal-title').textContent=isPerfect?'Perfect Day!':'Shredded!';
   document.getElementById('shred-modal-message').textContent=isPerfect?(MAX_DAILY+'/'+MAX_DAILY+" — You're unstoppable!"):'Day logged. Keep grinding.';
   // Reset animation by removing+re-adding the icon node
@@ -2514,17 +2996,40 @@ function launchShred(isPerfect){
 
 /* ═══ WEEKLY VIEW ═══ */
 function renderWeeklyView(){
-  // Build week selector
+  // Build week selector. Current week is locked unless today is Saturday (so members fill in
+  // the past week as a group at end-of-week before Tina locks points on Wednesday).
   const sel=document.getElementById('week-selector');sel.innerHTML='';
   const cw=currentWeekNum();
+  const isSat=new Date().getDay()===6;
+  // If selected is the current week and we're not Saturday, fall back to the most recent past week
+  if(selectedWeek===cw&&!isSat&&cw>1)selectedWeek=cw-1;
   for(let w=1;w<=PROGRAM_WEEKS;w++){
     const btn=document.createElement('button');
-    btn.className='week-sel-btn'+(w===selectedWeek?' active':'')+(w===cw?' current-week':'');
+    const isCurrent=w===cw;
+    const isFuture=w>cw;
+    const isLocked=(isCurrent&&!isSat)||isFuture;
+    btn.className='week-sel-btn'+(w===selectedWeek?' active':'')+(isCurrent?' current-week':'');
+    btn.disabled=isLocked;
+    if(isLocked&&isCurrent)btn.title='Opens Saturday so the gym fills it in together';
+    if(isFuture)btn.title='Future week';
     const startKey=weekStartDate(w);
     const startLabel=new Date(startKey+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'});
     btn.innerHTML=`<span class="wsb-num">Wk ${w}</span><span class="wsb-date">${startLabel}</span>`;
-    btn.onclick=(()=>{const ww=w;return()=>{selectedWeek=ww;renderWeeklyView();}})();
+    btn.onclick=(()=>{const ww=w,locked=isLocked;return()=>{if(locked)return;selectedWeek=ww;renderWeeklyView();}})();
     sel.appendChild(btn);
+  }
+  // On mobile this row scrolls horizontally — keep the active week visible without forcing the user to scroll
+  const active=sel.querySelector('.week-sel-btn.active');
+  if(active&&typeof active.scrollIntoView==='function')active.scrollIntoView({inline:'center',block:'nearest'});
+
+  // Edge case: week 1, weekday — there is no past week to show and the current is locked.
+  // Render an empty state instead of a confusing blank table.
+  if(selectedWeek===cw&&!isSat){
+    const grid=document.getElementById('weekly-grid');grid.innerHTML='';
+    const msg=document.createElement('div');msg.className='weekly-locked-msg';
+    msg.innerHTML=`This week is open for editing on <strong>Saturday</strong>. Log today's habits in the <strong>Today</strong> tab — you'll fill in the rest of the week here together with the gym at week's end.`;
+    grid.appendChild(msg);
+    return;
   }
 
   // Build day rows for selected week
@@ -2549,7 +3054,7 @@ function renderWeeklyView(){
       <div class="ws-left">
         <div class="ws-week-line">
           <div class="ws-week">Week ${selectedWeek}${focus?' · 🎯 '+focus:''}</div>
-          ${showEditBtn?'<button class="qa-btn ws-edit-top-btn" onclick="openWeekTotalModal()"><span class="qa-icon">✏️</span><span class="qa-sub">Edit weekly total</span></button>':''}
+          ${showEditBtn?'<button class="qa-btn ws-edit-top-btn" onclick="openWeekTotalModal()"><span class="qa-sub">Edit Total</span></button>':''}
         </div>
         <div class="ws-dates">${fmtR(wsKey)} – ${fmtR(weKey)}</div>
       </div>
@@ -2561,69 +3066,55 @@ function renderWeeklyView(){
     ${overridden?'<div class="ws-status-row"><span class="ws-inline-msg active">Manual total active — daily data preserved but not counted</span></div>':''}`;
   grid.appendChild(summary);
 
+  // Pre-compute per-day metadata for the selected week
+  const dayLetters=['S','M','T','W','T','F','S'];
+  const days=[];
   for(let d=0;d<7;d++){
     const key=dayOffset(weekStartDate(selectedWeek),d);
-    const isFuture=key>today;
-    const isToday=key===today;
-    const log=u.logs[key]||{};
-    const pts=userPtsForDay(u,key);
-    const hasData=pts>0;
-    const dayNames=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-    const dow=new Date(key+'T12:00:00').getDay();
-
-    const row=document.createElement('div');
-    row.className='day-row'+(hasData?' has-data':'')+(isToday?' today':'');
-    if(isFuture)row.style.opacity='0.4';
-
-    row.dataset.dayKey=key;
-    row.innerHTML=`
-      <div class="day-row-header" onclick="${isFuture?'':('toggleDayRow(this)')}">
-        <div class="day-row-left">
-          <div class="day-dot"></div>
-          <div>
-            <div style="display:flex;align-items:center;gap:0.5rem">
-              <span class="day-name">${dayNames[dow]}</span>
-              ${isToday?'<span class="day-today-badge">TODAY</span>':''}
-            </div>
-            <div class="day-date-str">${formatDateShort(key)}</div>
-          </div>
-        </div>
-        <div class="day-pts-summary">
-          <div>
-            <div class="day-pts-num" id="day-pts-num-${key}">${pts}</div>
-            <div class="day-pts-label">/ ${MAX_DAILY} pts</div>
-          </div>
-          ${isFuture?'<span style="font-size:0.75rem;color:var(--text-muted)">Upcoming</span>':'<span class="day-chevron">▾</span>'}
-        </div>
-      </div>
-      <div class="day-habits-wrap" id="day-habits-${key}">
-        <div class="quick-actions day-quick-actions">
-          <button class="qa-btn qa-icon-only" data-action="copy" data-day="${key}" title="Copy from previous day" onclick="event.stopPropagation();copyFromPrevDay('${key}')"><span class="qa-icon">📋</span></button>
-          <button class="qa-btn qa-icon-only" data-action="clear" data-day="${key}" title="Reset this day" onclick="event.stopPropagation();clearDay('${key}')"><span class="qa-icon">🗑</span></button>
-          <button class="qa-btn qa-icon-only" data-action="check" data-day="${key}" title="100% complete" onclick="event.stopPropagation();checkAllDay('${key}')"><span class="qa-icon">💯</span></button>
-        </div>
-        <div class="day-habits-inline" id="habits-inline-${key}"></div>
-      </div>
-    `;
-    grid.appendChild(row);
-
-    // Auto-expand today on first render; otherwise honor remembered state
-    if(isToday&&expandedDays.size===0)expandedDays.add(key);
-    if(expandedDays.has(key))row.classList.add('expanded');
-
-    if(!isFuture){
-      // Build mini habits
-      const container=row.querySelector(`#habits-inline-${key}`);
-      HABITS.forEach(h=>{
-        const checked=!!log[h.id];
-        const mh=document.createElement('div');
-        mh.className='mini-habit'+(checked?' checked':'');
-        mh.innerHTML=`<span class="mini-habit-emoji">${h.emoji}</span><span class="mini-habit-name">${h.name}</span><span class="mini-habit-pts">+${h.pts}</span>`;
-        mh.onclick=(()=>{const hid=h.id,k=key;return()=>toggleHabitForDay(k,hid);})();
-        container.appendChild(mh);
-      });
-    }
+    const dt=new Date(key+'T12:00:00');
+    days.push({key,letter:dayLetters[dt.getDay()],num:dt.getDate(),isToday:key===today,isFuture:key>today});
   }
+  const big3=new Set(['alcohol','bread','sugar']);
+
+  // Habits×days grid: rows are habits, columns are days. Tap a cell to toggle.
+  const table=document.createElement('div');
+  table.className='weekly-table';
+  let html='';
+  // Header row
+  html+='<div class="wt-corner"></div>';
+  days.forEach(d=>{
+    html+=`<div class="wt-day-head${d.isToday?' today':''}"><span class="wt-dh-letter">${d.letter}</span><span class="wt-dh-num">${d.num}</span></div>`;
+  });
+  html+='<div class="wt-tot-head">Σ</div>';
+  // Habit rows
+  HABITS.forEach(h=>{
+    const isBig=big3.has(h.id);
+    const escId=h.id.replace(/'/g,"\\'");
+    html+=`<div class="wt-habit-cell${isBig?' big3':''}"><span class="wt-emoji">${habitEmojiHTML(h)}</span><span class="wt-name">${h.name}</span><span class="wt-pts">+${h.pts}</span></div>`;
+    let hits=0;
+    days.forEach(d=>{
+      const log=u.logs[d.key]||{};
+      const hit=!!log[h.id];
+      if(hit)hits++;
+      const cls=['wt-cell'];
+      if(hit)cls.push('hit');
+      if(d.isFuture)cls.push('future');
+      if(d.isToday)cls.push('today-col');
+      const onclick=d.isFuture?'':`onclick="toggleHabitForDay('${d.key}','${escId}')"`;
+      html+=`<div class="${cls.join(' ')}" ${onclick}>${hit?'✓':''}</div>`;
+    });
+    html+=`<div class="wt-row-total">${hits}<small>/7</small></div>`;
+  });
+  // Footer: per-day point totals + week total
+  html+='<div class="wt-foot-label">Day pts</div>';
+  days.forEach(d=>{
+    const pts=userPtsForDay(u,d.key);
+    html+=`<div class="wt-day-total${d.isToday?' today-col':''}">${pts||'—'}</div>`;
+  });
+  html+=`<div class="wt-week-total">${weekPts}</div>`;
+  table.innerHTML=html;
+  grid.appendChild(table);
+
   refreshAllMassActionUI();
 }
 
@@ -2638,26 +3129,15 @@ function toggleDayRow(header){
 }
 
 function toggleHabitForDay(key,habitId){
+  navigator.vibrate?.(10); // micro-tap feedback on Android
   const u=currentUser();if(!u.logs[key])u.logs[key]={};
   u.logs[key][habitId]=!u.logs[key][habitId];
   upsertHabitLog(key,u.logs[key]);
   setMassAction(key,null); // individual toggle clears mass-action highlight
-  // Update mini habit UI + top-right day total
-  const container=document.getElementById(`habits-inline-${key}`);
-  if(container){
-    const minis=container.querySelectorAll('.mini-habit');
-    const log=u.logs[key];
-    HABITS.forEach((h,i)=>{
-      if(minis[i])minis[i].classList.toggle('checked',!!log[h.id]);
-    });
-    const pts=userPtsForDay(u,key);
-    const ptsNumEl=document.getElementById(`day-pts-num-${key}`);
-    if(ptsNumEl)ptsNumEl.textContent=pts;
-    const row=container.closest('.day-row');
-    if(row){row.classList.toggle('has-data',pts>0);}
+  // Re-render the weekly grid (cell, row total, day total, week total all update together)
+  if(document.getElementById('view-weekly')?.classList.contains('active')){
+    renderWeeklyView();
   }
-  // Live-update the week summary counter + bar (without rebuilding the grid)
-  updateWeekSummaryCounter();
   renderAll();
 }
 function updateWeekSummaryCounter(){
@@ -2710,7 +3190,7 @@ function bmToNumber(b,v){
 }
 function bmFmtDelta(b,start,end){
   const s=bmToNumber(b,start),e=bmToNumber(b,end);
-  if(s==null||e==null)return '<span class="bm-delta neutral">Set both</span>';
+  if(s==null||e==null)return '<span class="bm-delta neutral">—</span>';
   const better=b.lowerIsBetter?e<s:e>s;
   const diff=b.lowerIsBetter?s-e:e-s;
   const sign=diff>=0?(better?'+':'-'):(better?'-':'+');
@@ -2759,31 +3239,19 @@ function saveBmTimePart(el){
 function renderBenchmarks(){
   const u=currentUser();if(!u)return;
   const bm=u.benchmarks||{};const container=document.getElementById('bm-content');container.innerHTML='';
-  const mySection=document.createElement('div');mySection.innerHTML=`<div class="bm-section-header">📊 My Track</div>`;
-  const grid=document.createElement('div');grid.className='benchmarks-grid';
+  const mySection=document.createElement('div');
+  const grid=document.createElement('div');grid.className='bm-rows';
+  // Header row
+  let html='<div class="bm-rows-head">Exercise</div><div class="bm-rows-head">Start</div><div class="bm-rows-head">Finish</div><div class="bm-rows-head">Δ</div>';
+  // One row per exercise — text-only, no icon
   BENCHMARKS_DEF.forEach(b=>{
     const start=bm['start_'+b.id]||'',end=bm['end_'+b.id]||'';
-    const delta=bmFmtDelta(b,start,end);
-    const card=document.createElement('div');card.className='bm-card';card.dataset.bmId=b.id;
-    card.innerHTML=`
-      <div class="bm-card-head">
-        <span class="bm-icon">${b.icon}</span>
-        <span class="bm-name">${b.name}</span>
-        ${delta}
-      </div>
-      <div class="bm-card-row">
-        <div class="bm-input-group">
-          <label>Start</label>
-          ${bmBuildInput(b,'start_'+b.id,start)}
-        </div>
-        <span class="bm-arrow">→</span>
-        <div class="bm-input-group">
-          <label>Finish</label>
-          ${bmBuildInput(b,'end_'+b.id,end)}
-        </div>
-      </div>`;
-    grid.appendChild(card);
+    html+=`<div class="bm-row-name"><span>${b.name}</span><span class="bm-row-unit">${b.unit==='time'?'m:s':b.unit}</span></div>`;
+    html+=`<div class="bm-row-input">${bmBuildInput(b,'start_'+b.id,start)}</div>`;
+    html+=`<div class="bm-row-input">${bmBuildInput(b,'end_'+b.id,end)}</div>`;
+    html+=`<div class="bm-row-delta" data-bm-id="${b.id}">${bmFmtDelta(b,start,end)}</div>`;
   });
+  grid.innerHTML=html;
   mySection.appendChild(grid);container.appendChild(mySection);
 
   // Athletes — single combined table. Default: Start row only per athlete.
@@ -2839,11 +3307,10 @@ function saveBm(key,val){
   // Update the delta on the affected card immediately (cheap in-place update — preserves input focus)
   const b=BENCHMARKS_DEF.find(x=>key==='start_'+x.id||key==='end_'+x.id);
   if(b){
-    const card=document.querySelector('.bm-card[data-bm-id="'+b.id+'"]');
-    if(card){
-      const head=card.querySelector('.bm-card-head');
-      const oldDelta=head&&head.querySelector('.bm-delta');
-      if(oldDelta){oldDelta.outerHTML=bmFmtDelta(b,u.benchmarks['start_'+b.id]||'',u.benchmarks['end_'+b.id]||'');}
+    // Update the row's delta cell in place — preserves input focus on the value still being typed
+    const deltaCell=document.querySelector('[data-bm-id="'+b.id+'"]');
+    if(deltaCell){
+      deltaCell.innerHTML=bmFmtDelta(b,u.benchmarks['start_'+b.id]||'',u.benchmarks['end_'+b.id]||'');
     }
   }
   // Debounced persist
@@ -2887,9 +3354,10 @@ function badgeProgress(b,stats){
 }
 function pickRotatingQuote(dayKey){
   // Stable hash on dayKey so the same day shows the same quote across reloads.
-  // Pool = DEFAULT_QUOTES + admin/user-submitted approved quotes from Supabase.
+  // Pool = admin-approved user_quotes only (no hard-coded defaults).
+  const pool=state.approvedQuotes||[];
+  if(pool.length===0)return FALLBACK_QUOTE;
   let h=0;for(let i=0;i<dayKey.length;i++)h=(h*31+dayKey.charCodeAt(i))|0;
-  const pool=DEFAULT_QUOTES.concat(state.approvedQuotes||[]);
   return pool[Math.abs(h)%pool.length];
 }
 function strengthMsg(rate){
@@ -2928,7 +3396,7 @@ function renderCoachView(){
       const streakChip=s.streak>=2?`<span class="coach-streak-chip">🔥 ${s.streak}-day streak</span>`:'';
       const row=document.createElement('div');
       row.className='coach-row strong';
-      row.innerHTML=`<span class="coach-row-emoji">${s.habit.emoji}</span><div class="coach-row-body"><div class="coach-row-name">${s.habit.name}</div><div class="coach-row-meta"><span class="coach-row-rate">${s.checked}/${s.total} days</span>${streakChip}</div></div>`;
+      row.innerHTML=`<span class="coach-row-emoji">${habitEmojiHTML(s.habit)}</span><div class="coach-row-body"><div class="coach-row-name">${s.habit.name}</div><div class="coach-row-meta"><span class="coach-row-rate">${s.checked}/${s.total} days</span>${streakChip}</div></div>`;
       strengthsEl.appendChild(row);
     });
   }
@@ -2940,12 +3408,12 @@ function renderCoachView(){
   }else{
     const watch=[...sorted].reverse().filter(h=>h.rate<=0.4).slice(0,3);
     if(watch.length===0){
-      watchEl.innerHTML='<div class="coach-empty">Nothing slipping right now — keep it up 🐉</div>';
+      watchEl.innerHTML='<div class="coach-empty">Nothing slipping right now — keep it up 💪</div>';
     }else{
       watch.forEach(s=>{
         const row=document.createElement('div');
         row.className='coach-row weak';
-        row.innerHTML=`<span class="coach-row-emoji">${s.habit.emoji}</span><div class="coach-row-body"><div class="coach-row-name">${s.habit.name}</div><div class="coach-row-meta"><span class="coach-row-rate">${s.checked}/${s.total} days</span><span class="coach-row-msg">${watchlistMsg(s.rate)}</span></div></div>`;
+        row.innerHTML=`<span class="coach-row-emoji">${habitEmojiHTML(s.habit)}</span><div class="coach-row-body"><div class="coach-row-name">${s.habit.name}</div><div class="coach-row-meta"><span class="coach-row-rate">${s.checked}/${s.total} days</span><span class="coach-row-msg">${watchlistMsg(s.rate)}</span></div></div>`;
         watchEl.appendChild(row);
       });
     }
@@ -2955,7 +3423,7 @@ function renderCoachView(){
   const earnedEl=document.getElementById('coach-badges-earned');earnedEl.innerHTML='';
   const earned=BADGE_DEFS.filter(b=>b.check(stats));
   if(earned.length===0){
-    earnedEl.innerHTML='<div class="coach-empty">No badges yet — your first one is around the corner 🐉</div>';
+    earnedEl.innerHTML='<div class="coach-empty">No badges yet — your first one is around the corner 💪</div>';
   }else{
     earned.forEach(b=>{
       const card=document.createElement('div');
@@ -2985,7 +3453,16 @@ function renderCoachView(){
 }
 
 /* ═══ SUBMIT QUOTE ═══ */
-function toggleQuoteSuggest(){document.getElementById('quote-suggest-form').classList.toggle('open');}
+function toggleQuoteSuggest(){
+  const form=document.getElementById('quote-suggest-form');
+  const wasOpen=form.classList.contains('open');
+  form.classList.toggle('open');
+  if(!wasOpen){
+    // Just opened — scroll the form into view so the input is visible on mobile, then focus it
+    setTimeout(()=>form.scrollIntoView({behavior:'smooth',block:'center'}),60);
+    setTimeout(()=>{const t=document.getElementById('suggest-text');if(t)t.focus();},380);
+  }
+}
 async function submitSuggestedQuote(){
   const text=document.getElementById('suggest-text').value.trim();
   const author=document.getElementById('suggest-author').value.trim();

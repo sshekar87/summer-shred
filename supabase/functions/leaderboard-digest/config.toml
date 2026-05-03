@@ -1,0 +1,8 @@
+# Leaderboard digest — Tuesday 9 PM EDT (01:00 UTC Wednesday)
+# Subtract 1 hour during EST winter (Nov-Mar): change to "0 2 * * 3"
+# Recaps the same prior Sun-Sat week as the Sunday recap. Last call before
+# Tina locks in points on Wednesday.
+
+[functions.leaderboard-digest]
+verify_jwt = false
+schedule = "0 1 * * 3"
