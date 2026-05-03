@@ -855,8 +855,18 @@ body::before { display: none; } /* noise overlay removed for light theme */
 .weekly-view-header {
   display:flex; align-items:center; gap:1rem; margin-bottom:1.25rem; flex-wrap:wrap;
 }
-.week-selector { display:grid; grid-template-columns:repeat(4,1fr); gap:0.4rem; margin-bottom:0.9rem; }
-@media (min-width:600px){ .week-selector { grid-template-columns:repeat(8,1fr); gap:0.3rem; } }
+.week-selector {
+  display: flex; gap: 0.4rem; margin-bottom: 0.9rem;
+  overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+  margin-left: -1.5rem; margin-right: -1.5rem;
+  padding: 0 1.5rem 0.4rem;
+}
+.week-selector::-webkit-scrollbar { display: none; }
+.week-selector .week-sel-btn { flex: 0 0 auto; min-width: 4.6rem; }
+@media (min-width:600px){
+  .week-selector { display:grid; grid-template-columns:repeat(8,1fr); gap:0.3rem; overflow:visible; margin:0 0 0.9rem; padding:0; }
+  .week-selector .week-sel-btn { min-width: 0; }
+}
 .week-sel-btn {
   background:var(--bg2); border:1px solid var(--border); border-radius:8px;
   color:var(--text-dim); padding:0.5rem 0.3rem; cursor:pointer; transition:all 0.15s;
@@ -1159,23 +1169,20 @@ body::before { display: none; } /* noise overlay removed for light theme */
 .fb-widget { position: fixed; inset: 0; pointer-events: none; z-index: 9000; }
 .fb-widget > * { pointer-events: auto; }
 
-/* Vertical edge tab — glued to the right side, lower-third (out of content's way) */
+/* Edge pill — anchored right, horizontal text so it's clearly readable */
 .fb-toggle {
-  position: fixed; right: 0; bottom: 25%;
+  position: fixed; right: 0; bottom: 35%;
   background: var(--red); color: #FFFFFF; border: none;
   border-radius: 8px 0 0 8px;
-  padding: 0.95rem 0.45rem;
-  cursor: pointer; box-shadow: -3px 4px 14px rgba(222,51,65,0.28);
-  transition: background 0.15s, padding 0.2s, box-shadow 0.2s;
-}
-.fb-toggle-text {
-  display: inline-block; writing-mode: vertical-rl;
+  padding: 0.45rem 0.75rem;
+  cursor: pointer; box-shadow: -3px 4px 14px rgba(222,51,65,0.32);
   font-family: 'DM Sans', sans-serif; font-weight: 800;
-  font-size: 0.82rem; letter-spacing: 1.2px;
-  transform: rotate(180deg);
+  font-size: 0.78rem; letter-spacing: 0.5px;
+  transition: background 0.15s, padding 0.2s, box-shadow 0.2s, transform 0.1s;
 }
-.fb-toggle:hover { background: var(--red-bright); padding-right: 0.65rem; box-shadow: -4px 6px 18px rgba(222,51,65,0.4); }
-@media (max-width: 768px) { .fb-toggle { bottom: 35%; padding: 1.05rem 0.55rem; } } /* lifted clear of bottom nav into eye-line */
+.fb-toggle-text { display: inline-block; }
+.fb-toggle:hover { background: var(--red-bright); padding-right: 0.95rem; box-shadow: -4px 6px 18px rgba(222,51,65,0.42); }
+.fb-toggle:active { transform: scale(0.96); }
 
 /* Backdrop scrim — only present when drawer is open */
 .fb-backdrop {
@@ -2777,6 +2784,9 @@ function renderWeeklyView(){
     btn.onclick=(()=>{const ww=w;return()=>{selectedWeek=ww;renderWeeklyView();}})();
     sel.appendChild(btn);
   }
+  // On mobile this row scrolls horizontally — keep the active week visible without forcing the user to scroll
+  const active=sel.querySelector('.week-sel-btn.active');
+  if(active&&typeof active.scrollIntoView==='function')active.scrollIntoView({inline:'center',block:'nearest'});
 
   // Build day rows for selected week
   const grid=document.getElementById('weekly-grid');grid.innerHTML='';
