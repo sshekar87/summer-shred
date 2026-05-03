@@ -92,14 +92,6 @@ body::before { display: none; } /* noise overlay removed for light theme */
     radial-gradient(ellipse 50% 35% at 90% 105%, rgba(255,140,66,0.05) 0%, transparent 50%),
     var(--bg);
 }
-.auth-sun-svg {
-  width: 96px; height: 96px; margin-bottom: 1rem;
-  filter: drop-shadow(0 4px 22px rgba(255,140,66,0.35)) drop-shadow(0 0 30px rgba(222,51,65,0.15));
-  animation: sunSpin 24s linear infinite, sunPulse 4s ease-in-out infinite;
-  transform-origin: center;
-}
-.auth-sun-svg .auth-sun-rays { transform-origin: 60px 60px; }
-@keyframes sunSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 @keyframes sunPulse {
   0%,100% { filter: drop-shadow(0 4px 22px rgba(255,140,66,0.3)) drop-shadow(0 0 30px rgba(222,51,65,0.15)); }
   50%     { filter: drop-shadow(0 4px 30px rgba(255,140,66,0.55)) drop-shadow(0 0 50px rgba(222,51,65,0.25)); }
@@ -108,7 +100,7 @@ body::before { display: none; } /* noise overlay removed for light theme */
   font-size: clamp(2.6rem,9vw,4.4rem); font-weight: 800; letter-spacing: -0.02em;
   color: var(--text); line-height: 1; text-align: center; font-family: 'DM Sans', sans-serif;
 }
-.auth-logo span { color: var(--red); font-style: italic; font-weight: 900; }
+.auth-logo span { color: var(--red); font-weight: 900; }
 .auth-sub {
   font-size: 0.95rem; font-weight: 600; letter-spacing: 1px; color: var(--text-dim);
   margin-top: 0.6rem; text-align: center;
@@ -120,9 +112,9 @@ body::before { display: none; } /* noise overlay removed for light theme */
 }
 .auth-tagline {
   font-size: 0.7rem; font-weight: 700; letter-spacing: 3px; text-transform: uppercase;
-  color: var(--red); margin: 1rem 0 0.7rem;
+  color: var(--red); margin: 1.75rem 0 0.7rem; text-align: center;
 }
-.auth-countdown { display: flex; gap: 0.65rem; margin: 0 0 1.6rem; }
+.auth-countdown { display: flex; gap: 0.65rem; margin: 0 0 0.5rem; justify-content: center; }
 .auth-cd-block {
   position: relative; text-align: center; min-width: 64px;
   background: linear-gradient(180deg,#2c2c2c 0%,#2c2c2c 50%,#181818 50%,#181818 100%);
@@ -1353,34 +1345,10 @@ body::before { display: none; } /* noise overlay removed for light theme */
 
 <!-- ════════ AUTH ════════ -->
 <div id="auth-screen">
-  <svg class="auth-sun-svg" viewBox="0 0 120 120" aria-hidden="true">
-    <defs>
-      <radialGradient id="sun-grad" cx="50%" cy="50%" r="50%">
-        <stop offset="0%" stop-color="#FFD66B"/>
-        <stop offset="55%" stop-color="#FF8C42"/>
-        <stop offset="100%" stop-color="#DE3341"/>
-      </radialGradient>
-    </defs>
-    <g class="auth-sun-rays" fill="#FF8C42">
-      <rect x="57" y="4"   width="6" height="14" rx="3"/>
-      <rect x="57" y="102" width="6" height="14" rx="3"/>
-      <rect x="4"   y="57" width="14" height="6" rx="3"/>
-      <rect x="102" y="57" width="14" height="6" rx="3"/>
-      <rect x="57" y="4"   width="6" height="14" rx="3" transform="rotate(45 60 60)"/>
-      <rect x="57" y="102" width="6" height="14" rx="3" transform="rotate(45 60 60)"/>
-      <rect x="57" y="4"   width="6" height="14" rx="3" transform="rotate(-45 60 60)"/>
-      <rect x="57" y="102" width="6" height="14" rx="3" transform="rotate(-45 60 60)"/>
-    </g>
-    <circle cx="60" cy="60" r="26" fill="url(#sun-grad)"/>
-  </svg>
-
-  <div class="auth-logo">Summer <span>Shred</span></div>
+  <div class="auth-logo"><span>MEANEY</span> SUMMER SHRED</div>
   <div class="auth-sub" id="auth-prog-range">—</div>
 
-  <div class="auth-quote">"Be kind, and look mean."</div>
-
-  <div class="auth-tagline">☀️ Get ready. Summer is coming.</div>
-  <div class="auth-countdown" id="auth-cd"></div>
+  <div class="auth-quote">"Be kind, work hard, and look mean!"</div>
 
   <div class="auth-card">
     <h2>No password necessary.</h2>
@@ -1389,6 +1357,9 @@ body::before { display: none; } /* noise overlay removed for light theme */
     <button class="btn-primary" onclick="handleMagicLink()">SEND MAGIC LINK →</button>
     <div class="magic-sent" id="magic-sent">✅ Link sent! Check your inbox.</div>
   </div>
+
+  <div class="auth-tagline">☀️ Get ready. Summer is coming.</div>
+  <div class="auth-countdown" id="auth-cd"></div>
 
   <div class="demo-links">
     <p>Quick demo access</p>
