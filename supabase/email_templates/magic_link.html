@@ -1,7 +1,7 @@
 <!--
   Live B.I.G 365 — Sign-in code email (Supabase "Magic Link" template slot)
   Paste into Supabase Dashboard → Authentication → Email Templates → Magic Link.
-  Variables: {{ .Token }} (6-digit code, primary), {{ .ConfirmationURL }} (clickable fallback).
+  Variables: {{ .Token }} (numeric code — length depends on Supabase OTP setting, default 6, can be 6-8), {{ .ConfirmationURL }} (clickable fallback).
   Subject suggestion: "Your Live B.I.G 365 sign-in code"
 -->
 <div style="background:#F7F7F7;padding:24px 0;font-family:'DM Sans',Arial,sans-serif;">
