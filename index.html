@@ -1352,6 +1352,48 @@ body::before { display: none; } /* noise overlay removed for light theme */
 .ob-platform .ob-step { display: flex; gap: 0.6rem; align-items: flex-start; margin-bottom: 0.45rem; }
 .ob-platform .ob-step:last-child { margin-bottom: 0; }
 .ob-platform .ob-step-icon { font-size: 1.1rem; flex-shrink: 0; }
+/* Screen 2 — non-interactive illustration of the backfill workflow */
+.ob-mock {
+  background: var(--bg2); border: 1px solid var(--border); border-radius: 14px;
+  padding: 0.85rem; max-width: 380px; width: 100%; text-align: left;
+  margin-bottom: 1rem;
+}
+.ob-mock-pills { display: flex; gap: 0.4rem; margin-bottom: 0.85rem; }
+.ob-mock-pill {
+  flex: 1; background: var(--bg3); border: 1px solid var(--border); border-radius: 8px;
+  padding: 0.45rem 0.3rem; text-align: center;
+  display: flex; flex-direction: column; gap: 0.1rem;
+}
+.ob-mock-pill .ob-mp-num { font-size: 0.55rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--text-dim); }
+.ob-mock-pill .ob-mp-pts { font-size: 0.92rem; font-weight: 800; color: var(--text); }
+.ob-mock-pill.done { border-color: rgba(222,51,65,0.35); background: rgba(222,51,65,0.06); }
+.ob-mock-pill.done .ob-mp-num { color: var(--red); }
+.ob-mock-pill.active { background: rgba(222,51,65,0.16); border-color: var(--red); }
+.ob-mock-pill.active .ob-mp-num { color: var(--red); }
+.ob-mock-day {
+  background: var(--bg3); border: 1px solid var(--border); border-radius: 10px;
+  padding: 0.55rem 0.7rem; margin-bottom: 0.6rem;
+}
+.ob-mock-day-head { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; }
+.ob-mock-caret { color: var(--red); font-size: 0.85rem; }
+.ob-mock-day-label { flex: 1; font-size: 0.82rem; font-weight: 700; color: var(--text); }
+.ob-mock-day-pts { font-size: 0.75rem; font-weight: 800; color: var(--red); background: rgba(222,51,65,0.12); padding: 0.1rem 0.5rem; border-radius: 999px; }
+.ob-mock-habit {
+  display: flex; align-items: center; gap: 0.5rem;
+  font-size: 0.78rem; color: var(--text-dim); padding: 0.2rem 0;
+}
+.ob-mock-habit > span:first-child {
+  width: 16px; height: 16px; border: 1.5px solid var(--border); border-radius: 4px;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 0.7rem; flex-shrink: 0;
+}
+.ob-mock-habit.hit > span:first-child { background: var(--green); border-color: var(--green); color: #FFFFFF; font-weight: 800; }
+.ob-mock-habit.hit { color: var(--text); }
+.ob-mock-edit {
+  display: inline-block; font-size: 0.78rem; font-weight: 700; color: var(--red);
+  background: rgba(222,51,65,0.08); border: 1px dashed rgba(222,51,65,0.35);
+  border-radius: 8px; padding: 0.4rem 0.75rem;
+}
 .ob-dots {
   display: flex; gap: 0.4rem; justify-content: center; margin: 0.5rem 0 0.8rem;
 }
@@ -1665,24 +1707,50 @@ body::before { display: none; } /* noise overlay removed for light theme */
 <div id="onboarding-overlay" hidden role="dialog" aria-modal="true" aria-label="Welcome to Live B.I.G 365">
   <button class="ob-skip" type="button" onclick="onbDismiss()">Skip</button>
   <div class="ob-track" id="ob-track">
+
+    <!-- Screen 1: welcome + habit list -->
     <div class="ob-screen">
       <div class="ob-sun">☀️</div>
       <div class="ob-h1">LIVE <span>B.I.G</span> 365</div>
       <div class="ob-sub">8 weeks. 10 daily habits. One leaderboard.</div>
-      <div class="ob-body">Earn up to <strong>26 points a day</strong>. The person at the top of the leaderboard at the end wins.</div>
-    </div>
-    <div class="ob-screen">
-      <div class="ob-h2">How points work</div>
-      <div class="ob-sub">Tap each habit when you do it.</div>
       <ul class="ob-habits" id="ob-habits-list"></ul>
-      <div class="ob-body">Max <strong>26 pts/day</strong> · <strong>182 pts/week</strong> · <strong>1,456 over 8 weeks</strong>.</div>
+      <div class="ob-body" style="font-size:0.85rem;color:var(--text-dim)">Max <strong>26 pts/day</strong> · <strong>182 pts/week</strong> · <strong>1,456 over 8 weeks</strong>.</div>
     </div>
+
+    <!-- Screen 2: backfill flow mock -->
     <div class="ob-screen">
-      <div class="ob-h2">Get the full app</div>
-      <div class="ob-sub">Add Live B.I.G 365 to your home screen so it opens like a real app.</div>
-      <div class="ob-platform" id="ob-platform-instructions"></div>
-      <div class="ob-body" style="margin-top:0.6rem;font-size:0.85rem;color:var(--text-dim)">You'll get push-quick access without typing the URL every time.</div>
+      <div class="ob-h2">Catch up on a missed day.</div>
+      <div class="ob-sub">Tap any past week, expand a day, fill in what you missed. Or just type the weekly total.</div>
+      <div class="ob-mock">
+        <div class="ob-mock-pills">
+          <div class="ob-mock-pill done"><span class="ob-mp-num">Wk 1</span><span class="ob-mp-pts">52</span></div>
+          <div class="ob-mock-pill active"><span class="ob-mp-num">Wk 2</span><span class="ob-mp-pts">—</span></div>
+          <div class="ob-mock-pill"><span class="ob-mp-num">Wk 3</span><span class="ob-mp-pts">—</span></div>
+          <div class="ob-mock-pill"><span class="ob-mp-num">Wk 4</span><span class="ob-mp-pts">—</span></div>
+        </div>
+        <div class="ob-mock-day">
+          <div class="ob-mock-day-head">
+            <span class="ob-mock-caret">▾</span>
+            <span class="ob-mock-day-label">Wed · Apr 15</span>
+            <span class="ob-mock-day-pts">14 pts</span>
+          </div>
+          <div class="ob-mock-habit hit"><span>✓</span><span>🏋️ Train</span></div>
+          <div class="ob-mock-habit hit"><span>✓</span><span>💧 Hydration</span></div>
+          <div class="ob-mock-habit"><span></span><span>😴 Sleep</span></div>
+          <div class="ob-mock-habit"><span></span><span>🥦 Veggies & Fruit</span></div>
+        </div>
+        <div class="ob-mock-edit">✎ Edit weekly total</div>
+      </div>
+      <div class="ob-body" style="font-size:0.82rem;color:var(--text-dim)">Points lock on <strong>Wednesdays</strong> — Tina counts them then.</div>
     </div>
+
+    <!-- Screen 3: add to home screen -->
+    <div class="ob-screen">
+      <div class="ob-h2">Get the real app feel.</div>
+      <div class="ob-sub">Add Live B.I.G 365 to your home screen so it opens without typing the URL.</div>
+      <div class="ob-platform" id="ob-platform-instructions"></div>
+    </div>
+
   </div>
   <div class="ob-dots" id="ob-dots"><span class="active"></span><span></span><span></span></div>
   <button class="ob-next shred-btn" type="button" onclick="onbNext()" id="ob-next-btn">Next →</button>
@@ -1702,16 +1770,16 @@ function programEndDate(){const d=new Date(PROGRAM_START);d.setDate(d.getDate()+
 function weekDeadlineKey(wk){return dayOffset(weekEndDate(wk),4);} // Sat + 4 = Wed
 
 const HABITS = [
-  { id:'train',    emoji:'🏋️', name:'TRAIN',               pts:1, tip:'Hit the gym, class, home, or open gym' },
-  { id:'mobility', emoji:'🧘', name:'FLEXY & SEXY',         pts:1, tip:'15 min of stretching & mobility' },
-  { id:'sleep',    emoji:'😴', name:'SLEEP',               pts:1, tip:'6–8 hours of sleep' },
-  { id:'fasting',  emoji:'⏱️', name:'FASTING',             pts:1, tip:'10–14 hour overnight fast' },
-  { id:'veggies',  emoji:'🥦', name:'VEGGIES & FRUIT',     pts:1, tip:'6 servings veg + 2 fruit' },
-  { id:'water',    emoji:'💧', name:'HYDRATION',           pts:1, tip:'64oz water minimum' },
-  { id:'alcohol',  emoji:'🚫', name:'NO ALCOHOL',          pts:5, tip:'Skipped the booze today' },
-  { id:'bread',    emoji:'🍞', name:'NO BREAD',            pts:5, tip:'No flour-based foods' },
-  { id:'sugar',    emoji:'🍬', name:'NO ADDED SUGAR',      pts:5, tip:'No processed sugar or syrups' },
-  { id:'extra',    emoji:'⭐', name:'EXTRA CREDIT',        pts:5, tip:"Crushed this week's focus" },
+  { id:'train',    emoji:'🏋️', name:'Train',               pts:1, tip:'Hit the gym, class, home, or open gym' },
+  { id:'mobility', emoji:'🧘', name:'Flexy & Sexy',         pts:1, tip:'15 min of stretching & mobility' },
+  { id:'sleep',    emoji:'😴', name:'Sleep',               pts:1, tip:'6–8 hours of sleep' },
+  { id:'fasting',  emoji:'⏱️', name:'Fasting',             pts:1, tip:'10–14 hour overnight fast' },
+  { id:'veggies',  emoji:'🥦', name:'Veggies & Fruit',     pts:1, tip:'6 servings veg + 2 fruit' },
+  { id:'water',    emoji:'💧', name:'Hydration',           pts:1, tip:'64oz water minimum' },
+  { id:'alcohol',  emoji:'🚫', name:'No Alcohol',          pts:5, tip:'Skipped the booze today' },
+  { id:'bread',    emoji:'🍞', name:'No Bread',            pts:5, tip:'No flour-based foods' },
+  { id:'sugar',    emoji:'🍬', name:'No Added Sugar',      pts:5, tip:'No processed sugar or syrups' },
+  { id:'extra',    emoji:'⭐', name:'Extra Credit',        pts:5, tip:"Crushed this week's focus" },
 ];
 const MAX_DAILY = HABITS.reduce((a,h)=>a+h.pts,0);
 
@@ -2460,7 +2528,7 @@ function setOnbScreen(n){
     const track=document.getElementById('ob-track');if(track)track.dataset.screen=String(onbScreen);
     document.querySelectorAll('#ob-dots span').forEach((d,i)=>d.classList.toggle('active',i===onbScreen));
     const btn=document.getElementById('ob-next-btn');
-    if(btn)btn.textContent=onbScreen===2?"LET'S GO 🔥":'Next →';
+    if(btn)btn.textContent=onbScreen===2?"Let's go 🔥":'Next →';
   }catch(err){console.error('onb setScreen failed (suppressed):',err);}
 }
 function onbNext(){
