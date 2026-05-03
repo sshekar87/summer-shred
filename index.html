@@ -404,7 +404,7 @@ body::before { display: none; } /* noise overlay removed for light theme */
 .ws-top-row {
   display: flex; flex-direction: column; gap: 0.55rem;
 }
-.ws-week { font-size: 1rem; font-weight: 800; color: var(--text); margin-bottom: 0.15rem; }
+.ws-week { font-size: 1rem; font-weight: 800; color: var(--text); margin-bottom: 0.15rem; min-width: 0; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .ws-dates { font-size: 0.78rem; color: var(--text-dim); font-weight: 600; }
 .ws-right { width: 100%; }
 .ws-pts { font-size: 0.95rem; font-weight: 700; color: var(--text); margin-bottom: 0.35rem; text-align: left; }
@@ -795,10 +795,9 @@ body::before { display: none; } /* noise overlay removed for light theme */
 .wt-input-row input:focus { border-color: var(--red); }
 .wt-suffix { font-size: 0.92rem; font-weight: 700; color: var(--text-dim); }
 .wt-status { font-size: 0.82rem; color: var(--sun); font-weight: 700; margin-bottom: 0.3rem; min-height: 1.2em; }
-.ws-week-line { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 0.15rem; }
-.ws-edit-top-btn { padding: 0.35rem 0.7rem; flex-direction: row; gap: 0.35rem; min-width: 0; flex: 0 0 auto; margin-left: auto; }
-.ws-edit-top-btn .qa-icon { font-size: 0.9rem; margin-bottom: 0; }
-.ws-edit-top-btn .qa-sub { font-size: 0.75rem; font-weight: 600; }
+.ws-week-line { display: flex; align-items: center; gap: 0.5rem; flex-wrap: nowrap; margin-bottom: 0.15rem; min-width: 0; }
+.ws-edit-top-btn { padding: 0.35rem 0.75rem; flex-direction: row; gap: 0; min-width: 0; flex: 0 0 auto; margin-left: auto; }
+.ws-edit-top-btn .qa-sub { font-size: 0.75rem; font-weight: 700; white-space: nowrap; }
 .ws-status-row { padding-top: 0.6rem; border-top: 1px dashed var(--border); }
 .modal-shred .confirm-icon { font-size: 2.8rem; animation: shredBounce 0.5s ease-out both; }
 .modal-shred h2 { color: var(--red); }
@@ -1490,47 +1489,52 @@ body::before { display: none; } /* noise overlay removed for light theme */
 .ob-platform .ob-step { display: flex; gap: 0.6rem; align-items: flex-start; margin-bottom: 0.45rem; }
 .ob-platform .ob-step:last-child { margin-bottom: 0; }
 .ob-platform .ob-step-icon { font-size: 1.1rem; flex-shrink: 0; }
-/* Screen 2 — non-interactive illustration of the backfill workflow */
+/* Screen 2 — non-interactive illustration of the backfill workflow.
+   Mirrors the live weekly view: pills + habits×days grid + Edit Total chip. */
 .ob-mock {
   background: var(--bg2); border: 1px solid var(--border); border-radius: 14px;
   padding: 0.85rem; max-width: 380px; width: 100%; text-align: left;
-  margin-bottom: 1rem;
+  margin-bottom: 0.9rem;
 }
-.ob-mock-pills { display: flex; gap: 0.4rem; margin-bottom: 0.85rem; }
+.ob-mock-pills { display: flex; gap: 0.35rem; margin-bottom: 0.7rem; }
 .ob-mock-pill {
-  flex: 1; background: var(--bg3); border: 1px solid var(--border); border-radius: 8px;
-  padding: 0.45rem 0.3rem; text-align: center;
-  display: flex; flex-direction: column; gap: 0.1rem;
+  flex: 1; background: var(--bg3); border: 1px solid var(--border); border-radius: 7px;
+  padding: 0.38rem 0.25rem; text-align: center;
+  display: flex; flex-direction: column; gap: 0.05rem;
 }
-.ob-mock-pill .ob-mp-num { font-size: 0.55rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--text-dim); }
-.ob-mock-pill .ob-mp-pts { font-size: 0.92rem; font-weight: 800; color: var(--text); }
+.ob-mock-pill .ob-mp-num { font-size: 0.52rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--text-dim); }
+.ob-mock-pill .ob-mp-pts { font-size: 0.85rem; font-weight: 800; color: var(--text); }
 .ob-mock-pill.done { border-color: rgba(222,51,65,0.35); background: rgba(222,51,65,0.06); }
 .ob-mock-pill.done .ob-mp-num { color: var(--red); }
 .ob-mock-pill.active { background: rgba(222,51,65,0.16); border-color: var(--red); }
 .ob-mock-pill.active .ob-mp-num { color: var(--red); }
-.ob-mock-day {
-  background: var(--bg3); border: 1px solid var(--border); border-radius: 10px;
-  padding: 0.55rem 0.7rem; margin-bottom: 0.6rem;
+.ob-mock-pill.locked { opacity: 0.4; }
+
+/* Mini habits×days grid that mirrors .weekly-table at illustration scale */
+.ob-mock-grid {
+  display: grid;
+  grid-template-columns: minmax(74px, 1.4fr) repeat(7, 1fr);
+  gap: 1px; background: var(--border);
+  border: 1px solid var(--border); border-radius: 8px;
+  overflow: hidden; margin-bottom: 0.7rem;
 }
-.ob-mock-day-head { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; }
-.ob-mock-caret { color: var(--red); font-size: 0.85rem; }
-.ob-mock-day-label { flex: 1; font-size: 0.82rem; font-weight: 700; color: var(--text); }
-.ob-mock-day-pts { font-size: 0.75rem; font-weight: 800; color: var(--red); background: rgba(222,51,65,0.12); padding: 0.1rem 0.5rem; border-radius: 999px; }
-.ob-mock-habit {
-  display: flex; align-items: center; gap: 0.5rem;
-  font-size: 0.78rem; color: var(--text-dim); padding: 0.2rem 0;
+.ob-mg-corner, .ob-mg-head-cell, .ob-mg-name, .ob-mg-cell {
+  background: var(--bg3); display: flex; align-items: center; justify-content: center;
+  min-height: 26px; font-size: 0.62rem; font-weight: 700; color: var(--text-dim);
 }
-.ob-mock-habit > span:first-child {
-  width: 16px; height: 16px; border: 1.5px solid var(--border); border-radius: 4px;
-  display: inline-flex; align-items: center; justify-content: center;
-  font-size: 0.7rem; flex-shrink: 0;
+.ob-mg-name {
+  background: var(--bg2); padding: 0 0.4rem; justify-content: flex-start; gap: 0.3rem;
+  font-size: 0.7rem; font-weight: 700; color: var(--text); white-space: nowrap;
 }
-.ob-mock-habit.hit > span:first-child { background: var(--green); border-color: var(--green); color: #FFFFFF; font-weight: 800; }
-.ob-mock-habit.hit { color: var(--text); }
+.ob-mg-name.big3 { background: rgba(222,51,65,0.05); border-left: 2px solid var(--red); padding-left: calc(0.4rem - 2px); }
+.ob-mg-head-cell { font-size: 0.62rem; font-weight: 800; color: var(--text); }
+.ob-mg-cell { background: var(--bg2); }
+.ob-mg-cell.hit { background: var(--green); color: #FFFFFF; font-weight: 800; }
+
 .ob-mock-edit {
   display: inline-block; font-size: 0.78rem; font-weight: 700; color: var(--red);
   background: rgba(222,51,65,0.08); border: 1px dashed rgba(222,51,65,0.35);
-  border-radius: 8px; padding: 0.4rem 0.75rem;
+  border-radius: 8px; padding: 0.4rem 0.85rem;
 }
 .ob-dots {
   display: flex; gap: 0.4rem; justify-content: center; margin: 0.5rem 0 0.8rem;
@@ -1861,22 +1865,30 @@ body::before { display: none; } /* noise overlay removed for light theme */
       <div class="ob-mock">
         <div class="ob-mock-pills">
           <div class="ob-mock-pill done"><span class="ob-mp-num">Wk 1</span><span class="ob-mp-pts">52</span></div>
-          <div class="ob-mock-pill active"><span class="ob-mp-num">Wk 2</span><span class="ob-mp-pts">—</span></div>
-          <div class="ob-mock-pill"><span class="ob-mp-num">Wk 3</span><span class="ob-mp-pts">—</span></div>
-          <div class="ob-mock-pill"><span class="ob-mp-num">Wk 4</span><span class="ob-mp-pts">—</span></div>
+          <div class="ob-mock-pill active"><span class="ob-mp-num">Wk 2</span><span class="ob-mp-pts">94</span></div>
+          <div class="ob-mock-pill locked"><span class="ob-mp-num">Wk 3</span><span class="ob-mp-pts">—</span></div>
+          <div class="ob-mock-pill locked"><span class="ob-mp-num">Wk 4</span><span class="ob-mp-pts">—</span></div>
         </div>
-        <div class="ob-mock-day">
-          <div class="ob-mock-day-head">
-            <span class="ob-mock-caret">▾</span>
-            <span class="ob-mock-day-label">Wed · Apr 15</span>
-            <span class="ob-mock-day-pts">14 pts</span>
-          </div>
-          <div class="ob-mock-habit hit"><span>✓</span><span>🏋️ Train</span></div>
-          <div class="ob-mock-habit hit"><span>✓</span><span>💧 Hydration</span></div>
-          <div class="ob-mock-habit"><span></span><span>😴 Sleep</span></div>
-          <div class="ob-mock-habit"><span></span><span>🥦 Veggies & Fruit</span></div>
+        <div class="ob-mock-grid">
+          <div class="ob-mg-corner"></div>
+          <div class="ob-mg-head-cell">S</div>
+          <div class="ob-mg-head-cell">M</div>
+          <div class="ob-mg-head-cell">T</div>
+          <div class="ob-mg-head-cell">W</div>
+          <div class="ob-mg-head-cell">T</div>
+          <div class="ob-mg-head-cell">F</div>
+          <div class="ob-mg-head-cell">S</div>
+
+          <div class="ob-mg-name"><span>🏋️</span><span>Train</span></div>
+          <div class="ob-mg-cell hit">✓</div><div class="ob-mg-cell hit">✓</div><div class="ob-mg-cell"></div><div class="ob-mg-cell hit">✓</div><div class="ob-mg-cell hit">✓</div><div class="ob-mg-cell"></div><div class="ob-mg-cell"></div>
+
+          <div class="ob-mg-name"><span>💧</span><span>Hydrate</span></div>
+          <div class="ob-mg-cell hit">✓</div><div class="ob-mg-cell hit">✓</div><div class="ob-mg-cell hit">✓</div><div class="ob-mg-cell hit">✓</div><div class="ob-mg-cell"></div><div class="ob-mg-cell"></div><div class="ob-mg-cell"></div>
+
+          <div class="ob-mg-name big3"><span class="habit-emoji-no"><span class="heno-base">🍺</span><span class="heno-mark">🚫</span></span><span>Alcohol</span></div>
+          <div class="ob-mg-cell hit">✓</div><div class="ob-mg-cell hit">✓</div><div class="ob-mg-cell hit">✓</div><div class="ob-mg-cell hit">✓</div><div class="ob-mg-cell hit">✓</div><div class="ob-mg-cell"></div><div class="ob-mg-cell"></div>
         </div>
-        <div class="ob-mock-edit">✎ Edit weekly total</div>
+        <div class="ob-mock-edit">Edit Total</div>
       </div>
       <div class="ob-body" style="font-size:0.82rem;color:var(--text-dim)">Points lock on <strong>Wednesdays</strong> — Tina counts them then.</div>
     </div>
@@ -3042,7 +3054,7 @@ function renderWeeklyView(){
       <div class="ws-left">
         <div class="ws-week-line">
           <div class="ws-week">Week ${selectedWeek}${focus?' · 🎯 '+focus:''}</div>
-          ${showEditBtn?'<button class="qa-btn ws-edit-top-btn" onclick="openWeekTotalModal()"><span class="qa-icon">✏️</span><span class="qa-sub">Edit weekly total</span></button>':''}
+          ${showEditBtn?'<button class="qa-btn ws-edit-top-btn" onclick="openWeekTotalModal()"><span class="qa-sub">Edit Total</span></button>':''}
         </div>
         <div class="ws-dates">${fmtR(wsKey)} – ${fmtR(weKey)}</div>
       </div>
