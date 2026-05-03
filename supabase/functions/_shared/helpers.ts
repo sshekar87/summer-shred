@@ -101,7 +101,7 @@ export function brandHtmlWrap(inner: string, subject: string, appUrl: string): s
           <div style="font-size:18px;font-weight:900;letter-spacing:1.5px;color:#111111;text-transform:uppercase;">
             LIVE <span style="color:#DE3341;">B.I.G</span> 365
           </div>
-          <div style="font-size:11px;font-weight:700;letter-spacing:2px;color:#6A6A6A;text-transform:uppercase;margin-top:4px;">
+          <div style="font-size:13px;font-weight:600;color:#6A6A6A;margin-top:4px;">
             ${subject}
           </div>
         </div>
@@ -110,8 +110,8 @@ export function brandHtmlWrap(inner: string, subject: string, appUrl: string): s
 
         <!-- Footer -->
         <div style="padding:18px 28px;border-top:1px solid #E1E1E1;text-align:center;">
-          <a href="${appUrl}" style="display:inline-block;background:#DE3341;color:#FFFFFF;padding:12px 28px;border-radius:8px;font-weight:800;font-size:13px;letter-spacing:1.2px;text-decoration:none;">
-            OPEN LIVE B.I.G 365 →
+          <a href="${appUrl}" style="display:inline-block;background:#DE3341;color:#FFFFFF;padding:12px 28px;border-radius:8px;font-weight:700;font-size:14px;text-decoration:none;">
+            Open Live B.I.G 365 →
           </a>
           <p style="color:#B0B0B0;font-size:11px;margin:14px 0 0;">livebig365.fit</p>
         </div>

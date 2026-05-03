@@ -116,7 +116,7 @@ Deno.serve(async () => {
             : "Every point counts. Keep showing up.";
 
     const overrideTag = s.hasOverride
-      ? `<span style="display:inline-block;background:rgba(255,140,66,0.15);color:#FF8C42;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:800;letter-spacing:1px;margin-left:6px;vertical-align:middle;">MANUAL</span>`
+      ? `<span style="display:inline-block;background:rgba(255,140,66,0.15);color:#FF8C42;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;margin-left:6px;vertical-align:middle;">Manual</span>`
       : '';
 
     const inner = `
@@ -132,15 +132,15 @@ Deno.serve(async () => {
           <tr>
             <td style="background:#F7F7F7;border:1px solid #E1E1E1;border-radius:10px;padding:14px;text-align:center;width:33%;">
               <div style="font-size:28px;font-weight:900;color:#DE3341;line-height:1;">${s.weekPts}${overrideTag}</div>
-              <div style="font-size:10px;color:#6A6A6A;text-transform:uppercase;letter-spacing:1.5px;margin-top:6px;">Points</div>
+              <div style="font-size:12px;color:#6A6A6A;font-weight:600;margin-top:6px;">Points</div>
             </td>
             <td style="background:#F7F7F7;border:1px solid #E1E1E1;border-radius:10px;padding:14px;text-align:center;width:33%;">
               <div style="font-size:28px;font-weight:900;color:#DE3341;line-height:1;">#${rank}</div>
-              <div style="font-size:10px;color:#6A6A6A;text-transform:uppercase;letter-spacing:1.5px;margin-top:6px;">of ${profiles.length}</div>
+              <div style="font-size:12px;color:#6A6A6A;font-weight:600;margin-top:6px;">of ${profiles.length}</div>
             </td>
             <td style="background:#F7F7F7;border:1px solid #E1E1E1;border-radius:10px;padding:14px;text-align:center;width:33%;">
               <div style="font-size:28px;font-weight:900;color:#DE3341;line-height:1;">${s.daysLogged}/7</div>
-              <div style="font-size:10px;color:#6A6A6A;text-transform:uppercase;letter-spacing:1.5px;margin-top:6px;">Days</div>
+              <div style="font-size:12px;color:#6A6A6A;font-weight:600;margin-top:6px;">Days</div>
             </td>
           </tr>
         </table>
@@ -153,7 +153,7 @@ Deno.serve(async () => {
 
       <!-- Habit breakdown -->
       <div style="padding:18px 28px 4px;">
-        <div style="font-size:11px;font-weight:800;color:#6A6A6A;letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;">Habit Breakdown</div>
+        <div style="font-size:14px;font-weight:700;color:#111111;margin-bottom:10px;">Habit breakdown</div>
         <table style="width:100%;border-collapse:collapse;">
           ${habitRows}
         </table>
@@ -163,7 +163,7 @@ Deno.serve(async () => {
       ${bestHabit ? `
       <div style="padding:14px 28px 4px;">
         <div style="background:rgba(46,156,92,0.08);border-left:3px solid #2E9C5C;border-radius:8px;padding:12px 14px;">
-          <div style="font-size:10px;font-weight:800;color:#2E9C5C;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px;">Most Consistent</div>
+          <div style="font-size:12px;font-weight:700;color:#2E9C5C;margin-bottom:4px;">Most consistent</div>
           <div style="color:#111111;font-size:14px;font-weight:700;">${bestHabit.emoji} ${bestHabit.name} — ${bestHabit.count} of ${s.daysLogged} days</div>
         </div>
       </div>` : ''}
@@ -171,7 +171,7 @@ Deno.serve(async () => {
       ${oppHabit ? `
       <div style="padding:6px 28px 4px;">
         <div style="background:rgba(255,140,66,0.08);border-left:3px solid #FF8C42;border-radius:8px;padding:12px 14px;">
-          <div style="font-size:10px;font-weight:800;color:#FF8C42;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px;">Easy Win This Week</div>
+          <div style="font-size:12px;font-weight:700;color:#FF8C42;margin-bottom:4px;">Easy win this week</div>
           <div style="color:#111111;font-size:14px;font-weight:700;">${oppHabit.emoji} ${oppHabit.name} — ${oppHabit.count} of ${s.daysLogged} days</div>
         </div>
       </div>` : ''}
@@ -179,7 +179,7 @@ Deno.serve(async () => {
       <!-- Edit reminder -->
       <div style="padding:14px 28px 4px;">
         <div style="background:#F7F7F7;border:1px dashed #E1E1E1;border-radius:8px;padding:14px;">
-          <div style="font-size:11px;font-weight:800;color:#6A6A6A;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px;">⏰ Reminder</div>
+          <div style="font-size:12px;font-weight:700;color:#6A6A6A;margin-bottom:6px;">⏰ Reminder</div>
           <div style="color:#111111;font-size:13px;line-height:1.5;">
             Forgot a day? Tap the <strong>Weekly</strong> tab, expand any past day, and fill in what you missed.
             You can also <strong>Edit weekly total</strong> directly. Tina locks in points on Wednesday.
@@ -189,7 +189,7 @@ Deno.serve(async () => {
 
       <!-- Motivational close -->
       <div style="padding:14px 28px 24px;text-align:center;">
-        <div style="color:#111111;font-size:14px;font-style:italic;font-weight:600;">"${close}"</div>
+        <div style="color:#111111;font-size:14px;font-weight:600;">${close}</div>
       </div>
     `;
 

@@ -123,7 +123,7 @@ Deno.serve(async () => {
     }
     const highlightsHtml = highlights.length
       ? highlights.join('')
-      : '<div style="color:#6A6A6A;font-style:italic;">Quiet week. Plenty of room to take the top spot next week.</div>';
+      : '<div style="color:#6A6A6A;">Quiet week. Plenty of room to take the top spot next week.</div>';
 
     const inner = `
       <!-- Greeting -->
@@ -137,7 +137,7 @@ Deno.serve(async () => {
       <!-- Group stats banner -->
       <div style="padding:18px 28px 8px;">
         <div style="background:#F7F7F7;border:1px solid #E1E1E1;border-radius:10px;padding:14px;text-align:center;">
-          <div style="font-size:12px;font-weight:700;color:#6A6A6A;letter-spacing:1.5px;text-transform:uppercase;">Group Pulse</div>
+          <div style="font-size:13px;font-weight:700;color:#6A6A6A;">Group pulse</div>
           <div style="margin-top:6px;font-size:13px;color:#111111;">
             <strong>${totalGroupPts}</strong> total pts · <strong>${avgPts}</strong> avg per member · <strong>${totalDaysLogged}</strong> days logged${totalPerfectDays > 0 ? ` · <strong>${totalPerfectDays}</strong> perfect days` : ''}
           </div>
@@ -146,7 +146,7 @@ Deno.serve(async () => {
 
       <!-- Leaderboard table -->
       <div style="padding:18px 28px 4px;">
-        <div style="font-size:11px;font-weight:800;color:#6A6A6A;letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;">Leaderboard — Week ${wk}</div>
+        <div style="font-size:14px;font-weight:700;color:#111111;margin-bottom:10px;">Leaderboard · Week ${wk}</div>
         <table style="width:100%;border-collapse:collapse;border:1px solid #E1E1E1;border-radius:8px;overflow:hidden;">
           ${lbRows}
         </table>
@@ -154,7 +154,7 @@ Deno.serve(async () => {
 
       <!-- Highlights -->
       <div style="padding:18px 28px 4px;">
-        <div style="font-size:11px;font-weight:800;color:#6A6A6A;letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;">🌟 Highlights</div>
+        <div style="font-size:14px;font-weight:700;color:#111111;margin-bottom:10px;">🌟 Highlights</div>
         <div style="background:#F7F7F7;border:1px solid #E1E1E1;border-radius:10px;padding:14px;color:#111111;font-size:13px;line-height:1.5;">
           ${highlightsHtml}
         </div>
@@ -163,7 +163,7 @@ Deno.serve(async () => {
       <!-- Last call CTA -->
       <div style="padding:18px 28px 4px;">
         <div style="background:rgba(222,51,65,0.08);border-left:3px solid #DE3341;border-radius:8px;padding:14px 16px;">
-          <div style="font-size:11px;font-weight:800;color:#DE3341;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px;">⏰ Last Call</div>
+          <div style="font-size:12px;font-weight:700;color:#DE3341;margin-bottom:6px;">⏰ Last call</div>
           <div style="color:#111111;font-size:14px;line-height:1.55;">
             Tap the <strong>Weekly</strong> tab, expand any day, and fill in what you missed before <strong>Tina locks in points tomorrow</strong>.
           </div>
@@ -172,7 +172,7 @@ Deno.serve(async () => {
 
       <!-- Encouragement close -->
       <div style="padding:14px 28px 24px;text-align:center;">
-        <div style="color:#111111;font-size:14px;font-style:italic;font-weight:600;">"Every rep counts. Show up for Week ${wk + 1 <= cfg.programWeeks ? wk + 1 : 'the finish'}."</div>
+        <div style="color:#111111;font-size:14px;font-weight:600;">Every rep counts. Show up for Week ${wk + 1 <= cfg.programWeeks ? wk + 1 : 'the finish'}.</div>
       </div>
     `;
 
