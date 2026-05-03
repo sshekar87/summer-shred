@@ -939,12 +939,21 @@ body::before { display: none; } /* noise overlay removed for light theme */
 .weekly-table {
   display: grid;
   grid-template-columns: minmax(72px, 1.4fr) repeat(7, minmax(30px, 1fr)) minmax(38px, 0.7fr);
+  grid-auto-rows: 44px; /* uniform row height regardless of cell content */
   gap: 1px;
   background: var(--border);
   border: 1px solid var(--border);
   border-radius: 12px;
   overflow: hidden;
   margin-bottom: 1.5rem;
+}
+/* Overlay 🚫 on top of food emoji for the No-X habits — works anywhere a habit emoji renders */
+.habit-emoji-no { position: relative; display: inline-block; line-height: 1; }
+.habit-emoji-no .heno-base { display: inline-block; line-height: 1; }
+.habit-emoji-no .heno-mark {
+  position: absolute; top: -0.15em; right: -0.35em;
+  font-size: 0.72em; line-height: 1;
+  filter: drop-shadow(0 0 1.5px rgba(255,255,255,0.95));
 }
 .wt-corner { background: var(--bg3); }
 .wt-day-head, .wt-tot-head {
@@ -1042,6 +1051,55 @@ body::before { display: none; } /* noise overlay removed for light theme */
    BENCHMARKS
 ═══════════════════════════════════════════ */
 .benchmarks-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(205px,1fr)); gap:0.95rem; margin-bottom:1.5rem; }
+
+/* My Track row-grid: Exercise | Start | Finish | Δ */
+.bm-rows {
+  display: grid;
+  grid-template-columns: minmax(98px, 1.4fr) 1fr 1fr minmax(60px, 0.8fr);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+}
+.bm-rows-head {
+  background: var(--bg3); padding: 0.55rem 0.45rem;
+  font-size: 0.62rem; font-weight: 800; color: var(--text-dim);
+  text-transform: uppercase; letter-spacing: 1px;
+  display: flex; align-items: center; justify-content: center;
+}
+.bm-rows-head:first-child { justify-content: flex-start; padding-left: 0.7rem; }
+.bm-row-name {
+  background: var(--bg2); padding: 0.6rem 0.65rem;
+  display: flex; align-items: center; gap: 0.4rem;
+  font-size: 0.85rem; font-weight: 700; color: var(--text);
+}
+.bm-row-name .bm-icon { font-size: 1.05rem; flex-shrink: 0; }
+.bm-row-name .bm-row-unit { font-size: 0.6rem; font-weight: 600; color: var(--text-dim); margin-left: auto; }
+.bm-row-input {
+  background: var(--bg2); padding: 0.4rem 0.3rem;
+  display: flex; align-items: center; justify-content: center;
+}
+.bm-row-input .bm-input,
+.bm-row-input .bm-time-input input {
+  width: 100%; background: var(--bg3); border: 1px solid var(--border);
+  border-radius: 6px; color: var(--text); padding: 0.42rem 0.35rem;
+  font-family: 'DM Sans', sans-serif; font-size: 0.88rem;
+  text-align: center; outline: none; transition: border-color 0.15s;
+  min-width: 0;
+}
+.bm-row-input .bm-input:focus,
+.bm-row-input .bm-time-input input:focus { border-color: var(--red); }
+.bm-row-input .bm-time-input { display: flex; align-items: center; gap: 0.15rem; width: 100%; }
+.bm-row-input .bm-time-input input { padding: 0.42rem 0.2rem; }
+.bm-row-input .bm-time-input .bm-colon { color: var(--text-dim); font-weight: 800; padding: 0 0.05rem; }
+.bm-row-delta {
+  background: var(--bg2); padding: 0.45rem 0.25rem;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.8rem; font-weight: 800;
+}
+.bm-row-delta .bm-delta { background: none; border: none; padding: 0; font-weight: 800; }
 .bm-card { background:var(--bg2); border:1px solid var(--border); border-radius:12px; padding:1rem 1.1rem; transition:border-color 0.2s; }
 .bm-card:hover { border-color:rgba(222,51,65,0.3); }
 .bm-card-head { display:flex; align-items:center; gap:0.55rem; margin-bottom:0.7rem; }
@@ -1835,26 +1893,33 @@ function programEndDate(){const d=new Date(PROGRAM_START);d.setDate(d.getDate()+
 function weekDeadlineKey(wk){return dayOffset(weekEndDate(wk),4);} // Sat + 4 = Wed
 
 const HABITS = [
-  { id:'train',    emoji:'🏋️', name:'Train',               pts:1, tip:'Hit the gym, class, home, or open gym' },
-  { id:'mobility', emoji:'🧘', name:'Flexy & Sexy',         pts:1, tip:'15 min of stretching & mobility' },
-  { id:'sleep',    emoji:'😴', name:'Sleep',               pts:1, tip:'6–8 hours of sleep' },
-  { id:'fasting',  emoji:'⏱️', name:'Fasting',             pts:1, tip:'10–14 hour overnight fast' },
-  { id:'veggies',  emoji:'🥦', name:'Veggies & Fruit',     pts:1, tip:'6 servings veg + 2 fruit' },
-  { id:'water',    emoji:'💧', name:'Hydration',           pts:1, tip:'64oz water minimum' },
-  { id:'alcohol',  emoji:'🚫', name:'No Alcohol',          pts:5, tip:'Skipped the booze today' },
-  { id:'bread',    emoji:'🍞', name:'No Bread',            pts:5, tip:'No flour-based foods' },
-  { id:'sugar',    emoji:'🍬', name:'No Added Sugar',      pts:5, tip:'No processed sugar or syrups' },
-  { id:'extra',    emoji:'⭐', name:'Extra Credit',        pts:5, tip:"Crushed this week's focus" },
+  { id:'train',    emoji:'🏋️', name:'Train',     pts:1, tip:'Hit the gym, class, home, or open gym' },
+  { id:'mobility', emoji:'🧘', name:'Stretch',   pts:1, tip:'15 min of stretching & mobility' },
+  { id:'sleep',    emoji:'😴', name:'Sleep',     pts:1, tip:'6–8 hours of sleep' },
+  { id:'fasting',  emoji:'⏱️', name:'Fast',      pts:1, tip:'10–14 hour overnight fast' },
+  { id:'veggies',  emoji:'🥦', name:'Veggies',   pts:1, tip:'6 servings veg + 2 fruit' },
+  { id:'water',    emoji:'💧', name:'Hydrate',   pts:1, tip:'64oz water minimum' },
+  { id:'alcohol',  emoji:'🍺', name:'No Alcohol',pts:5, tip:'Skipped the booze today',     negate:true },
+  { id:'bread',    emoji:'🍞', name:'No Bread',  pts:5, tip:'No flour-based foods',        negate:true },
+  { id:'sugar',    emoji:'🍬', name:'No Sugar',  pts:5, tip:'No processed sugar or syrups',negate:true },
+  { id:'extra',    emoji:'⭐', name:'Extra',     pts:5, tip:"Crushed this week's focus" },
 ];
 const MAX_DAILY = HABITS.reduce((a,h)=>a+h.pts,0);
+// Render a habit's emoji — overlays 🚫 on top for "No X" habits (alcohol/bread/sugar) so the
+// glyph reads as "no <thing>" instead of just <thing>. Use everywhere we'd otherwise inline h.emoji.
+function habitEmojiHTML(h){
+  return h.negate
+    ? `<span class="habit-emoji-no"><span class="heno-base">${h.emoji}</span><span class="heno-mark">🚫</span></span>`
+    : h.emoji;
+}
 
 const BENCHMARKS_DEF = [
-  {id:'bench',    icon:'🏋️',name:'Bench Press', unit:'lbs', lowerIsBetter:false},
-  {id:'deadlift', icon:'⚡', name:'Deadlift',    unit:'lbs', lowerIsBetter:false},
-  {id:'squat',    icon:'🦵', name:'Back Squat',  unit:'lbs', lowerIsBetter:false},
+  {id:'bench',    icon:'💺', name:'Bench Press', unit:'lbs', lowerIsBetter:false},
+  {id:'deadlift', icon:'💪', name:'Deadlift',    unit:'lbs', lowerIsBetter:false},
+  {id:'squat',    icon:'🏋️', name:'Back Squat',  unit:'lbs', lowerIsBetter:false},
   {id:'row2k',    icon:'🚣', name:'2K Row',       unit:'time',lowerIsBetter:true },
   {id:'burpees',  icon:'💥', name:'50 Burpees',  unit:'time',lowerIsBetter:true },
-  {id:'pullups',  icon:'💪', name:'Max Pull-Ups',unit:'reps',lowerIsBetter:false},
+  {id:'pullups',  icon:'🤸', name:'Max Pull-Ups',unit:'reps',lowerIsBetter:false},
   {id:'bodycomp', icon:'⚖️', name:'Body Weight', unit:'lbs', lowerIsBetter:true },
 ];
 
@@ -2547,7 +2612,7 @@ function initOnboarding(){
     const big3=new Set(['alcohol','bread','sugar']);
     list.innerHTML=HABITS.map(h=>{
       const isBig=big3.has(h.id);
-      return `<li class="${isBig?'big3':''}"><span class="oh-emoji">${h.emoji}</span><span class="oh-name">${h.name}</span><span class="oh-pts">+${h.pts}pt${h.pts>1?'s':''}</span></li>`;
+      return `<li class="${isBig?'big3':''}"><span class="oh-emoji">${habitEmojiHTML(h)}</span><span class="oh-name">${h.name}</span><span class="oh-pts">+${h.pts}pt${h.pts>1?'s':''}</span></li>`;
     }).join('');
   }
   // Populate Screen 3 platform-specific instructions
@@ -2774,7 +2839,7 @@ function renderLog(){
     const checked=!!log[h.id];
     const row=document.createElement('div');
     row.className='habit-row'+(checked?' checked':'');
-    row.innerHTML=`<span class="habit-row-emoji">${h.emoji}</span><div class="habit-row-body"><div class="habit-row-name">${h.name}</div><div class="habit-row-tip">${h.tip}</div></div><span class="habit-row-pts">+${h.pts}</span>`;
+    row.innerHTML=`<span class="habit-row-emoji">${habitEmojiHTML(h)}</span><div class="habit-row-body"><div class="habit-row-name">${h.name}</div><div class="habit-row-tip">${h.tip}</div></div><span class="habit-row-pts">+${h.pts}</span>`;
     row.onclick=()=>toggleHabit(h.id);
     grid.appendChild(row);
   });
@@ -2979,7 +3044,7 @@ function renderWeeklyView(){
   HABITS.forEach(h=>{
     const isBig=big3.has(h.id);
     const escId=h.id.replace(/'/g,"\\'");
-    html+=`<div class="wt-habit-cell${isBig?' big3':''}"><span class="wt-emoji">${h.emoji}</span><span class="wt-name">${h.name}</span><span class="wt-pts">+${h.pts}</span></div>`;
+    html+=`<div class="wt-habit-cell${isBig?' big3':''}"><span class="wt-emoji">${habitEmojiHTML(h)}</span><span class="wt-name">${h.name}</span><span class="wt-pts">+${h.pts}</span></div>`;
     let hits=0;
     days.forEach(d=>{
       const log=u.logs[d.key]||{};
@@ -3129,30 +3194,18 @@ function renderBenchmarks(){
   const u=currentUser();if(!u)return;
   const bm=u.benchmarks||{};const container=document.getElementById('bm-content');container.innerHTML='';
   const mySection=document.createElement('div');mySection.innerHTML=`<div class="bm-section-header">📊 My Track</div>`;
-  const grid=document.createElement('div');grid.className='benchmarks-grid';
+  const grid=document.createElement('div');grid.className='bm-rows';
+  // Header row
+  let html='<div class="bm-rows-head">Exercise</div><div class="bm-rows-head">Start</div><div class="bm-rows-head">Finish</div><div class="bm-rows-head">Δ</div>';
+  // One row per exercise
   BENCHMARKS_DEF.forEach(b=>{
     const start=bm['start_'+b.id]||'',end=bm['end_'+b.id]||'';
-    const delta=bmFmtDelta(b,start,end);
-    const card=document.createElement('div');card.className='bm-card';card.dataset.bmId=b.id;
-    card.innerHTML=`
-      <div class="bm-card-head">
-        <span class="bm-icon">${b.icon}</span>
-        <span class="bm-name">${b.name}</span>
-        ${delta}
-      </div>
-      <div class="bm-card-row">
-        <div class="bm-input-group">
-          <label>Start</label>
-          ${bmBuildInput(b,'start_'+b.id,start)}
-        </div>
-        <span class="bm-arrow">→</span>
-        <div class="bm-input-group">
-          <label>Finish</label>
-          ${bmBuildInput(b,'end_'+b.id,end)}
-        </div>
-      </div>`;
-    grid.appendChild(card);
+    html+=`<div class="bm-row-name"><span class="bm-icon">${b.icon}</span><span>${b.name}</span><span class="bm-row-unit">${b.unit==='time'?'m:s':b.unit}</span></div>`;
+    html+=`<div class="bm-row-input">${bmBuildInput(b,'start_'+b.id,start)}</div>`;
+    html+=`<div class="bm-row-input">${bmBuildInput(b,'end_'+b.id,end)}</div>`;
+    html+=`<div class="bm-row-delta" data-bm-id="${b.id}">${bmFmtDelta(b,start,end)}</div>`;
   });
+  grid.innerHTML=html;
   mySection.appendChild(grid);container.appendChild(mySection);
 
   // Athletes — single combined table. Default: Start row only per athlete.
@@ -3208,11 +3261,10 @@ function saveBm(key,val){
   // Update the delta on the affected card immediately (cheap in-place update — preserves input focus)
   const b=BENCHMARKS_DEF.find(x=>key==='start_'+x.id||key==='end_'+x.id);
   if(b){
-    const card=document.querySelector('.bm-card[data-bm-id="'+b.id+'"]');
-    if(card){
-      const head=card.querySelector('.bm-card-head');
-      const oldDelta=head&&head.querySelector('.bm-delta');
-      if(oldDelta){oldDelta.outerHTML=bmFmtDelta(b,u.benchmarks['start_'+b.id]||'',u.benchmarks['end_'+b.id]||'');}
+    // Update the row's delta cell in place — preserves input focus on the value still being typed
+    const deltaCell=document.querySelector('[data-bm-id="'+b.id+'"]');
+    if(deltaCell){
+      deltaCell.innerHTML=bmFmtDelta(b,u.benchmarks['start_'+b.id]||'',u.benchmarks['end_'+b.id]||'');
     }
   }
   // Debounced persist
@@ -3298,7 +3350,7 @@ function renderCoachView(){
       const streakChip=s.streak>=2?`<span class="coach-streak-chip">🔥 ${s.streak}-day streak</span>`:'';
       const row=document.createElement('div');
       row.className='coach-row strong';
-      row.innerHTML=`<span class="coach-row-emoji">${s.habit.emoji}</span><div class="coach-row-body"><div class="coach-row-name">${s.habit.name}</div><div class="coach-row-meta"><span class="coach-row-rate">${s.checked}/${s.total} days</span>${streakChip}</div></div>`;
+      row.innerHTML=`<span class="coach-row-emoji">${habitEmojiHTML(s.habit)}</span><div class="coach-row-body"><div class="coach-row-name">${s.habit.name}</div><div class="coach-row-meta"><span class="coach-row-rate">${s.checked}/${s.total} days</span>${streakChip}</div></div>`;
       strengthsEl.appendChild(row);
     });
   }
@@ -3310,12 +3362,12 @@ function renderCoachView(){
   }else{
     const watch=[...sorted].reverse().filter(h=>h.rate<=0.4).slice(0,3);
     if(watch.length===0){
-      watchEl.innerHTML='<div class="coach-empty">Nothing slipping right now — keep it up 🐉</div>';
+      watchEl.innerHTML='<div class="coach-empty">Nothing slipping right now — keep it up 💪</div>';
     }else{
       watch.forEach(s=>{
         const row=document.createElement('div');
         row.className='coach-row weak';
-        row.innerHTML=`<span class="coach-row-emoji">${s.habit.emoji}</span><div class="coach-row-body"><div class="coach-row-name">${s.habit.name}</div><div class="coach-row-meta"><span class="coach-row-rate">${s.checked}/${s.total} days</span><span class="coach-row-msg">${watchlistMsg(s.rate)}</span></div></div>`;
+        row.innerHTML=`<span class="coach-row-emoji">${habitEmojiHTML(s.habit)}</span><div class="coach-row-body"><div class="coach-row-name">${s.habit.name}</div><div class="coach-row-meta"><span class="coach-row-rate">${s.checked}/${s.total} days</span><span class="coach-row-msg">${watchlistMsg(s.rate)}</span></div></div>`;
         watchEl.appendChild(row);
       });
     }
@@ -3325,7 +3377,7 @@ function renderCoachView(){
   const earnedEl=document.getElementById('coach-badges-earned');earnedEl.innerHTML='';
   const earned=BADGE_DEFS.filter(b=>b.check(stats));
   if(earned.length===0){
-    earnedEl.innerHTML='<div class="coach-empty">No badges yet — your first one is around the corner 🐉</div>';
+    earnedEl.innerHTML='<div class="coach-empty">No badges yet — your first one is around the corner 💪</div>';
   }else{
     earned.forEach(b=>{
       const card=document.createElement('div');
