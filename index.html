@@ -2172,7 +2172,10 @@ function resetAuth(){
   document.getElementById('auth-step-email').hidden=false;
 }
 async function logout(){
-  await sb.auth.signOut();
+  // Local clear is what matters for UX — fire signOut in the background so a slow
+  // network call never freezes the UI. supabase-js still clears localStorage tokens
+  // when the request resolves, and onAuthStateChange will fire then too (harmless).
+  sb.auth.signOut().catch(e=>console.warn('signOut network call failed:',e));
   state=initState();
   resetAuth();
   document.getElementById('auth-screen').style.display='flex';
