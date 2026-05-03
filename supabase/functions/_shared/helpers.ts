@@ -99,7 +99,7 @@ export function brandHtmlWrap(inner: string, subject: string, appUrl: string): s
         <!-- Header band -->
         <div style="background:#FFFFFF;padding:24px 28px 16px;border-bottom:1px solid #E1E1E1;">
           <div style="font-size:18px;font-weight:900;letter-spacing:1.5px;color:#111111;text-transform:uppercase;">
-            LIVE <span style="color:#DE3341;font-style:italic;">B.I.G</span> 365
+            LIVE <span style="color:#DE3341;">B.I.G</span> 365
           </div>
           <div style="font-size:11px;font-weight:700;letter-spacing:2px;color:#6A6A6A;text-transform:uppercase;margin-top:4px;">
             ${subject}
