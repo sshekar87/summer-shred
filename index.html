@@ -158,6 +158,10 @@ body::before { display: none; } /* noise overlay removed for light theme */
 }
 .btn-primary:hover { background: var(--red-bright); transform: translateY(-1px); box-shadow: 0 8px 28px var(--red-glow); }
 .magic-sent { background: rgba(61,170,108,0.1); border: 1px solid var(--green); border-radius: 8px; padding: 1rem; text-align: center; color: var(--green); font-size: 0.88rem; margin-top: 1rem; display: none; }
+.auth-code { font-family: 'DM Mono', 'Courier New', monospace; font-size: 1.6rem; letter-spacing: 0.4em; text-align: center; }
+.auth-step-foot { margin-top: 1rem; text-align: center; font-size: 0.85rem; color: var(--text-dim); }
+.auth-link { background: none; border: none; color: var(--red); cursor: pointer; font: inherit; padding: 0; text-decoration: underline; }
+.auth-link:hover { color: var(--red-bright); }
 .demo-links { margin-top: 1.75rem; text-align: center; }
 .demo-links p { color: var(--text-dim); font-size: 0.72rem; font-weight: 600; margin-bottom: 0.75rem; letter-spacing: 2px; text-transform: uppercase; }
 .demo-avatars { display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: center; }
@@ -1353,11 +1357,24 @@ body::before { display: none; } /* noise overlay removed for light theme */
   <div class="auth-sub" id="auth-prog-range">—</div>
 
   <div class="auth-card">
-    <h2>No password needed.</h2>
-    <p>Get a one-time login link from Live B.I.G 365.</p>
-    <input class="auth-input" id="auth-email" type="email" placeholder="you@example.com"/>
-    <button class="btn-primary" onclick="handleMagicLink()">Send magic link →</button>
-    <div class="magic-sent" id="magic-sent">✅ Link sent! Check your inbox.</div>
+    <div id="auth-step-email">
+      <h2>No password needed.</h2>
+      <p>Enter your email and we'll send you a 6-digit code from Live B.I.G 365.</p>
+      <input class="auth-input" id="auth-email" type="email" placeholder="you@example.com" autocomplete="email"/>
+      <button class="btn-primary" onclick="requestCode()">Send code →</button>
+    </div>
+
+    <div id="auth-step-code" hidden>
+      <h2>Check your email.</h2>
+      <p>We sent a 6-digit code to <strong id="auth-sent-to"></strong>. Enter it below — codes expire in 1 hour.</p>
+      <input class="auth-input auth-code" id="auth-code" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="6" placeholder="123456" autocomplete="one-time-code"/>
+      <button class="btn-primary" onclick="verifyCode()">Sign in</button>
+      <div class="auth-step-foot">
+        <button class="auth-link" onclick="resendCode()">Resend code</button>
+        <span> · </span>
+        <button class="auth-link" onclick="resetAuth()">Use a different email</button>
+      </div>
+    </div>
   </div>
 
   <div class="demo-links" hidden>
@@ -2107,19 +2124,57 @@ async function saveAdminConfig(btn){
   }
 }
 
-/* ═══ AUTH (Supabase magic link) ═══ */
-async function handleMagicLink(){
+/* ═══ AUTH (Supabase email OTP — 6-digit code, with magic link as desktop fallback) ═══ */
+let pendingEmail='';
+
+async function requestCode(){
   const email=document.getElementById('auth-email').value.trim();
   if(!email||!email.includes('@')){showToast('Enter a valid email');return;}
-  const btn=document.querySelector('#auth-screen .btn-primary');if(btn){btn.disabled=true;btn.textContent='Sending…';}
+  const btn=document.querySelector('#auth-step-email .btn-primary');
+  if(btn){btn.disabled=true;btn.textContent='Sending…';}
+  // emailRedirectTo kept so the magic link in the same email lands on the right host for desktop users
   const {error}=await sb.auth.signInWithOtp({email,options:{emailRedirectTo:window.location.origin+window.location.pathname}});
-  if(btn){btn.disabled=false;btn.textContent='SEND MAGIC LINK →';}
+  if(btn){btn.disabled=false;btn.textContent='Send code →';}
   if(error){showToast(error.message);return;}
-  document.getElementById('magic-sent').style.display='block';
+  pendingEmail=email;
+  document.getElementById('auth-sent-to').textContent=email;
+  document.getElementById('auth-step-email').hidden=true;
+  document.getElementById('auth-step-code').hidden=false;
+  setTimeout(()=>document.getElementById('auth-code').focus(),50);
+}
+
+async function verifyCode(){
+  const token=document.getElementById('auth-code').value.trim();
+  if(token.length!==6){showToast('Enter the 6-digit code');return;}
+  if(!pendingEmail){resetAuth();return;}
+  const btn=document.querySelector('#auth-step-code .btn-primary');
+  if(btn){btn.disabled=true;btn.textContent='Signing in…';}
+  const {error}=await sb.auth.verifyOtp({email:pendingEmail,token,type:'email'});
+  if(btn){btn.disabled=false;btn.textContent='Sign in';}
+  if(error){
+    showToast(error.message||'Invalid code');
+    document.getElementById('auth-code').value='';
+    return;
+  }
+  // onAuthStateChange will fire and call enterAppForUser
+}
+
+async function resendCode(){
+  if(!pendingEmail){resetAuth();return;}
+  const {error}=await sb.auth.signInWithOtp({email:pendingEmail,options:{emailRedirectTo:window.location.origin+window.location.pathname}});
+  showToast(error?error.message:'New code sent');
+}
+
+function resetAuth(){
+  pendingEmail='';
+  document.getElementById('auth-code').value='';
+  document.getElementById('auth-step-code').hidden=true;
+  document.getElementById('auth-step-email').hidden=false;
 }
 async function logout(){
   await sb.auth.signOut();
   state=initState();
+  resetAuth();
   document.getElementById('auth-screen').style.display='flex';
   document.getElementById('app').style.display='none';
   showToast('Signed out 👋');

@@ -1,7 +1,8 @@
 <!--
-  Live B.I.G 365 — Magic Link Email Template
+  Live B.I.G 365 — Sign-in code email (Supabase "Magic Link" template slot)
   Paste into Supabase Dashboard → Authentication → Email Templates → Magic Link.
-  Variables: {{ .ConfirmationURL }} (Supabase Go template).
+  Variables: {{ .Token }} (6-digit code, primary), {{ .ConfirmationURL }} (clickable fallback).
+  Subject suggestion: "Your Live B.I.G 365 sign-in code"
 -->
 <div style="background:#F7F7F7;padding:24px 0;font-family:'DM Sans',Arial,sans-serif;">
   <div style="max-width:480px;margin:0 auto;background:#FFFFFF;border-radius:14px;overflow:hidden;border:1px solid #E1E1E1;">
@@ -13,21 +14,28 @@
       </div>
     </div>
 
-    <!-- One-line + CTA -->
-    <div style="padding:28px 28px 22px;text-align:center;">
-      <p style="color:#111111;font-size:15px;font-weight:600;margin:0 0 18px;">
-        Tap to sign in. Link expires in 1 hour.
-      </p>
-      <a href="{{ .ConfirmationURL }}"
-         style="display:inline-block;background:#DE3341;color:#FFFFFF;padding:14px 36px;border-radius:8px;font-weight:700;font-size:15px;text-decoration:none;">
+    <!-- Code (primary) -->
+    <div style="padding:28px 28px 8px;text-align:center;">
+      <p style="color:#6A6A6A;font-size:13px;margin:0 0 12px;">Your sign-in code:</p>
+      <div style="font-family:'DM Mono','Courier New',monospace;font-size:34px;font-weight:800;letter-spacing:0.35em;color:#111111;background:#F7F7F7;border:1px solid #E1E1E1;border-radius:10px;padding:18px 12px 18px 22px;display:inline-block;">
+        {{ .Token }}
+      </div>
+      <p style="color:#B0B0B0;font-size:12px;margin:14px 0 0;">Code expires in 1 hour.</p>
+    </div>
+
+    <!-- Fallback link (desktop) -->
+    <div style="padding:18px 28px 8px;text-align:center;">
+      <p style="color:#6A6A6A;font-size:12px;margin:0 0 10px;">On a desktop? Click instead:</p>
+      <a href="{{ .ConfirmationURL }}" style="display:inline-block;background:#DE3341;color:#FFFFFF;padding:12px 28px;border-radius:8px;font-weight:700;font-size:14px;text-decoration:none;">
         Sign in →
       </a>
     </div>
 
-    <!-- Fallback link -->
-    <div style="padding:0 28px 22px;text-align:center;">
-      <p style="color:#B0B0B0;font-size:11px;margin:0 0 4px;">Button not working? Paste:</p>
-      <a href="{{ .ConfirmationURL }}" style="color:#DE3341;font-size:11px;text-decoration:none;word-break:break-all;">{{ .ConfirmationURL }}</a>
+    <!-- Safety note -->
+    <div style="padding:14px 28px 22px;text-align:center;">
+      <p style="color:#B0B0B0;font-size:11px;line-height:1.5;margin:0;">
+        Didn't request this? You can safely ignore this email.
+      </p>
     </div>
 
     <!-- Footer -->

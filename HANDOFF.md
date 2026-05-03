@@ -327,17 +327,21 @@ By default Supabase JWTs expire after 1 hour, which kicks gym members back to th
 
 ---
 
-## Branded Magic Link Email (one-time)
+## Branded Sign-In Email (one-time)
 
-Default Supabase magic link emails are plain-text and look like a phishing attempt. Replace with the branded version:
+The auth flow uses **email OTP** — members get a 6-digit code in the inbox and type it into the PWA. The same email also includes a clickable magic link as a desktop fallback. This avoids the iOS PWA storage isolation problem (where tapping a magic link always opens Safari, never the home-screen PWA).
+
+To install the branded template:
 
 1. Open `supabase/email_templates/magic_link.html` in this repo — copy the entire file body.
 2. **Supabase Dashboard → Authentication → Email Templates → Magic Link.**
-3. Subject line: `Your Live B.I.G 365 sign-in link`
+3. Subject line: `Your Live B.I.G 365 sign-in code`
 4. Paste the HTML into the message body. Save.
-5. Test: sign out, request a new magic link, confirm the inbox version has the LIVE B.I.G 365 header, red CTA button, and dashed fallback box.
+5. Test: sign out, request a code, confirm the inbox version shows the 6-digit code in a monospace box and a "Sign in →" button below.
 
-The template uses Supabase's `{{ .ConfirmationURL }}` variable. Edit the file in the repo if you tweak it later — keep dashboard + repo in sync.
+The template uses both `{{ .Token }}` (the code) and `{{ .ConfirmationURL }}` (the link). Edit the file in the repo if you tweak it later — keep dashboard + repo in sync.
+
+**Allowlist:** Auth → URL Configuration → Redirect URLs needs both `https://livebig365.fit/**` and `https://summer-shred-*-sukesh-shekars-projects.vercel.app/**` so the magic-link fallback path lands on the right host on production AND branch previews.
 
 ---
 
