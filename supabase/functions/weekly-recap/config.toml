@@ -1,7 +1,10 @@
-# Weekly recap — Sunday 8 AM EDT (12:00 UTC)
-# Subtract 1 hour during EST winter (Nov-Mar): change to "0 13 * * 0"
-# Recaps the Sun-Sat week that just ended (yesterday).
+# Weekly recap — Sunday 8 PM EDT (Monday 00:00 UTC)
+# Add 1 hour during EST winter (Nov-Mar): change to "0 1 * * 1"
+# Recaps the Sun-Sat week that just ended (today).
+#
+# NOTE: this `schedule` field is honored by `supabase serve` locally only.
+# Production scheduling lives in the database via pg_cron — see HANDOFF.md.
 
 [functions.weekly-recap]
 verify_jwt = false
-schedule = "0 12 * * 0"
+schedule = "0 0 * * 1"

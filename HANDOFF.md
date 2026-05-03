@@ -387,21 +387,65 @@ supabase functions deploy weekly-recap
 supabase functions deploy leaderboard-digest
 ```
 
-### 5. Enable cron schedules
+### 5. Schedule the cron jobs in the database
 
-Each function has its cron expression in `config.toml`. To activate:
+**Important:** the `schedule = "..."` line in each function's `config.toml` only matters for `supabase serve` local dev. **Production scheduling lives in the database**, via the `pg_cron` extension calling the function via `pg_net`.
 
-- **Dashboard route:** Supabase → Edge Functions → click function → Schedules → enable. Cron is read from the deployed `config.toml` automatically.
-- **CLI route (newer Supabase CLI):** `supabase functions schedule list`
+One-time setup, run in **Supabase Dashboard → SQL Editor**:
 
-Verify: dashboard should show next runs at:
-- `weekly-recap`: Sunday 12:00 UTC (8 AM EDT)
-- `leaderboard-digest`: Wednesday 01:00 UTC (Tuesday 9 PM EDT)
+```sql
+-- Enable extensions (idempotent; safe to re-run)
+create extension if not exists pg_cron;
+create extension if not exists pg_net;
 
-> **Daylight saving:** times above are EDT (Mar–Nov). For EST (Nov–Mar), the same UTC time is 1 hour later locally. To keep emails firing at 8 AM and 9 PM **EST** in winter, edit each `config.toml`:
-> - `weekly-recap`: `0 13 * * 0` (instead of `0 12 * * 0`)
+-- Weekly recap — Sunday 8 PM EDT = Monday 00:00 UTC
+select cron.schedule(
+  'weekly-recap-sunday-evening',
+  '0 0 * * 1',
+  $$
+    select net.http_post(
+      url := 'https://nstgevgekqtmeixdukvi.supabase.co/functions/v1/weekly-recap',
+      headers := jsonb_build_object('Content-Type', 'application/json')
+    ) as request_id;
+  $$
+);
+
+-- Leaderboard digest — Tuesday 9 PM EDT = Wednesday 01:00 UTC
+select cron.schedule(
+  'leaderboard-digest-tuesday-evening',
+  '0 1 * * 3',
+  $$
+    select net.http_post(
+      url := 'https://nstgevgekqtmeixdukvi.supabase.co/functions/v1/leaderboard-digest',
+      headers := jsonb_build_object('Content-Type', 'application/json')
+    ) as request_id;
+  $$
+);
+```
+
+Verify after running:
+
+```sql
+select jobid, schedule, command, jobname from cron.job;
+```
+
+Should show both rows. To see whether a scheduled run actually executed:
+
+```sql
+select * from cron.job_run_details
+order by start_time desc limit 10;
+```
+
+To **change a schedule later**, the easiest path is unschedule + reschedule:
+
+```sql
+select cron.unschedule('weekly-recap-sunday-evening');
+-- then re-run the cron.schedule(...) above with the new expression
+```
+
+> **Daylight saving:** the cron expressions above are EDT (Mar–Nov). For EST (Nov–Mar), shift by one hour:
+> - `weekly-recap`: `0 1 * * 1` (instead of `0 0 * * 1`)
 > - `leaderboard-digest`: `0 2 * * 3` (instead of `0 1 * * 3`)
-> Or just accept the 1-hour shift — most members won't notice.
 
 ### 6. Test before waiting for the cron
 
