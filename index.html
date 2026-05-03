@@ -880,6 +880,15 @@ body::before { display: none; } /* noise overlay removed for light theme */
 .week-sel-btn.current-week:not(.active) .wsb-num { color:var(--red); }
 .week-sel-btn.active { background:rgba(222,51,65,0.16); border-color:var(--red); }
 .week-sel-btn.active .wsb-num { color:var(--red); }
+.week-sel-btn:disabled, .week-sel-btn.disabled { opacity: 0.38; cursor: not-allowed; background: var(--bg2); }
+.week-sel-btn:disabled:hover, .week-sel-btn.disabled:hover { border-color: var(--border); }
+.weekly-locked-msg {
+  background: var(--bg2); border: 1px dashed var(--border);
+  border-radius: 12px; padding: 1.4rem 1.2rem;
+  text-align: center; color: var(--text-dim); line-height: 1.55;
+  font-size: 0.92rem;
+}
+.weekly-locked-msg strong { color: var(--text); }
 
 .weekly-grid { display:flex; flex-direction:column; gap:0.6rem; margin-bottom:1.5rem; }
 
@@ -1292,19 +1301,22 @@ body::before { display: none; } /* noise overlay removed for light theme */
 .fb-widget { position: fixed; inset: 0; pointer-events: none; z-index: 9000; }
 .fb-widget > * { pointer-events: auto; }
 
-/* Edge pill — anchored right, horizontal text so it's clearly readable */
+/* Vertical edge tab — anchored right, lifted into eye-line on mobile */
 .fb-toggle {
   position: fixed; right: 0; bottom: 35%;
   background: var(--red); color: #FFFFFF; border: none;
   border-radius: 8px 0 0 8px;
-  padding: 0.45rem 0.75rem;
+  padding: 0.95rem 0.5rem;
   cursor: pointer; box-shadow: -3px 4px 14px rgba(222,51,65,0.32);
-  font-family: 'DM Sans', sans-serif; font-weight: 800;
-  font-size: 0.78rem; letter-spacing: 0.5px;
   transition: background 0.15s, padding 0.2s, box-shadow 0.2s, transform 0.1s;
 }
-.fb-toggle-text { display: inline-block; }
-.fb-toggle:hover { background: var(--red-bright); padding-right: 0.95rem; box-shadow: -4px 6px 18px rgba(222,51,65,0.42); }
+.fb-toggle-text {
+  display: inline-block; writing-mode: vertical-rl;
+  font-family: 'DM Sans', sans-serif; font-weight: 800;
+  font-size: 0.85rem; letter-spacing: 1.4px;
+  transform: rotate(180deg);
+}
+.fb-toggle:hover { background: var(--red-bright); padding-right: 0.7rem; box-shadow: -4px 6px 18px rgba(222,51,65,0.42); }
 .fb-toggle:active { transform: scale(0.96); }
 
 /* Backdrop scrim — only present when drawer is open */
@@ -1764,9 +1776,9 @@ body::before { display: none; } /* noise overlay removed for light theme */
   </main>
 
   <nav class="bottom-nav">
-    <button class="bottom-nav-btn active" data-view="log" onclick="switchView('log',this);syncBottomNav(this)"><span class="icon">📝</span>Today</button>
+    <button class="bottom-nav-btn active" data-view="log" onclick="switchView('log',this);syncBottomNav(this)"><span class="icon">🏋️</span>Today</button>
     <button class="bottom-nav-btn" data-view="weekly" onclick="switchView('weekly',this);syncBottomNav(this)"><span class="icon">📅</span>Weekly</button>
-    <button class="bottom-nav-btn" data-view="coach" onclick="switchView('coach',this);syncBottomNav(this)"><span class="icon">🏋️</span>Coach</button>
+    <button class="bottom-nav-btn" data-view="coach" onclick="switchView('coach',this);syncBottomNav(this)"><span class="icon">🎯</span>Coach</button>
     <button class="bottom-nav-btn" data-view="leaderboard" onclick="switchView('leaderboard',this);syncBottomNav(this)"><span class="icon">🏆</span>Board</button>
     <button class="bottom-nav-btn" data-view="benchmarks" onclick="switchView('benchmarks',this);syncBottomNav(this)"><span class="icon">📊</span>Track</button>
   </nav>
@@ -1899,9 +1911,9 @@ const HABITS = [
   { id:'fasting',  emoji:'⏱️', name:'Fast',      pts:1, tip:'10–14 hour overnight fast' },
   { id:'veggies',  emoji:'🥦', name:'Veggies',   pts:1, tip:'6 servings veg + 2 fruit' },
   { id:'water',    emoji:'💧', name:'Hydrate',   pts:1, tip:'64oz water minimum' },
-  { id:'alcohol',  emoji:'🍺', name:'No Alcohol',pts:5, tip:'Skipped the booze today',     negate:true },
-  { id:'bread',    emoji:'🍞', name:'No Bread',  pts:5, tip:'No flour-based foods',        negate:true },
-  { id:'sugar',    emoji:'🍬', name:'No Sugar',  pts:5, tip:'No processed sugar or syrups',negate:true },
+  { id:'alcohol',  emoji:'🍺', name:'Alcohol',   pts:5, tip:'Skipped the booze today',     negate:true },
+  { id:'bread',    emoji:'🍞', name:'Bread',     pts:5, tip:'No flour-based foods',        negate:true },
+  { id:'sugar',    emoji:'🍬', name:'Sugar',     pts:5, tip:'No processed sugar or syrups',negate:true },
   { id:'extra',    emoji:'⭐', name:'Extra',     pts:5, tip:"Crushed this week's focus" },
 ];
 const MAX_DAILY = HABITS.reduce((a,h)=>a+h.pts,0);
@@ -2970,21 +2982,41 @@ function launchShred(isPerfect){
 
 /* ═══ WEEKLY VIEW ═══ */
 function renderWeeklyView(){
-  // Build week selector
+  // Build week selector. Current week is locked unless today is Saturday (so members fill in
+  // the past week as a group at end-of-week before Tina locks points on Wednesday).
   const sel=document.getElementById('week-selector');sel.innerHTML='';
   const cw=currentWeekNum();
+  const isSat=new Date().getDay()===6;
+  // If selected is the current week and we're not Saturday, fall back to the most recent past week
+  if(selectedWeek===cw&&!isSat&&cw>1)selectedWeek=cw-1;
   for(let w=1;w<=PROGRAM_WEEKS;w++){
     const btn=document.createElement('button');
-    btn.className='week-sel-btn'+(w===selectedWeek?' active':'')+(w===cw?' current-week':'');
+    const isCurrent=w===cw;
+    const isFuture=w>cw;
+    const isLocked=(isCurrent&&!isSat)||isFuture;
+    btn.className='week-sel-btn'+(w===selectedWeek?' active':'')+(isCurrent?' current-week':'');
+    btn.disabled=isLocked;
+    if(isLocked&&isCurrent)btn.title='Opens Saturday so the gym fills it in together';
+    if(isFuture)btn.title='Future week';
     const startKey=weekStartDate(w);
     const startLabel=new Date(startKey+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'});
     btn.innerHTML=`<span class="wsb-num">Wk ${w}</span><span class="wsb-date">${startLabel}</span>`;
-    btn.onclick=(()=>{const ww=w;return()=>{selectedWeek=ww;renderWeeklyView();}})();
+    btn.onclick=(()=>{const ww=w,locked=isLocked;return()=>{if(locked)return;selectedWeek=ww;renderWeeklyView();}})();
     sel.appendChild(btn);
   }
   // On mobile this row scrolls horizontally — keep the active week visible without forcing the user to scroll
   const active=sel.querySelector('.week-sel-btn.active');
   if(active&&typeof active.scrollIntoView==='function')active.scrollIntoView({inline:'center',block:'nearest'});
+
+  // Edge case: week 1, weekday — there is no past week to show and the current is locked.
+  // Render an empty state instead of a confusing blank table.
+  if(selectedWeek===cw&&!isSat){
+    const grid=document.getElementById('weekly-grid');grid.innerHTML='';
+    const msg=document.createElement('div');msg.className='weekly-locked-msg';
+    msg.innerHTML=`This week is open for editing on <strong>Saturday</strong>. Log today's habits in the <strong>Today</strong> tab — you'll fill in the rest of the week here together with the gym at week's end.`;
+    grid.appendChild(msg);
+    return;
+  }
 
   // Build day rows for selected week
   const grid=document.getElementById('weekly-grid');grid.innerHTML='';
@@ -3144,7 +3176,7 @@ function bmToNumber(b,v){
 }
 function bmFmtDelta(b,start,end){
   const s=bmToNumber(b,start),e=bmToNumber(b,end);
-  if(s==null||e==null)return '<span class="bm-delta neutral">Set both</span>';
+  if(s==null||e==null)return '<span class="bm-delta neutral">—</span>';
   const better=b.lowerIsBetter?e<s:e>s;
   const diff=b.lowerIsBetter?s-e:e-s;
   const sign=diff>=0?(better?'+':'-'):(better?'-':'+');
@@ -3193,14 +3225,14 @@ function saveBmTimePart(el){
 function renderBenchmarks(){
   const u=currentUser();if(!u)return;
   const bm=u.benchmarks||{};const container=document.getElementById('bm-content');container.innerHTML='';
-  const mySection=document.createElement('div');mySection.innerHTML=`<div class="bm-section-header">📊 My Track</div>`;
+  const mySection=document.createElement('div');
   const grid=document.createElement('div');grid.className='bm-rows';
   // Header row
   let html='<div class="bm-rows-head">Exercise</div><div class="bm-rows-head">Start</div><div class="bm-rows-head">Finish</div><div class="bm-rows-head">Δ</div>';
-  // One row per exercise
+  // One row per exercise — text-only, no icon
   BENCHMARKS_DEF.forEach(b=>{
     const start=bm['start_'+b.id]||'',end=bm['end_'+b.id]||'';
-    html+=`<div class="bm-row-name"><span class="bm-icon">${b.icon}</span><span>${b.name}</span><span class="bm-row-unit">${b.unit==='time'?'m:s':b.unit}</span></div>`;
+    html+=`<div class="bm-row-name"><span>${b.name}</span><span class="bm-row-unit">${b.unit==='time'?'m:s':b.unit}</span></div>`;
     html+=`<div class="bm-row-input">${bmBuildInput(b,'start_'+b.id,start)}</div>`;
     html+=`<div class="bm-row-input">${bmBuildInput(b,'end_'+b.id,end)}</div>`;
     html+=`<div class="bm-row-delta" data-bm-id="${b.id}">${bmFmtDelta(b,start,end)}</div>`;
