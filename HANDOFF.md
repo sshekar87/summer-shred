@@ -327,6 +327,20 @@ By default Supabase JWTs expire after 1 hour, which kicks gym members back to th
 
 ---
 
+## Branded Magic Link Email (one-time)
+
+Default Supabase magic link emails are plain-text and look like a phishing attempt. Replace with the branded version:
+
+1. Open `supabase/email_templates/magic_link.html` in this repo — copy the entire file body.
+2. **Supabase Dashboard → Authentication → Email Templates → Magic Link.**
+3. Subject line: `Your Live B.I.G 365 sign-in link`
+4. Paste the HTML into the message body. Save.
+5. Test: sign out, request a new magic link, confirm the inbox version has the LIVE B.I.G 365 header, red CTA button, and dashed fallback box.
+
+The template uses Supabase's `{{ .ConfirmationURL }}` variable. Edit the file in the repo if you tweak it later — keep dashboard + repo in sync.
+
+---
+
 ## Weekly Email Cron Jobs — Setup (one-time, on `feature/pwa-polish` branch)
 
 The branch ships two Supabase Edge Functions that send branded emails via Resend:

@@ -1,0 +1,63 @@
+<!--
+  Live B.I.G 365 — Magic Link Email Template
+  Paste into Supabase Dashboard → Authentication → Email Templates → Magic Link.
+  Uses Supabase's Go template variables: {{ .ConfirmationURL }}, {{ .SiteURL }}, {{ .Email }}.
+  Brand chrome mirrors the Sunday recap / Tuesday digest emails (see _shared/helpers.ts brandHtmlWrap).
+-->
+<div style="background:#F7F7F7;padding:24px 0;font-family:'DM Sans',Arial,sans-serif;">
+  <div style="max-width:560px;margin:0 auto;background:#FFFFFF;border-radius:14px;overflow:hidden;border:1px solid #E1E1E1;">
+
+    <!-- Header band -->
+    <div style="background:#FFFFFF;padding:24px 28px 16px;border-bottom:1px solid #E1E1E1;">
+      <div style="font-size:18px;font-weight:900;letter-spacing:1.5px;color:#111111;text-transform:uppercase;">
+        LIVE <span style="color:#DE3341;font-style:italic;">B.I.G</span> 365
+      </div>
+      <div style="font-size:11px;font-weight:700;letter-spacing:2px;color:#6A6A6A;text-transform:uppercase;margin-top:4px;">
+        Your sign-in link
+      </div>
+    </div>
+
+    <!-- Greeting -->
+    <div style="padding:24px 28px 4px;">
+      <p style="color:#111111;font-size:18px;font-weight:800;margin:0 0 6px;">Welcome back ☀️</p>
+      <p style="color:#6A6A6A;font-size:14px;line-height:1.55;margin:0;">
+        Tap the button below to sign in to <strong>Live B.I.G 365</strong> on this device.
+        The link works once and expires in 1 hour.
+      </p>
+    </div>
+
+    <!-- CTA -->
+    <div style="padding:22px 28px 8px;text-align:center;">
+      <a href="{{ .ConfirmationURL }}"
+         style="display:inline-block;background:#DE3341;color:#FFFFFF;padding:14px 36px;border-radius:8px;font-weight:800;font-size:14px;letter-spacing:1.2px;text-decoration:none;">
+        SIGN IN TO LIVE B.I.G 365 →
+      </a>
+    </div>
+
+    <!-- Fallback link -->
+    <div style="padding:14px 28px 8px;">
+      <div style="background:#F7F7F7;border:1px dashed #E1E1E1;border-radius:8px;padding:12px 14px;">
+        <div style="font-size:10px;font-weight:800;color:#6A6A6A;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px;">
+          Button not working?
+        </div>
+        <div style="color:#111111;font-size:12px;line-height:1.5;word-break:break-all;">
+          Copy and paste this link into your browser:<br/>
+          <a href="{{ .ConfirmationURL }}" style="color:#DE3341;text-decoration:none;">{{ .ConfirmationURL }}</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Safety note -->
+    <div style="padding:14px 28px 22px;text-align:center;">
+      <p style="color:#B0B0B0;font-size:11px;line-height:1.5;margin:0;">
+        Didn't request this? You can safely ignore this email — no one can sign in without the link.
+      </p>
+    </div>
+
+    <!-- Footer -->
+    <div style="padding:18px 28px;border-top:1px solid #E1E1E1;text-align:center;">
+      <p style="color:#B0B0B0;font-size:11px;margin:0;">livebig365.fit</p>
+    </div>
+
+  </div>
+</div>
