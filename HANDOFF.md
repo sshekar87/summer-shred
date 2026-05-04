@@ -343,6 +343,8 @@ The template uses both `{{ .Token }}` (the code) and `{{ .ConfirmationURL }}` (t
 
 **Allowlist:** Auth → URL Configuration → Redirect URLs needs both `https://livebig365.fit/**` and `https://summer-shred-*-sukesh-shekars-projects.vercel.app/**` so the magic-link fallback path lands on the right host on production AND branch previews.
 
+**Email confirmations must be OFF.** Supabase Dashboard → Authentication → Sign In / Providers → Email → toggle **"Confirm email" OFF** (or whatever the current dashboard label is — sometimes "Email confirmations"). With it ON, new members get a "confirm your email" email FIRST and have to click it before the OTP code is sent — two emails for what should be one step. The OTP code is itself proof the user owns the inbox; the confirm step is redundant and confusing.
+
 ---
 
 ## Weekly Email Cron Jobs — Setup (one-time, on `feature/pwa-polish` branch)
