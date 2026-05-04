@@ -345,6 +345,8 @@ The template uses both `{{ .Token }}` (the code) and `{{ .ConfirmationURL }}` (t
 
 **Email confirmations must be OFF.** Supabase Dashboard → Authentication → Sign In / Providers → Email → toggle **"Confirm email" OFF** (or whatever the current dashboard label is — sometimes "Email confirmations"). With it ON, new members get a "confirm your email" email FIRST and have to click it before the OTP code is sent — two emails for what should be one step. The OTP code is itself proof the user owns the inbox; the confirm step is redundant and confusing.
 
+**OTP length must be 6.** Same Auth section, look for **"OTP length"** — set to **6**. The client expects exactly 6 digits. If this is set to 7 or 8, members will get longer codes and the sign-in form will reject them.
+
 ---
 
 ## Weekly Email Cron Jobs — Setup (one-time, on `feature/pwa-polish` branch)
