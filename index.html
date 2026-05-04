@@ -624,7 +624,7 @@ body::before { display: none; } /* noise overlay removed for light theme */
   -webkit-appearance: none; appearance: none;
 }
 .admin-settings-form input:focus { border-color: var(--red); }
-.admin-settings-form .modal-row { display: grid; grid-template-columns: 60px 1fr; gap: 0.5rem; align-items: center; margin-bottom: 0.4rem; }
+.admin-settings-form .modal-row { display: grid; grid-template-columns: 76px 1fr; gap: 0.5rem; align-items: center; margin-bottom: 0.4rem; }
 .admin-settings-form .modal-row .wk-num { font-size: 0.75rem; font-weight: 800; color: var(--red); letter-spacing: 1px; }
 .admin-settings-form .form-actions { display: flex; gap: 0.5rem; margin-top: 1.2rem; justify-content: flex-end; }
 .admin-settings-form .form-actions button { padding: 0.6rem 1.2rem; border-radius: 8px; font-weight: 800; cursor: pointer; font-family: inherit; font-size: 0.88rem; border: none; }
@@ -1932,6 +1932,13 @@ let PROGRAM_START = new Date('2026-04-12T00:00:00'); // First Sunday of program
 let PROGRAM_WEEKS = 8;
 let SUMMER_START  = new Date('2026-06-21T00:00:00');
 let WEEKLY_FOCUS  = {1:'Get Started',2:'Hydration',3:'No Added Sugar',4:'Sleep',5:'No Bread',6:'Mobility',7:'No Alcohol',8:'Finish Strong'};
+// Extra Credit exercise rotates monthly — Tina sets per-month from Admin → Settings.
+// Keys are month numbers (1-12); value is the noun shown after "Crushed today's ___".
+let MONTHLY_EXTRA = {4:'pullups', 5:'pushups', 6:'situps'};
+function extraForMonth(dateKey){
+  const m=new Date(dateKey+'T12:00:00').getMonth()+1;
+  return MONTHLY_EXTRA[m] || "this week's focus";
+}
 
 function programEndDate(){const d=new Date(PROGRAM_START);d.setDate(d.getDate()+PROGRAM_WEEKS*7-1);return d;} // Saturday of final week
 function weekDeadlineKey(wk){return dayOffset(weekEndDate(wk),4);} // Sat + 4 = Wed
@@ -2064,8 +2071,18 @@ function computeUserStats(u){
 function showToast(msg){const f=document.getElementById('saved-flash');f.textContent=msg;f.classList.add('show');setTimeout(()=>f.classList.remove('show'),2200);}
 
 /* ═══ COUNTDOWN ═══ */
+// Login countdown is fixed to the next June 21 (first day of summer) regardless
+// of whatever End Date the admin sets in Settings — those drive the program window,
+// not the calendar event the login is teasing.
+function nextSummerStart(){
+  const now=new Date();
+  const y=now.getFullYear();
+  let s=new Date(y,5,21,0,0,0);
+  if(s<now)s=new Date(y+1,5,21,0,0,0);
+  return s;
+}
 function renderSummerCountdown(){
-  const now=new Date(),diff=SUMMER_START-now;
+  const now=new Date(),diff=nextSummerStart()-now;
   const authCd=document.getElementById('auth-cd');
   if(authCd){
     if(diff>0){
@@ -2355,12 +2372,20 @@ function renderAdminSettings(){
     const w=i+1;
     return `<div class="modal-row"><div class="wk-num">WK ${w}</div><input type="text" id="adm-wf-${w}" value="${(WEEKLY_FOCUS[w]||'').replace(/"/g,'&quot;')}" placeholder="Focus theme"/></div>`;
   }).join('');
+  const monthLabels={4:'Apr',5:'May',6:'Jun'};
+  const monthRows=[4,5,6].map(m=>{
+    const v=(MONTHLY_EXTRA[m]||'').replace(/"/g,'&quot;');
+    return `<div class="modal-row"><div class="wk-num">${monthLabels[m]}</div><input type="text" id="adm-mx-${m}" value="${v}" placeholder="e.g. pushups"/></div>`;
+  }).join('');
   c.innerHTML=`<div class="admin-settings-form">
     <label>Program Dates</label>
     <div class="modal-row"><div class="wk-num">Start</div><input type="date" id="adm-start" value="${iso(PROGRAM_START)}"/></div>
-    <div class="modal-row"><div class="wk-num">Summer</div><input type="date" id="adm-summer" value="${iso(SUMMER_START)}"/></div>
+    <div class="modal-row"><div class="wk-num">End Date</div><input type="date" id="adm-summer" value="${iso(SUMMER_START)}"/></div>
     <label style="margin-top:1rem">Weekly Focus</label>
     ${focusRows}
+    <label style="margin-top:1rem">Monthly Extra Credit</label>
+    <div style="font-size:0.72rem;color:var(--text-dim);margin:-0.1rem 0 0.5rem;">Shown in Today as "Crushed today's ___".</div>
+    ${monthRows}
     <div class="form-actions">
       <button class="btn-save" id="adm-save-btn" onclick="saveAdminConfig(this)">Save settings</button>
     </div>
@@ -2378,9 +2403,16 @@ async function saveAdminConfig(btn){
   }
   const focus={};
   for(let w=1;w<=PROGRAM_WEEKS;w++){focus[w]=document.getElementById('adm-wf-'+w).value.trim();}
+  const monthlyExtra={};
+  [4,5,6].forEach(m=>{
+    const el=document.getElementById('adm-mx-'+m);
+    const v=el?el.value.trim():'';
+    if(v)monthlyExtra[m]=v;
+  });
   PROGRAM_START=new Date(start+'T00:00:00');
   SUMMER_START=new Date(summer+'T00:00:00');
   WEEKLY_FOCUS=focus;
+  MONTHLY_EXTRA=monthlyExtra;
   if(btn){btn.disabled=true;btn.textContent='Saving…';}
   try{
     if(typeof saveProgramConfigToSupabase==='function')await saveProgramConfigToSupabase();
@@ -2467,12 +2499,14 @@ async function loadProgramConfig(){
   SUMMER_START =new Date(data.summer_start +'T00:00:00');
   PROGRAM_WEEKS=data.program_weeks||8;
   WEEKLY_FOCUS =data.weekly_focus||{};
+  if(data.monthly_extra&&typeof data.monthly_extra==='object')MONTHLY_EXTRA=data.monthly_extra;
 }
 async function saveProgramConfigToSupabase(){
   const iso=d=>d.toISOString().split('T')[0];
   const {error}=await sb.from('program_config').upsert({
     id:1,program_start:iso(PROGRAM_START),program_weeks:PROGRAM_WEEKS,
-    summer_start:iso(SUMMER_START),weekly_focus:WEEKLY_FOCUS
+    summer_start:iso(SUMMER_START),weekly_focus:WEEKLY_FOCUS,
+    monthly_extra:MONTHLY_EXTRA
   });
   if(error)showToast('Save failed: '+error.message);
 }
@@ -2886,7 +2920,9 @@ function renderLog(){
     const checked=!!log[h.id];
     const row=document.createElement('div');
     row.className='habit-row'+(checked?' checked':'');
-    row.innerHTML=`<span class="habit-row-emoji">${habitEmojiHTML(h)}</span><div class="habit-row-body"><div class="habit-row-name">${h.name}</div><div class="habit-row-tip">${h.tip}</div></div><span class="habit-row-pts">+${h.pts}</span>`;
+    // Extra Credit's tip changes monthly — "Crushed today's pushups" in May, etc.
+    const tipText=h.id==='extra'?`Crushed today's ${extraForMonth(currentDay)}`:h.tip;
+    row.innerHTML=`<span class="habit-row-emoji">${habitEmojiHTML(h)}</span><div class="habit-row-body"><div class="habit-row-name">${h.name}</div><div class="habit-row-tip">${tipText}</div></div><span class="habit-row-pts">+${h.pts}</span>`;
     row.onclick=()=>toggleHabit(h.id);
     grid.appendChild(row);
   });
