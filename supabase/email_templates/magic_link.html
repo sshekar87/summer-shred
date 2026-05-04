@@ -14,13 +14,21 @@
       </div>
     </div>
 
-    <!-- Code (primary) -->
-    <div style="padding:28px 28px 8px;text-align:center;">
-      <p style="color:#6A6A6A;font-size:13px;margin:0 0 12px;">Your sign-in code:</p>
-      <div style="font-family:'DM Mono','Courier New',monospace;font-size:34px;font-weight:800;letter-spacing:0.35em;color:#111111;background:#F7F7F7;border:1px solid #E1E1E1;border-radius:10px;padding:18px 12px 18px 22px;display:inline-block;">
+    <!-- Plain-text autofill line — iOS Mail's parser needs the words "code"
+         and the digits in the same natural sentence to surface the QuickType
+         autofill suggestion. Don't move or restyle without checking that. -->
+    <div style="padding:24px 28px 4px;text-align:center;">
+      <p style="color:#111111;font-size:15px;font-weight:600;margin:0;">
+        Your sign-in code is <strong>{{ .Token }}</strong>.
+      </p>
+    </div>
+
+    <!-- Big visual block for humans (autofill doesn't read this) -->
+    <div style="padding:14px 28px 8px;text-align:center;">
+      <div style="font-family:'DM Mono','Courier New',monospace;font-size:34px;font-weight:800;letter-spacing:0.35em;color:#111111;background:#F7F7F7;border:1px solid #E1E1E1;border-radius:10px;padding:16px 12px 16px 22px;display:inline-block;">
         {{ .Token }}
       </div>
-      <p style="color:#B0B0B0;font-size:12px;margin:14px 0 0;">Code expires in 1 hour.</p>
+      <p style="color:#B0B0B0;font-size:12px;margin:12px 0 0;">Expires in 1 hour.</p>
     </div>
 
     <!-- Fallback link (desktop) -->
