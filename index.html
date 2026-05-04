@@ -1587,15 +1587,15 @@ body::before { display: none; } /* noise overlay removed for light theme */
   <div class="auth-card">
     <div id="auth-step-email">
       <h2>No password needed.</h2>
-      <p>Enter your email and we'll send you a sign-in code from Live B.I.G 365.</p>
+      <p>Enter your email and we'll send you a 6-digit sign-in code from Live B.I.G 365.</p>
       <input class="auth-input" id="auth-email" type="email" placeholder="you@example.com" autocomplete="email"/>
       <button class="btn-primary" onclick="requestCode()">Send code →</button>
     </div>
 
     <div id="auth-step-code" hidden>
       <h2>Check your email.</h2>
-      <p>We sent a sign-in code to <strong id="auth-sent-to"></strong>. Enter it below — codes expire in 1 hour.</p>
-      <input class="auth-input auth-code" id="auth-code" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="8" placeholder="12345678" autocomplete="one-time-code"/>
+      <p>We sent a 6-digit code to <strong id="auth-sent-to"></strong>. Enter it below — codes expire in 1 hour.</p>
+      <input class="auth-input auth-code" id="auth-code" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="6" placeholder="123456" autocomplete="one-time-code"/>
       <button class="btn-primary" onclick="verifyCode()">Sign in</button>
       <div class="auth-step-foot">
         <button class="auth-link" onclick="resendCode()">Resend code</button>
@@ -2421,7 +2421,7 @@ async function requestCode(){
 
 async function verifyCode(){
   const token=document.getElementById('auth-code').value.trim();
-  if(!/^\d{6,8}$/.test(token)){showToast('Enter the code from your email');return;}
+  if(!/^\d{6}$/.test(token)){showToast('Enter the 6-digit code from your email');return;}
   if(!pendingEmail){resetAuth();return;}
   const btn=document.querySelector('#auth-step-code .btn-primary');
   if(btn){btn.disabled=true;btn.textContent='Signing in…';}
