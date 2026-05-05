@@ -2137,17 +2137,23 @@ const BENCHMARKS_DEF = [
 ];
 
 const BADGE_DEFS = [
-  {id:'perfect_day',   icon:'💯',name:'Perfect Day',    desc:'Score all '+MAX_DAILY+' points in one day', check:(u)=>u.perfectDays>=1},
+  {id:'perfect_day',   icon:'💯',name:'1 Day Max',      desc:'Score all '+MAX_DAILY+' points in one day', check:(u)=>u.perfectDays>=1},
   {id:'streak3',       icon:'🔥',name:'On Fire',        desc:'3-day streak',                        check:(u)=>u.maxStreak>=3},
   {id:'streak7',       icon:'🌋',name:'Inferno',        desc:'7-day streak',                        check:(u)=>u.maxStreak>=7},
-  {id:'habit_streak7', icon:'🎯',name:'Locked In',      desc:'Hit any single habit 7 days in a row',check:(u)=>u.maxHabitStreak>=7},
-  {id:'no_booze_week', icon:'🥤',name:'Sober Warrior',  desc:'No alcohol 7 straight days',          check:(u)=>u.soberStreak>=7},
+  {id:'habit_streak7', icon:'🎯',name:'1 Week PR',      desc:'Hit any single habit 7 days in a row',check:(u)=>u.maxHabitStreak>=7},
+  {id:'no_booze_week', icon:'🥤',name:'Zero Proof',     desc:'No alcohol 7 straight days',          check:(u)=>u.soberStreak>=7},
   {id:'clean_week',    icon:'🥗',name:'Clean Machine',  desc:'No sugar + no bread for a full week', check:(u)=>u.cleanWeek>=7},
-  {id:'week1_done',    icon:'✅',name:'Wk 1 Done',      desc:'Finish Week 1 with any points',       check:(u)=>u.weeksCompleted>=1},
+  // Dynamic name: badge tracks the most recent COMPLETED prior week with any points.
+  // Updates as the program progresses ("Wk 1 Done" → "Wk 2 Done" → ...).
+  {id:'week_done',     icon:'✅',name:(u)=>`Wk ${u.lastCompletedWeek||0} Done`, desc:'Finish a prior week with any points', check:(u)=>u.lastCompletedWeek>=1},
   {id:'500pts',        icon:'🏅',name:'500 Club',       desc:'Reach 500 total points',              check:(u)=>u.totalPts>=500},
   {id:'1000pts',       icon:'🏆',name:'1K Legend',      desc:'Reach 1,000 total points',            check:(u)=>u.totalPts>=1000},
   {id:'all8weeks',     icon:'🎖️',name:'Summer Shredder',desc:'Complete all 8 weeks',                check:(u)=>u.weeksCompleted>=8},
 ];
+// Some badges have computed names/descs (functions of stats). Use these helpers everywhere
+// to handle both static strings and dynamic functions uniformly.
+function badgeName(b, stats) { return typeof b.name === 'function' ? b.name(stats) : b.name; }
+function badgeDesc(b, stats) { return typeof b.desc === 'function' ? b.desc(stats) : b.desc; }
 
 // Quote pool now comes entirely from admin-approved user_quotes (state.approvedQuotes).
 // Used when nothing's been approved yet so the UI doesn't render an empty quote card.
@@ -2227,8 +2233,17 @@ function computeUserStats(u){
     prevKey=k;
   }
   for(let w=1;w<=PROGRAM_WEEKS;w++){let ok=false;for(let d=0;d<7;d++){const k=dayOffset(weekStartDate(w),d);if(u.logs[k]&&userPtsForDay(u,k)>0){ok=true;break;}}if(ok)weeksCompleted=w;}
+  // Most-recent strictly-prior week with any points logged (current week excluded).
+  // Drives the "Wk N Done" badge so it advances each week the member kept the streak alive.
+  const cwNum=currentWeekNum();
+  let lastCompletedWeek=0;
+  for(let w=1;w<cwNum;w++){
+    let ok=false;
+    for(let d=0;d<7;d++){const k=dayOffset(weekStartDate(w),d);if(u.logs[k]&&userPtsForDay(u,k)>0){ok=true;break;}}
+    if(ok)lastCompletedWeek=w;
+  }
   const maxHabitStreak=Math.max(0,...Object.values(habitMaxStreaks));
-  return{totalPts,perfectDays,maxStreak,curStreak,soberStreak,cleanWeek,weeksCompleted,maxHabitStreak};
+  return{totalPts,perfectDays,maxStreak,curStreak,soberStreak,cleanWeek,weeksCompleted,lastCompletedWeek,maxHabitStreak};
 }
 function showToast(msg){const f=document.getElementById('saved-flash');f.textContent=msg;f.classList.add('show');setTimeout(()=>f.classList.remove('show'),2200);}
 
@@ -3084,7 +3099,7 @@ function renderEarnedBadgePills(stats){
   // Show the 3 highest-tier earned badges (BADGE_DEFS is ordered easy → hard, so take from the end)
   const top3=earned.slice(-3).reverse();
   const more=earned.length-top3.length;
-  c.innerHTML=top3.map(b=>`<span class="focus-badge-pill" title="${b.desc.replace(/"/g,'&quot;')}"><span class="fbp-icon">${b.icon}</span>${b.name}</span>`).join('')
+  c.innerHTML=top3.map(b=>`<span class="focus-badge-pill" title="${badgeDesc(b,stats).replace(/"/g,'&quot;')}"><span class="fbp-icon">${b.icon}</span>${badgeName(b,stats)}</span>`).join('')
     +(more>0?`<span class="focus-more-pill" title="${more} more earned">+${more} more</span>`:'');
 }
 
@@ -3602,7 +3617,7 @@ function badgeProgress(b,stats){
     case 'habit_streak7':return [Math.min(7,stats.maxHabitStreak||0),7];
     case 'no_booze_week':return [Math.min(7,stats.soberStreak),7];
     case 'clean_week':   return [Math.min(7,stats.cleanWeek),7];
-    case 'week1_done':   return [Math.min(1,stats.weeksCompleted),1];
+    case 'week_done':    return [Math.min(1,stats.lastCompletedWeek),1];
     case '500pts':       return [Math.min(500,stats.totalPts),500];
     case '1000pts':      return [Math.min(1000,stats.totalPts),1000];
     case 'all8weeks':    return [Math.min(8,stats.weeksCompleted),8];
@@ -3685,7 +3700,7 @@ function renderCoachView(){
     earned.forEach(b=>{
       const card=document.createElement('div');
       card.className='badge-card-coach';
-      card.innerHTML=`<div class="b-icon">${b.icon}</div><div class="b-name">${b.name}</div><div class="b-desc">${b.desc}</div>`;
+      card.innerHTML=`<div class="b-icon">${b.icon}</div><div class="b-name">${badgeName(b,stats)}</div><div class="b-desc">${badgeDesc(b,stats)}</div>`;
       earnedEl.appendChild(card);
     });
   }
@@ -3703,7 +3718,7 @@ function renderCoachView(){
       const pct=Math.round(x.pct*100);
       const row=document.createElement('div');
       row.className='badge-prog';
-      row.innerHTML=`<div class="badge-prog-top"><span class="badge-prog-icon">${x.b.icon}</span><span class="badge-prog-name">${x.b.name}</span><span class="badge-prog-frac">${x.num}/${x.den}</span></div><div class="ws-bar"><div class="ws-bar-fill" style="width:${pct}%"></div></div><div class="coach-row-meta" style="margin-top:0.35rem">${x.b.desc}</div>`;
+      row.innerHTML=`<div class="badge-prog-top"><span class="badge-prog-icon">${x.b.icon}</span><span class="badge-prog-name">${badgeName(x.b,stats)}</span><span class="badge-prog-frac">${x.num}/${x.den}</span></div><div class="ws-bar"><div class="ws-bar-fill" style="width:${pct}%"></div></div><div class="coach-row-meta" style="margin-top:0.35rem">${badgeDesc(x.b,stats)}</div>`;
       progEl.appendChild(row);
     });
   }
