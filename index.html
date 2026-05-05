@@ -2633,6 +2633,9 @@ function resetAuth(){
   document.getElementById('auth-step-email').hidden=false;
 }
 async function logout(){
+  // Close the settings drawer first so the user actually sees the auth screen instead
+  // of an empty drawer over the app shell as it transitions out
+  closeSettings();
   // Local clear is what matters for UX — fire signOut in the background so a slow
   // network call never freezes the UI. supabase-js still clears localStorage tokens
   // when the request resolves, and onAuthStateChange will fire then too (harmless).
