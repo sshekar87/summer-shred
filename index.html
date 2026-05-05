@@ -196,7 +196,7 @@ body::before { display: none; } /* noise overlay removed for light theme */
 .user-avatar { width: 30px; height: 30px; border-radius: 50%; background: var(--red); display: flex; align-items: center; justify-content: center; font-size: 0.78rem; font-weight: 800; color: var(--white); border: 2px solid var(--red-dim); flex-shrink: 0; }
 .user-name { font-weight: 700; font-size: 0.85rem; text-align: right; max-width: 110px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .user-pts { color: var(--text-dim); font-weight: 600; font-size: 0.66rem; text-align: right; letter-spacing: 0.5px; }
-.user-pts::after { content: ' · sign out'; opacity: 0.6; }
+.user-pts::after { content: ' · settings'; opacity: 0.6; }
 .main { max-width: 880px; margin: 0 auto; padding: 1.5rem; }
 .view { display: none; }
 .view.active { display: block; }
@@ -1373,6 +1373,106 @@ body::before { display: none; } /* noise overlay removed for light theme */
 }
 
 /* ═══════════════════════════════════════════
+   SETTINGS DRAWER (mirror of feedback widget pattern)
+═══════════════════════════════════════════ */
+.settings-widget { position: fixed; inset: 0; pointer-events: none; z-index: 9100; }
+.settings-widget > * { pointer-events: auto; }
+.settings-widget[hidden] { display: none; }
+.settings-backdrop {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.4);
+  opacity: 0; pointer-events: none; transition: opacity 0.2s;
+}
+.settings-widget.open .settings-backdrop { opacity: 1; pointer-events: auto; }
+.settings-panel {
+  position: fixed; right: 0; top: 0; bottom: 0;
+  width: 360px; max-width: 92vw;
+  background: var(--bg2); border-left: 1px solid var(--border);
+  box-shadow: -10px 0 30px rgba(0,0,0,0.18);
+  padding: 1.6rem 1.4rem max(1.4rem, env(safe-area-inset-bottom));
+  transform: translateX(100%); transition: transform 0.28s ease;
+  display: flex; flex-direction: column;
+}
+.settings-widget.open .settings-panel { transform: translateX(0); }
+.settings-close {
+  position: absolute; top: 0.6rem; right: 0.7rem;
+  background: none; border: none; cursor: pointer;
+  font-size: 1.4rem; color: var(--text-dim); padding: 0.2rem 0.45rem;
+  line-height: 1; border-radius: 6px;
+}
+.settings-close:hover { color: var(--text); background: var(--bg3); }
+.settings-title { font-size: 1.15rem; font-weight: 800; color: var(--text); margin-bottom: 1.2rem; }
+
+/* Profile header: avatar + name + email */
+.settings-profile {
+  display: flex; align-items: center; gap: 0.75rem;
+  padding-bottom: 1rem; margin-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+.settings-profile .sp-avatar {
+  width: 44px; height: 44px; border-radius: 50%; background: var(--red); color: #FFFFFF;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem; font-weight: 800; flex-shrink: 0;
+}
+.sp-name { font-size: 0.95rem; font-weight: 800; color: var(--text); line-height: 1.2; }
+.sp-email { font-size: 0.78rem; color: var(--text-dim); margin-top: 0.1rem; word-break: break-all; }
+
+/* Section blocks */
+.settings-section { margin-bottom: 1.2rem; }
+.settings-section-label {
+  font-size: 0.62rem; font-weight: 800; color: var(--text-dim);
+  letter-spacing: 1.5px; text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+.settings-row {
+  display: flex; align-items: center; justify-content: space-between; gap: 0.75rem;
+  padding: 0.55rem 0; min-height: 36px;
+}
+.settings-row + .settings-row { border-top: 1px solid var(--border); }
+.settings-row-label { font-size: 0.88rem; font-weight: 600; color: var(--text); flex: 1; }
+.settings-row-sub { display: block; font-size: 0.72rem; font-weight: 500; color: var(--text-dim); margin-top: 0.1rem; }
+.settings-input {
+  width: 100%; background: var(--bg3); border: 1px solid var(--border); border-radius: 8px;
+  padding: 0.55rem 0.7rem; color: var(--text); font-family: inherit; font-size: 0.9rem;
+}
+.settings-input:focus { outline: none; border-color: var(--red); }
+.settings-save-name {
+  background: var(--red); color: #FFFFFF; border: none; border-radius: 6px;
+  padding: 0.45rem 0.85rem; font-family: inherit; font-weight: 700; font-size: 0.78rem;
+  cursor: pointer; transition: background 0.15s; flex-shrink: 0;
+}
+.settings-save-name:hover { background: var(--red-bright); }
+.settings-save-name:disabled { background: var(--bg4); color: var(--text-muted); cursor: not-allowed; }
+
+/* iOS-style toggle */
+.settings-toggle {
+  position: relative; width: 44px; height: 26px;
+  background: var(--bg4); border-radius: 999px;
+  cursor: pointer; transition: background 0.18s; flex-shrink: 0;
+  border: none; padding: 0;
+}
+.settings-toggle::after {
+  content: ''; position: absolute; top: 2px; left: 2px;
+  width: 22px; height: 22px; background: #FFFFFF; border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.18); transition: transform 0.18s;
+}
+.settings-toggle[aria-checked="true"] { background: var(--green); }
+.settings-toggle[aria-checked="true"]::after { transform: translateX(18px); }
+.settings-toggle:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* Sign out — explicitly separated at the bottom */
+.settings-footer { margin-top: auto; padding-top: 1rem; border-top: 1px solid var(--border); }
+.settings-signout {
+  width: 100%; background: var(--bg3); color: var(--red); border: 1px solid rgba(222,51,65,0.3);
+  border-radius: 8px; padding: 0.75rem; font-family: inherit; font-weight: 700; font-size: 0.92rem;
+  cursor: pointer; transition: all 0.15s;
+}
+.settings-signout:hover { background: rgba(222,51,65,0.08); border-color: var(--red); }
+
+@media (max-width: 480px) {
+  .settings-panel { width: 100vw; max-width: 100vw; }
+}
+
+/* ═══════════════════════════════════════════
    SHRED PARTICLES
 ═══════════════════════════════════════════ */
 @keyframes shredSlice {
@@ -1625,7 +1725,7 @@ body::before { display: none; } /* noise overlay removed for light theme */
       </nav>
       <div id="sync-indicator" class="sync-pill" hidden>🔄 Syncing <span id="sync-count">0</span></div>
       <button class="admin-btn" id="admin-btn" onclick="toggleAdminView(this)">⚙️ Admin</button>
-      <div class="header-user" onclick="logout()" title="Click to sign out">
+      <div class="header-user" onclick="openSettings()" title="Settings">
         <div class="user-info-text">
           <div class="user-name" id="hdr-name">—</div>
           <div class="user-pts" id="hdr-pts">0 pts</div>
@@ -1806,6 +1906,56 @@ body::before { display: none; } /* noise overlay removed for light theme */
 </div>
 
 <div class="saved-flash" id="saved-flash">✓ Logged!</div>
+
+<!-- ════════ SETTINGS DRAWER ════════ -->
+<div class="settings-widget" id="settings-widget" hidden>
+  <div class="settings-backdrop" onclick="closeSettings()"></div>
+  <aside class="settings-panel" role="dialog" aria-label="Settings">
+    <button class="settings-close" onclick="closeSettings()" aria-label="Close">×</button>
+    <div class="settings-title">Settings</div>
+
+    <div class="settings-profile">
+      <div class="sp-avatar" id="set-avatar">?</div>
+      <div style="min-width:0;flex:1;">
+        <div class="sp-name" id="set-name">—</div>
+        <div class="sp-email" id="set-email">—</div>
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-section-label">Profile</div>
+      <div class="settings-row" style="flex-direction:column;align-items:stretch;gap:0.4rem;">
+        <label class="settings-row-label" for="set-name-input">Display name</label>
+        <div style="display:flex;gap:0.5rem;">
+          <input class="settings-input" id="set-name-input" type="text" placeholder="Your name" maxlength="40"/>
+          <button class="settings-save-name" id="set-save-name-btn" onclick="saveDisplayName()" disabled>Save</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-section-label">Email notifications</div>
+      <div class="settings-row">
+        <div class="settings-row-label">
+          Sunday recap
+          <span class="settings-row-sub">Your personal weekly summary</span>
+        </div>
+        <button class="settings-toggle" id="set-toggle-recap" role="switch" aria-checked="true" onclick="toggleEmailPref('recap')" aria-label="Sunday recap email"></button>
+      </div>
+      <div class="settings-row">
+        <div class="settings-row-label">
+          Tuesday standings
+          <span class="settings-row-sub">Group leaderboard digest</span>
+        </div>
+        <button class="settings-toggle" id="set-toggle-digest" role="switch" aria-checked="true" onclick="toggleEmailPref('digest')" aria-label="Tuesday standings email"></button>
+      </div>
+    </div>
+
+    <div class="settings-footer">
+      <button class="settings-signout" onclick="logout()">Sign out</button>
+    </div>
+  </aside>
+</div>
 
 <!-- ════════ SIDE-TAB FEEDBACK DRAWER ════════ -->
 <div class="fb-widget" id="fb-widget">
@@ -3542,6 +3692,75 @@ async function submitSuggestedQuote(){
 let fbRating=0;
 function openFeedback(){document.getElementById('fb-widget').classList.add('open');}
 function closeFeedback(){document.getElementById('fb-widget').classList.remove('open');}
+
+/* ═══ SETTINGS DRAWER ═══ */
+function openSettings(){
+  const widget=document.getElementById('settings-widget');if(!widget)return;
+  widget.hidden=false;
+  // Defer the .open class so the CSS transition fires from the off-screen state
+  requestAnimationFrame(()=>widget.classList.add('open'));
+  populateSettings();
+}
+function closeSettings(){
+  const widget=document.getElementById('settings-widget');if(!widget)return;
+  widget.classList.remove('open');
+  // Match the panel transition duration before hiding (avoids flash)
+  setTimeout(()=>{widget.hidden=true;},300);
+}
+function populateSettings(){
+  const u=currentUser();if(!u)return;
+  const initials=(u.name||u.email||'?').split(/[\s@.]+/).filter(Boolean).slice(0,2).map(s=>s[0]).join('').toUpperCase()||'?';
+  document.getElementById('set-avatar').textContent=initials;
+  document.getElementById('set-name').textContent=u.name||u.email.split('@')[0];
+  document.getElementById('set-email').textContent=u.email;
+  const inp=document.getElementById('set-name-input');
+  inp.value=u.name||'';
+  document.getElementById('set-save-name-btn').disabled=true;
+  inp.oninput=()=>{
+    document.getElementById('set-save-name-btn').disabled=inp.value.trim()===(u.name||'').trim()||!inp.value.trim();
+  };
+  // Email prefs — default to true if column not present yet
+  const recapOn=u.email_recap_enabled!==false;
+  const digestOn=u.email_digest_enabled!==false;
+  document.getElementById('set-toggle-recap').setAttribute('aria-checked',String(recapOn));
+  document.getElementById('set-toggle-digest').setAttribute('aria-checked',String(digestOn));
+}
+async function saveDisplayName(){
+  const u=currentUser();if(!u)return;
+  const inp=document.getElementById('set-name-input');
+  const newName=inp.value.trim();
+  if(!newName||newName===(u.name||'').trim())return;
+  const btn=document.getElementById('set-save-name-btn');
+  btn.disabled=true;btn.textContent='Saving…';
+  const {error}=await sb.from('profiles').update({name:newName}).eq('id',u.id);
+  btn.textContent='Save';
+  if(error){showToast('Save failed: '+error.message);btn.disabled=false;return;}
+  u.name=newName;
+  document.getElementById('set-name').textContent=newName;
+  // Refresh header pill + initials
+  const hdr=document.getElementById('hdr-name');if(hdr)hdr.textContent=newName.split(' ')[0];
+  const initials=newName.split(/\s+/).filter(Boolean).slice(0,2).map(s=>s[0]).join('').toUpperCase()||'?';
+  document.getElementById('set-avatar').textContent=initials;
+  const hdrAv=document.getElementById('hdr-av');if(hdrAv)hdrAv.textContent=initials;
+  showToast('Display name saved');
+}
+async function toggleEmailPref(kind){
+  const u=currentUser();if(!u)return;
+  const col=kind==='recap'?'email_recap_enabled':'email_digest_enabled';
+  const tglId=kind==='recap'?'set-toggle-recap':'set-toggle-digest';
+  const tgl=document.getElementById(tglId);
+  const next=tgl.getAttribute('aria-checked')!=='true';
+  tgl.setAttribute('aria-checked',String(next));
+  const {error}=await sb.from('profiles').update({[col]:next}).eq('id',u.id);
+  if(error){
+    // Revert UI on failure (commonly: column doesn't exist yet)
+    tgl.setAttribute('aria-checked',String(!next));
+    showToast(/column .* does not exist/i.test(error.message)?'Email opt-outs coming soon':'Save failed');
+    return;
+  }
+  u[col]=next;
+  showToast(`${next?'Enabled':'Paused'} ${kind==='recap'?'Sunday recap':'Tuesday standings'}`);
+}
 function setFbRating(n){
   fbRating=n;
   document.querySelectorAll('.fb-star').forEach(s=>{
