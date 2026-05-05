@@ -22,10 +22,11 @@ Deno.serve(async () => {
   const weekEnd = weekEndDate(wk, cfg.programStart);
   const focus = cfg.weeklyFocus[String(wk)] || '';
 
-  // Active members
+  // Active members who haven't opted out of the recap email.
+  // email_recap_enabled defaults to true; treat null as opted-in (legacy rows).
   const { data: profiles } = await supabase
     .from('profiles')
-    .select('id, name')
+    .select('id, name, email_recap_enabled')
     .eq('is_active', true);
 
   if (!profiles?.length) return new Response('No active users', { status: 200 });
@@ -69,6 +70,8 @@ Deno.serve(async () => {
     const email = emails[profile.id];
     if (!email) { skipped++; continue; }
     if (testEmail && email.toLowerCase() !== testEmail) { skipped++; continue; }
+    // Member opted out of the recap (Settings → Email notifications → Sunday recap OFF)
+    if ((profile as any).email_recap_enabled === false) { skipped++; continue; }
 
     const s = stats[profile.id];
     const rank = ranked.findIndex(r => r.id === profile.id) + 1;

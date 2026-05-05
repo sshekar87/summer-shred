@@ -23,10 +23,11 @@ Deno.serve(async () => {
   const weekStart = weekStartDate(wk, cfg.programStart);
   const weekEnd = weekEndDate(wk, cfg.programStart);
 
-  // Active members
+  // Active members who haven't opted out of the digest email.
+  // email_digest_enabled defaults to true; treat null as opted-in (legacy rows).
   const { data: profiles } = await supabase
     .from('profiles')
-    .select('id, name')
+    .select('id, name, email_digest_enabled')
     .eq('is_active', true);
   if (!profiles?.length) return new Response('No active users', { status: 200 });
 
@@ -44,12 +45,15 @@ Deno.serve(async () => {
 
   const emails = await resolveEmails(supabase, userIds);
 
-  // Sort leaderboard by week pts desc
+  // Sort leaderboard by week pts desc. The board includes everyone for the displayed
+  // standings; opt-out only suppresses the SEND below — opted-out members still appear
+  // on other recipients' leaderboards (the program is a shared scoreboard).
   const board = profiles
     .map(p => ({
       id: p.id,
       name: (p.name || emails[p.id]?.split('@')[0] || 'Member').split(' ')[0],
       s: stats[p.id],
+      digestEnabled: (p as any).email_digest_enabled !== false,
     }))
     .sort((a, b) => b.s.weekPts - a.s.weekPts);
 
@@ -85,6 +89,8 @@ Deno.serve(async () => {
     const email = emails[recipient.id];
     if (!email) { skipped++; continue; }
     if (testEmail && email.toLowerCase() !== testEmail) { skipped++; continue; }
+    // Member opted out of the digest (Settings → Email notifications → Tuesday standings OFF)
+    if (!recipient.digestEnabled) { skipped++; continue; }
     const firstName = recipient.name;
 
     // Build leaderboard table (highlight recipient)
