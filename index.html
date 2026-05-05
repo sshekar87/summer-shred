@@ -163,6 +163,14 @@ body::before { display: none; } /* noise overlay removed for light theme */
 .auth-step-foot { margin-top: 1rem; text-align: center; font-size: 0.85rem; color: var(--text-dim); }
 .auth-link { background: none; border: none; color: var(--red); cursor: pointer; font: inherit; padding: 0; text-decoration: underline; }
 .auth-link:hover { color: var(--red-bright); }
+.auth-link:disabled { color: var(--text-dim); cursor: not-allowed; text-decoration: none; }
+.auth-resend-hint {
+  margin-top: 0.85rem; padding: 0.55rem 0.75rem;
+  background: rgba(255,140,66,0.08); border: 1px solid rgba(255,140,66,0.28);
+  border-radius: 8px; color: var(--text); font-size: 0.78rem; line-height: 1.4;
+  text-align: center;
+}
+.auth-resend-hint[hidden] { display: none; }
 .demo-links { margin-top: 1.75rem; text-align: center; }
 .demo-links p { color: var(--text-dim); font-size: 0.72rem; font-weight: 600; margin-bottom: 0.75rem; letter-spacing: 2px; text-transform: uppercase; }
 .demo-avatars { display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: center; }
@@ -1697,11 +1705,12 @@ body::before { display: none; } /* noise overlay removed for light theme */
 
     <div id="auth-step-code" hidden>
       <h2>Check your email.</h2>
-      <p>We sent a 6-digit code to <strong id="auth-sent-to"></strong>. Enter it below — codes expire in 1 hour.</p>
+      <p>We sent a 6-digit code to <strong id="auth-sent-to"></strong>. It can take up to <strong>2 minutes</strong> to arrive — check your spam folder if it doesn't show. Codes expire in 1 hour.</p>
       <input class="auth-input auth-code" id="auth-code" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="6" placeholder="123456" autocomplete="one-time-code"/>
       <button class="btn-primary" onclick="verifyCode()">Sign in</button>
+      <div class="auth-resend-hint" id="auth-resend-hint" hidden>Already requested another code? Only the most recent one works.</div>
       <div class="auth-step-foot">
-        <button class="auth-link" onclick="resendCode()">Resend code</button>
+        <button class="auth-link" id="auth-resend-btn" onclick="resendCode()">Resend code</button>
         <span> · </span>
         <button class="auth-link" onclick="resetAuth()">Use a different email</button>
       </div>
@@ -2588,6 +2597,30 @@ async function saveAdminConfig(btn){
 /* ═══ AUTH (Supabase email OTP — 6-digit code, with magic link as desktop fallback) ═══ */
 let pendingEmail='';
 
+// Resend cooldown: prevents impatient retries that would invalidate the still-in-flight code.
+// Supabase invalidates older codes when a new one is requested, so a 60s window covers
+// typical Resend+Auth queue latency (5-30s typical, up to ~60s outliers).
+const RESEND_COOLDOWN_MS=60000;
+let resendDeadline=0;
+let resendInterval=null;
+function startResendCooldown(){
+  resendDeadline=Date.now()+RESEND_COOLDOWN_MS;
+  tickResend();
+  if(resendInterval)clearInterval(resendInterval);
+  resendInterval=setInterval(tickResend,1000);
+}
+function tickResend(){
+  const btn=document.getElementById('auth-resend-btn');if(!btn)return;
+  const remaining=Math.max(0,Math.ceil((resendDeadline-Date.now())/1000));
+  if(remaining>0){btn.disabled=true;btn.textContent=`Resend in ${remaining}s`;}
+  else{btn.disabled=false;btn.textContent='Resend code';if(resendInterval){clearInterval(resendInterval);resendInterval=null;}}
+}
+function stopResendCooldown(){
+  if(resendInterval){clearInterval(resendInterval);resendInterval=null;}
+  const btn=document.getElementById('auth-resend-btn');
+  if(btn){btn.disabled=false;btn.textContent='Resend code';}
+}
+
 async function requestCode(){
   const email=document.getElementById('auth-email').value.trim();
   if(!email||!email.includes('@')){showToast('Enter a valid email');return;}
@@ -2601,7 +2634,9 @@ async function requestCode(){
   document.getElementById('auth-sent-to').textContent=email;
   document.getElementById('auth-step-email').hidden=true;
   document.getElementById('auth-step-code').hidden=false;
+  document.getElementById('auth-resend-hint').hidden=true; // first-time send — hide the latest-code hint
   setTimeout(()=>document.getElementById('auth-code').focus(),50);
+  startResendCooldown();
 }
 
 async function verifyCode(){
@@ -2622,8 +2657,14 @@ async function verifyCode(){
 
 async function resendCode(){
   if(!pendingEmail){resetAuth();return;}
+  const btn=document.getElementById('auth-resend-btn');
+  if(btn&&btn.disabled)return; // cooldown active — bail
   const {error}=await sb.auth.signInWithOtp({email:pendingEmail,options:{emailRedirectTo:window.location.origin+window.location.pathname}});
-  showToast(error?error.message:'New code sent');
+  if(error){showToast(error.message);return;}
+  showToast('New code sent');
+  // Surface the "latest code only" hint now that they've requested twice
+  const hint=document.getElementById('auth-resend-hint');if(hint)hint.hidden=false;
+  startResendCooldown();
 }
 
 function resetAuth(){
@@ -2631,6 +2672,9 @@ function resetAuth(){
   document.getElementById('auth-code').value='';
   document.getElementById('auth-step-code').hidden=true;
   document.getElementById('auth-step-email').hidden=false;
+  // Cooldown is per pending-email; reset when starting over
+  stopResendCooldown();
+  const hint=document.getElementById('auth-resend-hint');if(hint)hint.hidden=true;
 }
 async function logout(){
   // Close the settings drawer first so the user actually sees the auth screen instead

@@ -14,28 +14,21 @@
       </div>
     </div>
 
-    <!-- Plain-text autofill line — iOS Mail's parser needs the words "code"
-         and the digits in the same natural sentence to surface the QuickType
-         autofill suggestion. Don't move or restyle without checking that. -->
-    <div style="padding:24px 28px 4px;text-align:center;">
-      <p style="color:#111111;font-size:15px;font-weight:600;margin:0;">
-        Your sign-in code is <strong>{{ .Token }}</strong>.
+    <!-- Single natural-language line — what iOS Mail's parser uses to surface QuickType
+         autofill, and big enough for humans to read at a glance. The code is also in the
+         subject line, so two total appearances per email — that's the limit. -->
+    <div style="padding:28px 28px 8px;text-align:center;">
+      <p style="color:#111111;font-size:17px;font-weight:600;margin:0;line-height:1.5;">
+        Your sign-in code is <strong style="font-size:20px;">{{ .Token }}</strong>.
       </p>
-    </div>
-
-    <!-- Big visual block for humans (autofill doesn't read this) -->
-    <div style="padding:14px 28px 8px;text-align:center;">
-      <div style="font-family:'DM Mono','Courier New',monospace;font-size:34px;font-weight:800;letter-spacing:0.35em;color:#111111;background:#F7F7F7;border:1px solid #E1E1E1;border-radius:10px;padding:16px 12px 16px 22px;display:inline-block;">
-        {{ .Token }}
-      </div>
       <p style="color:#B0B0B0;font-size:12px;margin:12px 0 0;">Expires in 1 hour.</p>
     </div>
 
-    <!-- Fallback link (desktop) -->
-    <div style="padding:18px 28px 8px;text-align:center;">
-      <p style="color:#6A6A6A;font-size:12px;margin:0 0 10px;">On a desktop? Click instead:</p>
-      <a href="{{ .ConfirmationURL }}" style="display:inline-block;background:#DE3341;color:#FFFFFF;padding:12px 28px;border-radius:8px;font-weight:700;font-size:14px;text-decoration:none;">
-        Sign in →
+    <!-- Fallback link for desktop — deliberately small + muted so phone members don't
+         tap it (which would open Safari and break the home-screen PWA flow). -->
+    <div style="padding:14px 28px 8px;text-align:center;">
+      <a href="{{ .ConfirmationURL }}" style="color:#6A6A6A;font-size:12px;text-decoration:underline;">
+        On a desktop? Sign in here
       </a>
     </div>
 
