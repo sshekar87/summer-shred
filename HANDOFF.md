@@ -353,8 +353,9 @@ The template uses both `{{ .Token }}` (the code) and `{{ .ConfirmationURL }}` (t
 
 The branch ships two Supabase Edge Functions that send branded emails via Resend:
 
-- **`weekly-recap`** — Sunday 8 AM EDT per-user personal recap of the prior Sun-Sat week
+- **`weekly-recap`** — Sunday 8 PM EDT per-user personal recap of the prior Sun-Sat week
 - **`leaderboard-digest`** — Tuesday 9 PM EDT group leaderboard digest, last call before Tina's Wednesday lock-in
+- **`inactivity-reminder`** — Thursday 7 PM EDT nudge for members who haven't logged in 3+ days (skipped during pre-program / post-program windows)
 
 Both read from `program_config`, `profiles`, `habit_logs`, and `week_overrides`. Auth emails are resolved via `auth.admin.listUsers()`. Sender: `noreply@livebig365.fit` (already verified in Resend).
 
@@ -387,9 +388,12 @@ APP_URL=https://livebig365.fit
 ### 4. Deploy both functions
 
 ```bash
-supabase functions deploy weekly-recap
-supabase functions deploy leaderboard-digest
+supabase functions deploy weekly-recap --no-verify-jwt
+supabase functions deploy leaderboard-digest --no-verify-jwt
+supabase functions deploy inactivity-reminder --no-verify-jwt
 ```
+
+`--no-verify-jwt` is required so pg_cron's HTTP calls (which carry no Authorization header) reach the function instead of getting 401s at the gateway.
 
 ### 5. Schedule the cron jobs in the database
 
@@ -409,6 +413,18 @@ select cron.schedule(
   $$
     select net.http_post(
       url := 'https://nstgevgekqtmeixdukvi.supabase.co/functions/v1/weekly-recap',
+      headers := jsonb_build_object('Content-Type', 'application/json')
+    ) as request_id;
+  $$
+);
+
+-- Inactivity reminder — Thursday 7 PM EDT = Thursday 23:00 UTC
+select cron.schedule(
+  'inactivity-reminder-thursday-evening',
+  '0 23 * * 4',
+  $$
+    select net.http_post(
+      url := 'https://nstgevgekqtmeixdukvi.supabase.co/functions/v1/inactivity-reminder',
       headers := jsonb_build_object('Content-Type', 'application/json')
     ) as request_id;
   $$

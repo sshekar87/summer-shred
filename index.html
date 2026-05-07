@@ -1949,6 +1949,13 @@ body::before { display: none; } /* noise overlay removed for light theme */
       <div class="settings-section-label">Email notifications</div>
       <div class="settings-row">
         <div class="settings-row-label">
+          Thursday check-in
+          <span class="settings-row-sub">Nudge if you haven't logged in a few days</span>
+        </div>
+        <button class="settings-toggle" id="set-toggle-reminder" role="switch" aria-checked="true" onclick="toggleEmailPref('reminder')" aria-label="Thursday inactivity reminder"></button>
+      </div>
+      <div class="settings-row">
+        <div class="settings-row-label">
           Sunday recap
           <span class="settings-row-sub">Your personal weekly summary</span>
         </div>
@@ -3787,8 +3794,10 @@ function populateSettings(){
   // Email prefs — default to true if column not present yet
   const recapOn=u.email_recap_enabled!==false;
   const digestOn=u.email_digest_enabled!==false;
+  const reminderOn=u.email_reminder_enabled!==false;
   document.getElementById('set-toggle-recap').setAttribute('aria-checked',String(recapOn));
   document.getElementById('set-toggle-digest').setAttribute('aria-checked',String(digestOn));
+  document.getElementById('set-toggle-reminder').setAttribute('aria-checked',String(reminderOn));
 }
 async function saveDisplayName(){
   const u=currentUser();if(!u)return;
@@ -3811,8 +3820,8 @@ async function saveDisplayName(){
 }
 async function toggleEmailPref(kind){
   const u=currentUser();if(!u)return;
-  const col=kind==='recap'?'email_recap_enabled':'email_digest_enabled';
-  const tglId=kind==='recap'?'set-toggle-recap':'set-toggle-digest';
+  const col=kind==='recap'?'email_recap_enabled':kind==='digest'?'email_digest_enabled':'email_reminder_enabled';
+  const tglId=kind==='recap'?'set-toggle-recap':kind==='digest'?'set-toggle-digest':'set-toggle-reminder';
   const tgl=document.getElementById(tglId);
   const next=tgl.getAttribute('aria-checked')!=='true';
   tgl.setAttribute('aria-checked',String(next));
@@ -3824,7 +3833,8 @@ async function toggleEmailPref(kind){
     return;
   }
   u[col]=next;
-  showToast(`${next?'Enabled':'Paused'} ${kind==='recap'?'Sunday recap':'Tuesday standings'}`);
+  const label=kind==='recap'?'Sunday recap':kind==='digest'?'Tuesday standings':'Thursday check-in';
+  showToast(`${next?'Enabled':'Paused'} ${label}`);
 }
 function setFbRating(n){
   fbRating=n;

@@ -1,0 +1,10 @@
+# Inactivity reminder — Thursday 7 PM EDT (Friday 23:00 UTC summer / Friday 00:00 UTC winter)
+# Subtract 1 hour during EST winter (Nov-Mar): change to "0 0 * * 5"
+# Sends to members who haven't logged any habit points in 3+ days.
+#
+# NOTE: this `schedule` field is honored by `supabase serve` locally only.
+# Production scheduling lives in pg_cron — see HANDOFF.md.
+
+[functions.inactivity-reminder]
+verify_jwt = false
+schedule = "0 23 * * 4"
