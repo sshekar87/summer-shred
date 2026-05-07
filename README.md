@@ -12,9 +12,9 @@
 
 ## How I got here
 
-I'm Sukesh — a non-technical founder, and this is the first real application I've built. The user is Tina, who owns **CrossFit Boston Iron & Grit**, and her members. The constraint was simple: she runs an 8-week challenge every summer and tracks it in a spreadsheet that nobody on her team enjoys maintaining. I told her I'd take a swing at building something better. The deadline was her next program kickoff.
+I'm Sukesh — a non-technical founder, and this is the first real application I've built. The user is Tina, who owns **CrossFit Boston Iron & Grit**, and her members. The constraint was simple: data entry over an 8-week challenge that's not suited for the regular workout logging + class signup app. The gym tried a spreadsheet that doesn't update live across all users. I wanted to build something for myself and also share with gym members. 
 
-I shipped it by pairing with [Claude Code](https://claude.com/claude-code) over a few weeks of sessions. Claude wrote most of the code. I made every product decision: which features to cut, which to fight for, what the brand should feel like, how to handle the inevitable bugs. The split that worked for me — Claude is faster than I am at translating intent into working code; I'm faster than Claude at noticing when something doesn't feel right for a real member to use.
+I shipped it by pairing with [Claude Code](https://claude.com/claude-code) over a 1 week of sessions. Claude wrote most of the code. I made every product decision: which features to cut, which to fight for, what the brand should feel like, how to handle the inevitable bugs. The split that worked for me — Claude is faster than I am at translating intent into working code; I'm faster than Claude at noticing when something doesn't feel right for a real member to use.
 
 A few things I figured out along the way that I didn't expect to —
 

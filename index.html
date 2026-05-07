@@ -2106,15 +2106,15 @@ function programEndDate(){const d=new Date(PROGRAM_START);d.setDate(d.getDate()+
 function weekDeadlineKey(wk){return dayOffset(weekEndDate(wk),4);} // Sat + 4 = Wed
 
 const HABITS = [
-  { id:'train',    emoji:'🏋️', name:'Train',     pts:1, tip:'Hit the gym, class, home, or open gym' },
+  { id:'train',    emoji:'🏋️', name:'Train',     pts:1, tip:'Hit the gym, workout at home or elsewhere? Count it.' },
   { id:'mobility', emoji:'🧘', name:'Stretch',   pts:1, tip:'15 min of stretching & mobility' },
   { id:'sleep',    emoji:'😴', name:'Sleep',     pts:1, tip:'6–8 hours of sleep' },
   { id:'fasting',  emoji:'⏱️', name:'Fast',      pts:1, tip:'10–14 hour overnight fast' },
   { id:'veggies',  emoji:'🥦', name:'Veggies',   pts:1, tip:'6 servings veg + 2 fruit' },
   { id:'water',    emoji:'💧', name:'Hydrate',   pts:1, tip:'64oz water minimum' },
   { id:'alcohol',  emoji:'🍺', name:'Alcohol',   pts:5, tip:'Skipped the booze today',     negate:true },
-  { id:'bread',    emoji:'🍞', name:'Bread',     pts:5, tip:'No flour-based foods',        negate:true },
-  { id:'sugar',    emoji:'🍬', name:'Sugar',     pts:5, tip:'No processed sugar or syrups',negate:true },
+  { id:'bread',    emoji:'🍞', name:'Bread',     pts:5, tip:'Eat Quinoa, Farro etc. Sourdough is good!', negate:true },
+  { id:'sugar',    emoji:'🍬', name:'Sugar',     pts:5, tip:'No added sugar or syrups',   negate:true },
   { id:'extra',    emoji:'⭐', name:'Extra',     pts:5, tip:"Crushed this week's focus" },
 ];
 const MAX_DAILY = HABITS.reduce((a,h)=>a+h.pts,0);
@@ -3253,7 +3253,7 @@ function shredAndReveal(){
 function launchShred(isPerfect){
   const modal=document.getElementById('shred-modal');
   document.getElementById('shred-modal-icon').textContent=isPerfect?'🔥':'💪';
-  document.getElementById('shred-modal-title').textContent=isPerfect?'Perfect Day!':'Shredded!';
+  document.getElementById('shred-modal-title').textContent=isPerfect?'Max Day!':'Shredded!';
   document.getElementById('shred-modal-message').textContent=isPerfect?(MAX_DAILY+'/'+MAX_DAILY+" — You're unstoppable!"):'Day logged. Keep grinding.';
   // Reset animation by removing+re-adding the icon node
   const icon=document.getElementById('shred-modal-icon');
@@ -3444,7 +3444,7 @@ function renderLeaderboard(){
     const rank=idx+1,pts=lbTab==='week'?item.weekPts:item.totalPts,streak=item.stats.curStreak,isMe=item.u.id===state.currentUser;
     const row=document.createElement('div');row.className='lb-row'+(isMe?' me':'');
     const rc=rank===1?'top1':rank===2?'top2':rank===3?'top3':'';const medal=rank===1?'🥇':rank===2?'🥈':rank===3?'🥉':rank;
-    row.innerHTML=`<div class="lb-rank ${rc}">${medal}</div><div class="lb-identity"><div class="lb-av">${initials(item.u.name)}</div><div><div class="lb-name">${item.u.name}${isMe?' <span style="color:var(--red);font-size:0.68rem">(you)</span>':''}</div><div class="lb-badge">W${cw} · ${item.stats.perfectDays} perfect day${item.stats.perfectDays!==1?'s':''}</div></div></div><div><div class="lb-week-pts">${item.weekPts}</div><div class="lb-week-label">This Wk</div></div><div><div class="lb-total-pts">${item.totalPts}</div><div class="lb-week-label">Total</div></div><div class="lb-streak ${streak>=3?'hot':''}">${streak>0?streak+'🔥':'—'}</div>`;
+    row.innerHTML=`<div class="lb-rank ${rc}">${medal}</div><div class="lb-identity"><div class="lb-av">${initials(item.u.name)}</div><div><div class="lb-name">${item.u.name}${isMe?' <span style="color:var(--red);font-size:0.68rem">(you)</span>':''}</div><div class="lb-badge">W${cw} · ${item.stats.perfectDays} Max day${item.stats.perfectDays!==1?'s':''}</div></div></div><div><div class="lb-week-pts">${item.weekPts}</div><div class="lb-week-label">This Wk</div></div><div><div class="lb-total-pts">${item.totalPts}</div><div class="lb-week-label">Total</div></div><div class="lb-streak ${streak>=3?'hot':''}">${streak>0?streak+'🔥':'—'}</div>`;
     table.appendChild(row);
   });
 }
