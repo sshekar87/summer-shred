@@ -119,7 +119,7 @@ Deno.serve(async () => {
 
       <!-- Opt-out hint -->
       <div style="padding:0 28px 18px;text-align:center;">
-        <p style="color:#B0B0B0;font-size:11px;margin:0;">Don't want these check-ins? Tap your avatar in the app → Settings.</p>
+        <p style="color:#B0B0B0;font-size:11px;margin:0;">Edit notifications in settings.</p>
       </div>
     `;
 
