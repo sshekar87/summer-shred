@@ -3470,9 +3470,12 @@ function bmToNumber(b,v){
 function bmFmtDelta(b,start,end){
   const s=bmToNumber(b,start),e=bmToNumber(b,end);
   if(s==null||e==null)return '<span class="bm-delta neutral">—</span>';
-  const better=b.lowerIsBetter?e<s:e>s;
-  const diff=b.lowerIsBetter?s-e:e-s;
-  const sign=diff>=0?(better?'+':'-'):(better?'-':'+');
+  // Final − Initial — sign reflects real direction; color encodes good/bad per lowerIsBetter
+  const diff=e-s;
+  let cls;
+  if(diff===0) cls='neutral';
+  else cls=(b.lowerIsBetter?diff<0:diff>0)?'pos':'neg';
+  const sign=diff>0?'+':(diff<0?'-':'');
   let body;
   if(b.unit==='time'){
     const abs=Math.abs(diff);
@@ -3480,7 +3483,7 @@ function bmFmtDelta(b,start,end){
   }else{
     body=`${sign}${Math.abs(diff).toFixed(0)} ${b.unit}`;
   }
-  return `<span class="bm-delta ${better?'pos':'neg'}">${body}</span>`;
+  return `<span class="bm-delta ${cls}">${body}</span>`;
 }
 function bmDisplayValue(b,v){
   if(!v)return '';
@@ -3535,15 +3538,18 @@ function renderBenchmarks(){
 
   // Athletes — single combined table. Default: Start row only per athlete.
   // Click a row to reveal End + Δ underneath. "Expand all" / "Collapse all" toggles every row.
+  // Body Weight hidden here for privacy — members only see/enter their own in the grid above.
+  const athleteBms=BENCHMARKS_DEF.filter(b=>b.id!=='bodycomp');
+  const activeAthletes=state.users.filter(u=>u.is_active!==false);
   const allSec=document.createElement('div');
-  const allExpanded=state.users.length>0&&state.users.every(u=>expandedAthletes.has(u.id));
+  const allExpanded=activeAthletes.length>0&&activeAthletes.every(u=>expandedAthletes.has(u.id));
   allSec.innerHTML=`<div class="bm-section-header mt1" style="display:flex;align-items:center;justify-content:space-between;gap:0.6rem">
     <span>🏆 Athletes</span>
     <button class="admin-action-btn" onclick="toggleAllBmAthletes()" style="text-transform:none;letter-spacing:0">${allExpanded?'Collapse all':'Expand all'}</button>
   </div>`;
   const wrap=document.createElement('div');wrap.className='bm-table-wrap card';wrap.style.padding='0.5rem 0.75rem';
-  let st=`<table class="bm-table"><thead><tr><th class="bm-col-name">Athlete</th>${BENCHMARKS_DEF.map(b=>`<th class="bm-col-vert"><div class="bm-col-vert-inner">${b.name}</div></th>`).join('')}</tr></thead><tbody>`;
-  state.users.forEach(usr=>{
+  let st=`<table class="bm-table"><thead><tr><th class="bm-col-name">Athlete</th>${athleteBms.map(b=>`<th class="bm-col-vert"><div class="bm-col-vert-inner">${b.name}</div></th>`).join('')}</tr></thead><tbody>`;
+  activeAthletes.forEach(usr=>{
     const ubm=usr.benchmarks||{};
     const isMe=usr.id===state.currentUser;
     const shortName=(usr.name||'').split(' ')[0]||usr.name||'';
@@ -3551,18 +3557,18 @@ function renderBenchmarks(){
     // Main row (Start values) — clickable
     st+=`<tr class="bm-athlete-main${isMe?' bm-row-me':''}" onclick="toggleAthleteRow('${usr.id}')">
       <td class="bm-col-name-cell"><span class="bm-row-chevron${expanded?' open':''}">▸</span>${shortName}${isMe?' <span class="bm-you-tag">(you)</span>':''}</td>
-      ${BENCHMARKS_DEF.map(b=>{const v=bmDisplayValue(b,ubm['start_'+b.id]);return `<td class="bm-col-val ${v?'has-val':''}">${v||'—'}</td>`;}).join('')}
+      ${athleteBms.map(b=>{const v=bmDisplayValue(b,ubm['start_'+b.id]);return `<td class="bm-col-val ${v?'has-val':''}">${v||'—'}</td>`;}).join('')}
     </tr>`;
     if(expanded){
       // END row
       st+=`<tr class="bm-athlete-detail${isMe?' bm-row-me':''}">
         <td class="bm-col-name-cell bm-detail-label">End</td>
-        ${BENCHMARKS_DEF.map(b=>{const v=bmDisplayValue(b,ubm['end_'+b.id]);return `<td class="bm-col-val ${v?'has-val':''}">${v||'—'}</td>`;}).join('')}
+        ${athleteBms.map(b=>{const v=bmDisplayValue(b,ubm['end_'+b.id]);return `<td class="bm-col-val ${v?'has-val':''}">${v||'—'}</td>`;}).join('')}
       </tr>`;
       // Δ row
       st+=`<tr class="bm-athlete-detail bm-detail-last${isMe?' bm-row-me':''}">
         <td class="bm-col-name-cell bm-detail-label">Δ</td>
-        ${BENCHMARKS_DEF.map(b=>{const s=ubm['start_'+b.id]||'',e=ubm['end_'+b.id]||'';if(!s||!e)return `<td class="bm-col-val">—</td>`;return `<td class="bm-col-val">${bmFmtDelta(b,s,e)}</td>`;}).join('')}
+        ${athleteBms.map(b=>{const s=ubm['start_'+b.id]||'',e=ubm['end_'+b.id]||'';if(!s||!e)return `<td class="bm-col-val">—</td>`;return `<td class="bm-col-val">${bmFmtDelta(b,s,e)}</td>`;}).join('')}
       </tr>`;
     }
   });
@@ -3575,9 +3581,10 @@ function toggleAthleteRow(uid){
   renderBenchmarks();
 }
 function toggleAllBmAthletes(){
-  const allExpanded=state.users.length>0&&state.users.every(u=>expandedAthletes.has(u.id));
+  const active=state.users.filter(u=>u.is_active!==false);
+  const allExpanded=active.length>0&&active.every(u=>expandedAthletes.has(u.id));
   if(allExpanded)expandedAthletes.clear();
-  else state.users.forEach(u=>expandedAthletes.add(u.id));
+  else active.forEach(u=>expandedAthletes.add(u.id));
   renderBenchmarks();
 }
 function saveBm(key,val){
