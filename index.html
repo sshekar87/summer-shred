@@ -3592,9 +3592,10 @@ function saveBm(key,val){
       deltaCell.innerHTML=bmFmtDelta(b,u.benchmarks['start_'+b.id]||'',u.benchmarks['end_'+b.id]||'');
     }
   }
-  // Debounced persist
-  clearTimeout(saveBm._t);
-  saveBm._t=setTimeout(()=>{upsertBenchmark(key,val);},700);
+  // Debounced persist — one timer per key so saves for different lifts don't cancel each other
+  saveBm._timers=saveBm._timers||{};
+  clearTimeout(saveBm._timers[key]);
+  saveBm._timers[key]=setTimeout(()=>{upsertBenchmark(key,val);},700);
 }
 
 /* ═══ COACH TAB ═══ */
@@ -3640,7 +3641,7 @@ function pickRotatingQuote(dayKey){
   return pool[Math.abs(h)%pool.length];
 }
 function strengthMsg(rate){
-  if(rate>=1)return 'Perfect week — untouchable';
+  if(rate>=1)return 'Max week — untouchable';
   if(rate>=0.85)return 'Strong rhythm — keep it';
   if(rate>=0.7)return "You're owning this";
   return 'Solid — building it up';

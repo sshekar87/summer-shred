@@ -149,7 +149,7 @@ Deno.serve(async () => {
         </table>
         ${s.perfectDays > 0 ? `
           <div style="margin-top:8px;text-align:center;color:#2E9C5C;font-size:13px;font-weight:700;">
-            🔥 ${s.perfectDays} perfect day${s.perfectDays === 1 ? '' : 's'} (${MAX_DAILY}/${MAX_DAILY})
+            🔥 ${s.perfectDays} max day${s.perfectDays === 1 ? '' : 's'} (${MAX_DAILY}/${MAX_DAILY})
           </div>
         ` : ''}
       </div>

@@ -118,7 +118,7 @@ Deno.serve(async () => {
     if (perfectDayPeople.length) {
       const names = perfectDayPeople.map(p => `<strong>${p.name}</strong>`).join(', ');
       const total = perfectDayPeople.reduce((a, p) => a + p.s.perfectDays, 0);
-      highlights.push(`<div style="margin-bottom:6px;">${names} hit <strong>${total} perfect day${total === 1 ? '' : 's'}</strong> (${MAX_DAILY}/${MAX_DAILY}) 💯</div>`);
+      highlights.push(`<div style="margin-bottom:6px;">${names} hit <strong>${total} max day${total === 1 ? '' : 's'}</strong> (${MAX_DAILY}/${MAX_DAILY}) 💯</div>`);
     }
     if (mostImproved && mostImproved.gain >= 10) {
       highlights.push(`<div style="margin-bottom:6px;"><strong>${mostImproved.name}</strong> jumped <strong>+${mostImproved.gain} pts</strong> over last week 📈</div>`);
@@ -145,7 +145,7 @@ Deno.serve(async () => {
         <div style="background:#F7F7F7;border:1px solid #E1E1E1;border-radius:10px;padding:14px;text-align:center;">
           <div style="font-size:13px;font-weight:700;color:#6A6A6A;">Group pulse</div>
           <div style="margin-top:6px;font-size:13px;color:#111111;">
-            <strong>${totalGroupPts}</strong> total pts · <strong>${avgPts}</strong> avg per member · <strong>${totalDaysLogged}</strong> days logged${totalPerfectDays > 0 ? ` · <strong>${totalPerfectDays}</strong> perfect days` : ''}
+            <strong>${totalGroupPts}</strong> total pts · <strong>${avgPts}</strong> avg per member · <strong>${totalDaysLogged}</strong> days logged${totalPerfectDays > 0 ? ` · <strong>${totalPerfectDays}</strong> max days` : ''}
           </div>
         </div>
       </div>

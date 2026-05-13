@@ -120,7 +120,7 @@ export function brandHtmlWrap(inner: string, subject: string, appUrl: string): s
     </div>`;
 }
 
-// Compute per-user week stats: pts (with override fallback), days logged, perfect days, habit counts.
+// Compute per-user week stats: pts (with override fallback), days logged, max days, habit counts.
 export interface UserWeekStats {
   userId: string;
   weekPts: number;          // override-aware
