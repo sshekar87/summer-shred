@@ -2791,17 +2791,19 @@ async function clearWeekFromModal(){
   renderWeeklyView();renderAll();showToast('Override cleared');
 }
 /* ═══ OFFLINE WRITE QUEUE ═══
-   Wraps habit-log upserts so a failed save (offline / network blip) never loses data.
-   Queue persists in localStorage and replays on app load + window.online. */
+   Wraps habit-log AND benchmark upserts so a failed save (offline / network
+   blip / iOS PWA backgrounding) never loses data. Queue persists in
+   localStorage and replays on app load + window.online + visibility flush. */
 const WRITE_QUEUE_KEY='live_big_write_queue';
 const WRITE_BACKOFF_MS=[2000,5000,15000,60000];
 function loadQueue(){try{return JSON.parse(localStorage.getItem(WRITE_QUEUE_KEY))||[];}catch{return [];}}
 function saveQueue(q){localStorage.setItem(WRITE_QUEUE_KEY,JSON.stringify(q));}
-function enqueueWrite(payload){
+function enqueueWrite(type,payload,isSameFn){
   const q=loadQueue();
-  // Coalesce: if there's already a pending write for the same (user_id, log_date), replace it (we always store the latest full habits object)
-  const idx=q.findIndex(e=>e.payload.user_id===payload.user_id&&e.payload.log_date===payload.log_date);
-  const entry={id:crypto.randomUUID?crypto.randomUUID():String(Date.now())+Math.random(),type:'habit_log',payload,queuedAt:Date.now(),attempts:0};
+  // Coalesce: replace any pending entry of the same type+identity so we only
+  // ever ship the latest value for a given (user, key) pair.
+  const idx=q.findIndex(e=>e.type===type&&isSameFn(e.payload,payload));
+  const entry={id:crypto.randomUUID?crypto.randomUUID():String(Date.now())+Math.random(),type,payload,queuedAt:Date.now(),attempts:0};
   if(idx>=0)q[idx]=entry; else q.push(entry);
   saveQueue(q);
   renderSyncIndicator();
@@ -2819,7 +2821,12 @@ function bumpAttempts(id){
 }
 const WRITE_MAX_ATTEMPTS=8;
 async function trySend(entry){
-  const {error}=await sb.from('habit_logs').upsert(entry.payload,{onConflict:'user_id,log_date'});
+  let error;
+  if(entry.type==='benchmark'){
+    ({error}=await sb.from('benchmarks').upsert(entry.payload,{onConflict:'user_id,metric_key'}));
+  }else{
+    ({error}=await sb.from('habit_logs').upsert(entry.payload,{onConflict:'user_id,log_date'}));
+  }
   if(error){
     bumpAttempts(entry.id);
     const fresh=loadQueue().find(x=>x.id===entry.id);
@@ -2854,15 +2861,34 @@ function renderSyncIndicator(){
 }
 window.addEventListener('online',flushQueue);
 
+// Force any pending 700ms benchmark debounce timers to enqueue NOW before iOS
+// suspends the PWA. Without this, a force-quit between keystroke and timer-fire
+// means the upsert never gets queued and the value is lost.
+function flushPendingBenchmarkSaves(){
+  if(!saveBm._timers)return;
+  const u=currentUser();
+  for(const key in saveBm._timers){
+    clearTimeout(saveBm._timers[key]);
+    if(u&&u.benchmarks&&u.benchmarks[key]!==undefined){
+      upsertBenchmark(key,u.benchmarks[key]);
+    }
+  }
+  saveBm._timers={};
+}
+document.addEventListener('visibilitychange',()=>{
+  if(document.visibilityState==='hidden')flushPendingBenchmarkSaves();
+});
+window.addEventListener('pagehide',flushPendingBenchmarkSaves);
+
 async function upsertHabitLog(date,habits){
   const u=currentUser();if(!u)return;
-  const entry=enqueueWrite({user_id:u.id,log_date:date,habits});
+  const entry=enqueueWrite('habit_log',{user_id:u.id,log_date:date,habits},(a,b)=>a.user_id===b.user_id&&a.log_date===b.log_date);
   trySend(entry); // fire-and-forget; queue handles retries on failure
 }
 async function upsertBenchmark(metricKey,value){
   const u=currentUser();if(!u)return;
-  const {error}=await sb.from('benchmarks').upsert({user_id:u.id,metric_key:metricKey,value},{onConflict:'user_id,metric_key'});
-  if(error)showToast('Save failed: '+error.message);
+  const entry=enqueueWrite('benchmark',{user_id:u.id,metric_key:metricKey,value},(a,b)=>a.user_id===b.user_id&&a.metric_key===b.metric_key);
+  trySend(entry); // fire-and-forget; queue handles retries on failure
 }
 async function upsertQuote(dateKey,text,author){
   const {error}=await sb.from('quotes').upsert({quote_date:dateKey,quote_text:text,author:author||'Coach'});
